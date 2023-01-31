@@ -11,8 +11,7 @@
 *List here the actions points discussed with assistants*
 
 
-### Comments from staff
-*ONLY USED BY COURSE STAFF: Additional comments from the course staff*
+
 
 ## Meeting 2.
 * **DATE:**
@@ -25,8 +24,7 @@
 *List here the actions points discussed with assistants*
 
 
-### Comments from staff
-*ONLY USED BY COURSE STAFF: Additional comments from the course staff*
+
 
 ## Meeting 3.
 * **DATE:**
@@ -39,8 +37,7 @@
 *List here the actions points discussed with assistants*
 
 
-### Comments from staff
-*ONLY USED BY COURSE STAFF: Additional comments from the course staff*
+
 
 ## Meeting 4.
 * **DATE:**
@@ -53,8 +50,7 @@
 *List here the actions points discussed with assistants*
 
 
-### Comments from staff
-*ONLY USED BY COURSE STAFF: Additional comments from the course staff*
+
 
 ## Midterm meeting
 * **DATE:**
@@ -67,8 +63,7 @@
 *List here the actions points discussed with assistants*
 
 
-### Comments from staff
-*ONLY USED BY COURSE STAFF: Additional comments from the course staff*
+
 
 ## Final meeting
 * **DATE:**
@@ -81,6 +76,5 @@
 *List here the actions points discussed with assistants*
 
 
-### Comments from staff
-*ONLY USED BY COURSE STAFF: Additional comments from the course staff*
+
 
