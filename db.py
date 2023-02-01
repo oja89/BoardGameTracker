@@ -19,13 +19,13 @@ class Maps(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), nullable=False)
     
-    game_id = db.relationship("id", back_populates="games")
+    #game_id = db.relationship("id", back_populates="games")
     
 class Rulesets(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), nullable=False)
     
-    game_id = db.relationship("id", back_populates="games")
+    #game_id = db.relationship("id", back_populates="games")
     
 
 class Games(db.Model):
@@ -38,10 +38,14 @@ class Matches(db.Model):
     date = db.Column(db.String(64), nullable=False)
     turns = db.Column(db.Integer, nullable=False)
     
-    game_id = db.relationship("id", back_populates="games")
-    ruleset_id = db.relationship("id", back_populates="rulesets")
-    map_id = db.relationship("id", back_populates="maps")
+    #game_id = db.relationship("id", back_populates="games")
+    #ruleset_id = db.relationship("id", back_populates="rulesets")
+    #map_id = db.relationship("id", back_populates="maps")
 
 class Player_results(db.Model):
+    row = db.Column(db.Integer, primary_key=True)
+    points = db.Column(db.Integer, nullable=False)
+    
+class Team_results(db.Model):
     row = db.Column(db.Integer, primary_key=True)
     points = db.Column(db.Integer, nullable=False)
