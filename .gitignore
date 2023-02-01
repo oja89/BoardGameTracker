@@ -1,0 +1,6 @@
+# Ignore venv -folder
+venv/
+# Ignore instance -folder (has the db)
+instance/
+# Ignore _pycache_ -folder
+__pycache__/
