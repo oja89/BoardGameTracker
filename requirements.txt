@@ -1,0 +1,16 @@
+backports.entry-points-selectable==1.1.0
+click==8.0.1
+colorama==0.4.4
+distlib==0.3.2
+filelock==3.0.12
+Flask==2.0.1
+Flask-SQLAlchemy==2.5.1
+greenlet==1.1.1
+itsdangerous==2.0.1
+Jinja2==3.0.1
+MarkupSafe==2.0.1
+platformdirs==2.2.0
+six==1.16.0
+SQLAlchemy==1.4.22
+virtualenv==20.7.2
+Werkzeug==2.0.1
