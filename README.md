@@ -5,7 +5,7 @@
 * Markus Oja, markus.oja@student.oulu.fi
 * Riina Annunen, riina.annunen@student.oulu.fi
 
-![Relationmodel](https://github.com/oja89/BoardGameTracker/media/BGT.png)
+![BGTlogo](https://github.com/oja89/BoardGameTracker/blob/master/media/BGT.png)
 
 ## Info
 BoardGameTracker is a game statistic tracker API.
