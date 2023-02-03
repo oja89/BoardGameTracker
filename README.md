@@ -54,6 +54,11 @@ python create_db.py
 
 Use for example "DB Browser for SQLite" to open the db.
 
+You can also create a shortcut on your desktop (on windows)
+Use target `C:\Windows\System32\cmd.exe /K "[route_to_your_folder]\BoardGameTracker\venv\Scripts\activate.bat"`
+And working directory `[route_to_your_folder]`
+
+
 
 
 
