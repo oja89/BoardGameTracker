@@ -12,6 +12,52 @@ BoardGameTracker is a game statistic tracker API.
 It uses Python with Flask and SQLAlchemy.
 Work is still in progress.
 
+## Installation 
+
+Prerequisites:
+Python
+pip
+
+Using commandline: (on Windows)
+
+Install virtualenv
+```
+pip install virtualenv
+```
+
+Create new virtualenv
+(use name venv to have it .gitignored)
+```
+virtualenv venv
+```
+
+Activate venv
+```
+venv\Scripts\activate.bat
+```
+
+cd back to root
+```
+cd ..
+cd ..
+```
+
+install required dependencies for your venv
+```
+pip install -r requirements.txt
+```
+
+run create_db.py to create your database under folder "instance"
+```
+python create_db.py
+```
+
+Use for example "DB Browser for SQLite" to open the db.
+
+
+
+
+
 __Remember to include all required documentation and HOWTOs, including how to create and populate the database, how to run and test the API, the url to the entrypoint and instructions on how to setup and run the client__
 
 
