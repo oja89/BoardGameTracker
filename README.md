@@ -14,13 +14,12 @@ Work is still in progress.
 
 ## Installation 
 
-Prerequisites:
+### Prerequisites:
+-Python
+-pip
 
-Python
-
-pip
-
-Using CMD (on Windows)
+(Guide is for Windows)
+Using command line:
 
 Install virtualenv
 ```
