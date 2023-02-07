@@ -3,7 +3,6 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.engine import Engine
 from sqlalchemy import event
-
 DATABASE = "sqlite:///maindata.db"
 
 app = Flask(__name__)
@@ -19,51 +18,79 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
 
 class Players(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), nullable=False)
+    name = db.Column(db.String(16), unique=True, nullable=False)
 
 class Teams(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), nullable=False)
+    name = db.Column(db.String(16), unique=True, nullable=False)
 
 class Maps(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), nullable=False)
-    
-    game_id = db.Column(db.Integer, db.ForeignKey("games.id", ondelete="SET NULL"))
-    
+    name = db.Column(db.String(16), unique=True, nullable=False)
+
+    game_id = db.Column(
+        db.Integer,
+        db.ForeignKey("games.id", ondelete="SET NULL")
+        )
+
 class Rulesets(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), nullable=False)
-    
-    game_id = db.Column(db.Integer, db.ForeignKey("games.id", ondelete="SET NULL"))
-    
+    name = db.Column(db.String(16), nullable=False)
+
+    game_id = db.Column(
+        db.Integer,
+        db.ForeignKey("games.id", ondelete="SET NULL")
+        )
 
 class Games(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), nullable=False)
+    name = db.Column(db.String(16), unique=True, nullable=False)
 
 class Matches(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    # check how datetime is done, use string as a placeholder
-    date = db.Column(db.String(64), nullable=False)
+    date = db.Column(db.DateTime, nullable=False)
     turns = db.Column(db.Integer, nullable=False)
-    
-    game_id = db.Column(db.Integer, db.ForeignKey("games.id", ondelete="SET NULL"))
-    ruleset_id = db.Column(db.Integer, db.ForeignKey("rulesets.id", ondelete="SET NULL"))
-    map_id = db.Column(db.Integer, db.ForeignKey("maps.id", ondelete="SET NULL"))
+
+    game_id = db.Column(
+        db.Integer,
+        db.ForeignKey("games.id", ondelete="SET NULL")
+        )
+    ruleset_id = db.Column(
+        db.Integer,
+        db.ForeignKey("rulesets.id", ondelete="SET NULL")
+        )
+    map_id = db.Column(
+        db.Integer,
+        db.ForeignKey("maps.id", ondelete="SET NULL")
+        )
 
 class Player_results(db.Model):
-    row = db.Column(db.Integer, primary_key=True)
-    points = db.Column(db.Integer, nullable=False)
-    
-    match_id = db.Column(db.Integer, db.ForeignKey("matches.id", ondelete="SET NULL"))
-    player_id = db.Column(db.Integer, db.ForeignKey("players.id", ondelete="SET NULL"))
-    team_id = db.Column(db.Integer, db.ForeignKey("teams.id", ondelete="SET NULL"))
-    
+    id = db.Column(db.Integer, primary_key=True)
+    points = db.Column(db.Float, nullable=False)
+
+    match_id = db.Column(
+        db.Integer,
+        db.ForeignKey("matches.id", ondelete="CASCADE")
+        )
+    player_id = db.Column(
+        db.Integer,
+        db.ForeignKey("players.id", ondelete="SET NULL")
+        )
+    team_id = db.Column(
+        db.Integer,
+        db.ForeignKey("teams.id", ondelete="SET NULL")
+        )
+
 class Team_results(db.Model):
-    row = db.Column(db.Integer, primary_key=True)
-    points = db.Column(db.Integer, nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    points = db.Column(db.Float, nullable=False)
     order = db.Column(db.Integer, nullable=False)
-    
-    match_id = db.Column(db.Integer, db.ForeignKey("matches.id", ondelete="SET NULL"))
-    team_id = db.Column(db.Integer, db.ForeignKey("teams.id", ondelete="SET NULL"))
+
+    match_id = db.Column(
+        db.Integer,
+        db.ForeignKey("matches.id", ondelete="CASCADE")
+        )
+    team_id = db.Column(
+        db.Integer,
+        db.ForeignKey("teams.id", ondelete="SET NULL")
+        )
