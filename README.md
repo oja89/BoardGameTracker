@@ -58,6 +58,7 @@ python create_db.py
 Database (maindata.db) is created inside folder "instance".
 
 Use for example "DB Browser for SQLite" to open the db.
+This db needs to be deleted and recreated (for example using create_db.py) if models in db.py are modified!
 
 ## Shortcut for venv
 
