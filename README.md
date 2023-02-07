@@ -22,10 +22,13 @@ There is a sample database called example_db.db provided.
 
 ### Prerequisites:
 -Python
+
 -pip
+
 (requirements.txt is used for installing dependencies using pip)
 
 (Guide is for Windows)
+
 Using command line:
 
 Install virtualenv
@@ -69,7 +72,8 @@ This db needs to be deleted and recreated (for example using create_db.py) if mo
 ## Shortcut for venv
 
 You can also create a shortcut on your desktop (on Windows) to open the venv directly.
-Use target 
+
+Use target:
 
 `C:\Windows\System32\cmd.exe /K "[route_to_your_folder]\BoardGameTracker\venv\Scripts\activate.bat"`
 
