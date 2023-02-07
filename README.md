@@ -8,15 +8,17 @@
 ![BGTlogo](https://github.com/oja89/BoardGameTracker/blob/master/media/BGT.png)
 
 ## Info
-BoardGameTracker is a game statistic tracker API.
+BoardGameTracker is an API for tracking game results.
 It uses Python with Flask and SQLAlchemy.
 Work is still in progress.
+It uses SQLite database.
 
 ## Installation 
 
 ### Prerequisites:
 -Python
 -pip
+(requirements.txt is used for installing dependencies using pip)
 
 (Guide is for Windows)
 Using command line:
@@ -43,19 +45,23 @@ cd ..
 cd ..
 ```
 
-install required dependencies for your venv
+Install required dependencies for your venv:
 ```
 pip install -r requirements.txt
 ```
 
-run create_db.py to create your database
+Run create_db.py to create and populate your database:
 ```
 python create_db.py
 ```
 
-Database (maindata.db) will be created inside folder "instance".
+Database (maindata.db) is created inside folder "instance".
 
 Use for example "DB Browser for SQLite" to open the db.
+
+This db needs to be deleted and recreated (for example using create_db.py) if models in db.py are modified!
+
+## Shortcut for venv
 
 You can also create a shortcut on your desktop (on Windows) to open the venv directly.
 Use target 
