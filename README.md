@@ -18,7 +18,7 @@ Prerequisites:
 Python
 pip
 
-Using commandline: (on Windows)
+Using CMD (on Windows)
 
 Install virtualenv
 ```
@@ -31,7 +31,7 @@ Create new virtualenv
 virtualenv venv
 ```
 
-Activate venv
+Activate the virtual environment
 ```
 venv\Scripts\activate.bat
 ```
@@ -47,14 +47,16 @@ install required dependencies for your venv
 pip install -r requirements.txt
 ```
 
-run create_db.py to create your database under folder "instance"
+run create_db.py to create your database
 ```
 python create_db.py
 ```
 
+Database (maindata.db) will be created inside folder "instance".
+
 Use for example "DB Browser for SQLite" to open the db.
 
-You can also create a shortcut on your desktop (on windows)
+You can also create a shortcut on your desktop (on Windows) to open the venv directly.
 Use target 
 
 `C:\Windows\System32\cmd.exe /K "[route_to_your_folder]\BoardGameTracker\venv\Scripts\activate.bat"`
