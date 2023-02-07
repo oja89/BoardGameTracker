@@ -15,7 +15,9 @@ Work is still in progress.
 ## Installation 
 
 Prerequisites:
+
 Python
+
 pip
 
 Using CMD (on Windows)
