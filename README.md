@@ -9,9 +9,13 @@
 
 ## Info
 BoardGameTracker is an API for tracking game results.
+
 It uses Python with Flask and SQLAlchemy.
+
 Work is still in progress.
+
 It uses SQLite database.
+
 There is a sample database called example_db.db provided.
 
 ## Installation 
