@@ -8,7 +8,7 @@
 ![BGTlogo](https://github.com/oja89/BoardGameTracker/blob/master/media/BGT.png)
 
 ## Info
-BoardGameTracker is a game statistic tracker API.
+BoardGameTracker is an API for tracking game results.
 It uses Python with Flask and SQLAlchemy.
 Work is still in progress.
 It uses SQLite database.
