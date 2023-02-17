@@ -20,6 +20,10 @@ class Players(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(16), unique=True, nullable=False)
 
+    # games by player
+    results = db.relationship("Player_results", back_populates="player")
+
+
 class Teams(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(16), unique=True, nullable=False)
@@ -81,6 +85,10 @@ class Player_results(db.Model):
         db.ForeignKey("teams.id", ondelete="SET NULL")
         )
 
+    # games by player
+    player = db.relationship("Players", back_populates="results")
+    
+    
 class Team_results(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     points = db.Column(db.Float, nullable=False)
