@@ -13,14 +13,14 @@ More clear diagram which distincts the objects from their attributes. Everything
 
 
 ## Meeting 2.
-* **DATE:**
-* **ASSISTANTS:**
+* **DATE:17.2.2023**
+* **ASSISTANTS:Mika Oja**
 
 ### Minutes
-*Summary of what was discussed during the meeting*
-
+During this meeting we went through the database diagram and the tables. We also looked at the code and discussed the db.py.
 ### Action points
 *List here the actions points discussed with assistants*
+Add relationships in the code. Add them on top of relationships to shortcut data searches.
 
 
 
