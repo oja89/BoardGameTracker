@@ -1,20 +1,11 @@
-from flask import Flask, request, json
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.engine import Engine
-from sqlalchemy import event
-DATABASE = "sqlite:///maindata.db"
+### from sensorhub example 
+# https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/models.py
 
-app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-db = SQLAlchemy(app)
-
-@event.listens_for(Engine, "connect")
-def set_sqlite_pragma(dbapi_connection, connection_record):
-    cursor = dbapi_connection.cursor()
-    cursor.execute("PRAGMA foreign_keys=ON")
-    cursor.close()
+import click
+import datetime
+import hashlib
+from flask.cli import with_appcontext
+from boardgametracker import db
 
 class Players(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -102,3 +93,105 @@ class Team_results(db.Model):
         db.Integer,
         db.ForeignKey("teams.id", ondelete="SET NULL")
         )
+
+
+
+# commands for cli
+# placed here to ensure that the models are loaded.
+# call them from __init__.py
+
+
+# from sensorhub example 
+# https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/models.py
+
+@click.command("init-db")
+@with_appcontext
+def init_db_command():
+    db.create_all()
+    
+    
+@click.command("testgen")
+@with_appcontext
+def generate_test_data():
+    ### Populate database
+
+    # add a player
+    p = Players(name='Nick')
+    db.session.add(p)
+    db.session.commit()
+
+    print(f"Added player {p.name} as {p}")
+
+    # add a team
+    t = Teams(name='Foxes')
+    db.session.add(t)
+    db.session.commit()
+
+    print(f"Added team {t.name} as {t}")
+
+    #add a game
+    g = Games(name='CS:GO')
+    db.session.add(g)
+    db.session.commit()
+
+    print(f"Added game {g.name} as {g}")
+
+    # add map for the game
+    m = Maps(
+        name='dust',
+        game_id=g.id
+        )
+    db.session.add(m)
+    db.session.commit()
+
+    print(f"Added map {m.name} as {m} for game {g.name} {g}")
+
+    # add ruleset for the game
+    r = Rulesets(
+        name='competitive',
+        game_id=g.id
+        )
+    db.session.add(r)
+    db.session.commit()
+
+    print(f"Added ruleset {r.name} as {r} for game {g.name} {g}")
+
+    ### Match
+    # match info, use game, map, ruleset
+    m1 = Matches(
+        date=datetime.date(2022, 12, 25),
+        turns=30,
+        game_id=g.id,
+        map_id=m.id,
+        ruleset_id=r.id
+        )
+    db.session.add(m1)
+    db.session.commit()
+
+    print(f"Added match on date {m1.date} as {m1}, with {g}, {m}, {r}")
+
+    # team results, use match, team
+    tr = Team_results(
+        points=56,
+        order=2,
+        match_id=m1.id,
+        team_id=t.id
+        )
+    db.session.add(tr)
+    db.session.commit()
+
+    print(f"Added team score {tr.points} as {tr} for match {m1}")
+
+    # player results, use match, player, team
+    pr = Player_results(
+        points=23,
+        match_id=m1.id,
+        team_id=t.id,
+        player_id=p.id
+        )
+    db.session.add(pr)
+    db.session.commit()
+
+    print(f"Added player score {pr.points} as {pr}")
+
+    db.session.commit()

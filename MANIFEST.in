@@ -1,0 +1,2 @@
+graft boardgametracker/static
+global-exclude *.pyc

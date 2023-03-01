@@ -53,21 +53,27 @@ cd ..
 cd ..
 ```
 
-Install required dependencies for your venv:
+Install the project in editable mode:
 ```
-pip install -r requirements.txt
-```
-
-Run create_db.py to create and populate your database:
-```
-python create_db.py
+pip install -e .
 ```
 
-Database (maindata.db) is created inside folder "instance".
+Set Flask variables:
+```
+set FLASK_APP=boardgametracker
+set FLASK_DEBUG=development
+```
 
-Use for example "DB Browser for SQLite" to open the db.
+Initialize database:
+```
+flask init-db
+```
 
-This db needs to be deleted and recreated (for example using create_db.py) if models in db.py are modified!
+Try to populate database:
+```
+flask testgen
+```
+
 
 ## Shortcut for venv
 
