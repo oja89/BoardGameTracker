@@ -165,12 +165,12 @@ class Match(db.Model):
         
     def serialize(self):
         return {
-            "name": self.date,
+            "name": self.date.isoformat(),
             "turns": self.turns
         }
         
     def deserialize(self, doc):
-        self.date = doc["date"]
+        self.date = datetime.fromisoformat(doc["date"])
         self.turns = doc["turns"]
 
     @staticmethod

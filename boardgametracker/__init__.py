@@ -38,7 +38,7 @@ def create_app(test_config=None):
     from . import models
     from . import api
     
-    from boardgametracker.utils import PlayerConverter, TeamConverter
+    from boardgametracker.utils import PlayerConverter, TeamConverter, MatchConverter
     
     
     # cli commands placed in models
@@ -50,6 +50,7 @@ def create_app(test_config=None):
     
     app.url_map.converters["player"] = PlayerConverter
     app.url_map.converters["team"] = TeamConverter
+    app.url_map.converters["match"] = MatchConverter
     
     #this has to be after converters
     app.register_blueprint(api.api_bp)

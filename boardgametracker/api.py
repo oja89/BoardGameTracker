@@ -20,4 +20,4 @@ api.add_resource(TeamItem, "/team/<team:team>/")
 
 
 api.add_resource(MatchCollection, "/match/")
-api.add_resource(MatchItem, "/match/<match>/")
+api.add_resource(MatchItem, "/match/<match:match>/")

@@ -9,6 +9,7 @@ from sqlalchemy.exc import IntegrityError
 from boardgametracker.models import Match
 from boardgametracker import db
 from boardgametracker.constants import *
+import datetime
 
 class MatchCollection(Resource):
     def get(self):

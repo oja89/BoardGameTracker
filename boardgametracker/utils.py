@@ -21,6 +21,18 @@ class PlayerConverter(BaseConverter):
     def to_url(self, db_player):
         return db_player.name
         
+        
+class MatchConverter(BaseConverter):
+    def to_python(self, match):
+        db_match = Match.query.filter_by(id=match).first()
+        if db_match is None:
+            raise NotFound
+        return db_match
+        
+    def to_url(self, db_match):
+        return db_match.id
+
+        
 class TeamConverter(BaseConverter):
     
     def to_python(self, team):
