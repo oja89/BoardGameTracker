@@ -134,3 +134,44 @@ class BGTBuilder(MasonBuilder):
             "default": "0"
         }
         return schema
+        
+def create_error_response(status_code, title, message=None):
+    resource_url = request.path
+    body = MasonBuilder(resource_url=resource_url)
+    body.add_error(title, message)
+    body.add_control("profile", href=ERROR_PROFILE)
+    return Response(json.dumps(body), status_code, mimetype=MASON)
+
+def page_key(*args, **kwargs):
+    start = request.args.get("start", 0)
+    return request.path + f"[start_{start}]"
+    
+def require_admin(func):
+    def wrapper(*args, **kwargs):
+        key_hash = ApiKey.key_hash(request.headers.get("BGT-Api-Key", "").strip())
+        db_key = ApiKey.query.filter_by(admin=True).first()
+        if secrets.compare_digest(key_hash, db_key.key):
+            return func(*args, **kwargs)
+        raise Forbidden
+    return wrapper
+
+def require_player_key(func):
+    def wrapper(self, player, *args, **kwargs):
+        key_hash = ApiKey.key_hash(request.headers.get("BGT-Api-Key").strip())
+        db_key = ApiKey.query.filter_by(player=player).first()
+        if db_key is not None and secrets.compare_digest(key_hash, db_key.key):
+            return func(*args, **kwargs)
+        raise Forbidden
+    return wrapper
+
+
+class PlayerConverter(BaseConverter):
+    
+    def to_python(self, value):
+        db_player = Player.query.filter_by(name=value).first()
+        if db_player is None:
+            raise NotFound
+        return db_player
+        
+    def to_url(self, db_player):
+        return db_player.name

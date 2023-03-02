@@ -14,6 +14,18 @@ class Player(db.Model):
     # games by player
     result = db.relationship("Player_result", back_populates="player")
 
+    @staticmethod
+    def get_schema():
+        schema = {
+            "type": "object",
+            "required": ["name"]
+        }
+        props = schema["properties"] = {}
+        props["name"] = {
+            "description": "Player's  name",
+            "type": "string"
+        }
+        return schema
 
 class Team(db.Model):
     id = db.Column(db.Integer, primary_key=True)
