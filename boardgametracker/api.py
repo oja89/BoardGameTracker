@@ -9,10 +9,15 @@ api = Api(api_bp)
 
 # after api creation to avoid circular imports
 from boardgametracker.resources.player import PlayerCollection, PlayerItem
+from boardgametracker.resources.team import TeamCollection, TeamItem
 from boardgametracker.resources.match import MatchCollection, MatchItem
 
 api.add_resource(PlayerCollection, "/player/")
 api.add_resource(PlayerItem, "/player/<player:player>/")
+
+api.add_resource(TeamCollection, "/team/")
+api.add_resource(TeamItem, "/team/<team:team>/")
+
 
 api.add_resource(MatchCollection, "/match/")
 api.add_resource(MatchItem, "/match/<match>/")

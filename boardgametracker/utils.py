@@ -20,3 +20,14 @@ class PlayerConverter(BaseConverter):
         
     def to_url(self, db_player):
         return db_player.name
+        
+class TeamConverter(BaseConverter):
+    
+    def to_python(self, team):
+        db_team = Team.query.filter_by(name=team).first()
+        if db_team is None:
+            raise NotFound
+        return db_team
+        
+    def to_url(self, db_team):
+        return db_team.name
