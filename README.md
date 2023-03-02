@@ -74,6 +74,10 @@ Try to populate database:
 flask testgen
 ```
 
+Testing with pytest:
+```
+pytest --cov-report term-missing --cov=boardgametracker
+```
 
 ## Shortcut for venv
 
