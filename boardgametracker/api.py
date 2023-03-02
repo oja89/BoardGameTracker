@@ -8,11 +8,7 @@ api_bp = Blueprint("api", __name__, url_prefix="/api")
 api = Api(api_bp)
 
 # after api creation to avoid circular imports
-from boardgametracker.resources.players import PlayerCollection, PlayerItem
+from boardgametracker.resources.player import PlayerCollection, PlayerItem
 
-api.add_resource(PlayerCollection, "/players/")
-api.add_resource(PlayerItem, "players/<player>/")
-
-@api_bp.route("/"):
-def index():
-    return ""
+api.add_resource(PlayerCollection, "/player/")
+api.add_resource(PlayerItem, "/player/<player>/")

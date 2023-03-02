@@ -7,91 +7,91 @@ import hashlib
 from flask.cli import with_appcontext
 from boardgametracker import db
 
-class Players(db.Model):
+class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(16), unique=True, nullable=False)
 
     # games by player
-    results = db.relationship("Player_results", back_populates="player")
+    result = db.relationship("Player_result", back_populates="player")
 
 
-class Teams(db.Model):
+class Team(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(16), unique=True, nullable=False)
 
-class Maps(db.Model):
+class Map(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(16), unique=True, nullable=False)
 
     game_id = db.Column(
         db.Integer,
-        db.ForeignKey("games.id", ondelete="SET NULL")
+        db.ForeignKey("game.id", ondelete="SET NULL")
         )
 
-class Rulesets(db.Model):
+class Ruleset(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(16), nullable=False)
 
     game_id = db.Column(
         db.Integer,
-        db.ForeignKey("games.id", ondelete="SET NULL")
+        db.ForeignKey("game.id", ondelete="SET NULL")
         )
 
-class Games(db.Model):
+class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(16), unique=True, nullable=False)
 
-class Matches(db.Model):
+class Match(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime, nullable=False)
     turns = db.Column(db.Integer, nullable=False)
 
     game_id = db.Column(
         db.Integer,
-        db.ForeignKey("games.id", ondelete="SET NULL")
+        db.ForeignKey("game.id", ondelete="SET NULL")
         )
     ruleset_id = db.Column(
         db.Integer,
-        db.ForeignKey("rulesets.id", ondelete="SET NULL")
+        db.ForeignKey("ruleset.id", ondelete="SET NULL")
         )
     map_id = db.Column(
         db.Integer,
-        db.ForeignKey("maps.id", ondelete="SET NULL")
+        db.ForeignKey("map.id", ondelete="SET NULL")
         )
 
-class Player_results(db.Model):
+class Player_result(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     points = db.Column(db.Float, nullable=False)
 
     match_id = db.Column(
         db.Integer,
-        db.ForeignKey("matches.id", ondelete="CASCADE")
+        db.ForeignKey("match.id", ondelete="CASCADE")
         )
     player_id = db.Column(
         db.Integer,
-        db.ForeignKey("players.id", ondelete="SET NULL")
+        db.ForeignKey("player.id", ondelete="SET NULL")
         )
     team_id = db.Column(
         db.Integer,
-        db.ForeignKey("teams.id", ondelete="SET NULL")
+        db.ForeignKey("team.id", ondelete="SET NULL")
         )
 
     # games by player
-    player = db.relationship("Players", back_populates="results")
+    player = db.relationship("Player", back_populates="result")
     
     
-class Team_results(db.Model):
+class Team_result(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     points = db.Column(db.Float, nullable=False)
     order = db.Column(db.Integer, nullable=False)
 
     match_id = db.Column(
         db.Integer,
-        db.ForeignKey("matches.id", ondelete="CASCADE")
+        db.ForeignKey("match.id", ondelete="CASCADE")
         )
     team_id = db.Column(
         db.Integer,
-        db.ForeignKey("teams.id", ondelete="SET NULL")
+        db.ForeignKey("team.id", ondelete="SET NULL")
         )
 
 
@@ -116,28 +116,28 @@ def generate_test_data():
     ### Populate database
 
     # add a player
-    p = Players(name='Nick')
+    p = Player(name='Nick')
     db.session.add(p)
     db.session.commit()
 
     print(f"Added player {p.name} as {p}")
 
     # add a team
-    t = Teams(name='Foxes')
+    t = Team(name='Foxes')
     db.session.add(t)
     db.session.commit()
 
     print(f"Added team {t.name} as {t}")
 
     #add a game
-    g = Games(name='CS:GO')
+    g = Game(name='CS:GO')
     db.session.add(g)
     db.session.commit()
 
     print(f"Added game {g.name} as {g}")
 
     # add map for the game
-    m = Maps(
+    m = Map(
         name='dust',
         game_id=g.id
         )
@@ -147,7 +147,7 @@ def generate_test_data():
     print(f"Added map {m.name} as {m} for game {g.name} {g}")
 
     # add ruleset for the game
-    r = Rulesets(
+    r = Ruleset(
         name='competitive',
         game_id=g.id
         )
@@ -158,7 +158,7 @@ def generate_test_data():
 
     ### Match
     # match info, use game, map, ruleset
-    m1 = Matches(
+    m1 = Match(
         date=datetime.date(2022, 12, 25),
         turns=30,
         game_id=g.id,
@@ -171,7 +171,7 @@ def generate_test_data():
     print(f"Added match on date {m1.date} as {m1}, with {g}, {m}, {r}")
 
     # team results, use match, team
-    tr = Team_results(
+    tr = Team_result(
         points=56,
         order=2,
         match_id=m1.id,
@@ -183,7 +183,7 @@ def generate_test_data():
     print(f"Added team score {tr.points} as {tr} for match {m1}")
 
     # player results, use match, player, team
-    pr = Player_results(
+    pr = Player_result(
         points=23,
         match_id=m1.id,
         team_id=t.id,
