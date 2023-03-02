@@ -13,29 +13,31 @@ from boardgametracker.constants import *
 class PlayerCollection(Resource):
     def get(self):
         '''
-        From exercise 2
-        '''
-
-        # create list
-        data_object = []
+        Get all players
         
-        # query players in Player
+        
+        From exercise 2,
+        https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
+        '''
+        data_object = []
         player_list = Player.query.all()
         
-        # append players to list with keys
         for player in player_list:
             data_object.append({
                 'name': player.name
             })
             
-        #no need to rebuild the response to json
         response = data_object
         
         return response, 200
         
     def post(self):
         '''
-        From exercise 2
+        Add a new player
+        
+        
+        From exercise 2,
+        https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
         if not request.json:
             raise UnsupportedMediaType
@@ -63,5 +65,51 @@ class PlayerCollection(Resource):
     
 class PlayerItem(Resource):
     def get(self, player):
+        '''
+        Get information about a player
+        
+        
+        From exercise 2 material,
+        https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
+        '''
         return player.serialize()
+        
+    def put(self, player):
+        '''
+        Change information of a player
+        
+        
+        From exercise 2,
+        https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
+        '''
+        if not request.json:
+            raise UnsupportedMediaType
+
+        try:
+            validate(request.json, Player.get_schema())
+        except ValidationError as e:
+            raise BadRequest(description=str(e))
+
+        player.deserialize(request.json)
+        try:
+            db.session.add(player)
+            db.session.commit()
+        except IntegrityError:
+            raise Conflict(
+                409,
+                description="Player with name '{name}' already exists.".format(
+                    **request.json
+                )
+            )
+            
+    def delete(self, player):
+        '''
+        Delete a player
+        
+        From https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
+        ''' 
+        db.session.delete(player)
+        db.session.commit()
+
+        return Response(status=204)
 
