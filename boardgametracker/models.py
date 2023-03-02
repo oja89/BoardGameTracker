@@ -18,6 +18,9 @@ class Player(db.Model):
         return {
             "name": self.name
         }
+        
+    def deserialize(self, doc):
+        self.name = doc["name"]
 
     @staticmethod
     def get_schema():
@@ -35,6 +38,27 @@ class Player(db.Model):
 class Team(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(16), unique=True, nullable=False)
+    
+    def serialize(self):
+        return {
+            "name": self.name
+        }
+        
+    def deserialize(self, doc):
+        self.name = doc["name"]
+
+    @staticmethod
+    def get_schema():
+        schema = {
+            "type": "object",
+            "required": ["name"]
+        }
+        props = schema["properties"] = {}
+        props["name"] = {
+            "description": "Teams's  name",
+            "type": "string"
+        }
+        return schema
 
 class Map(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -44,6 +68,27 @@ class Map(db.Model):
         db.Integer,
         db.ForeignKey("game.id", ondelete="SET NULL")
         )
+        
+    def serialize(self):
+        return {
+            "name": self.name
+        }
+        
+    def deserialize(self, doc):
+        self.name = doc["name"]
+
+    @staticmethod
+    def get_schema():
+        schema = {
+            "type": "object",
+            "required": ["name"]
+        }
+        props = schema["properties"] = {}
+        props["name"] = {
+            "description": "Map's  name",
+            "type": "string"
+        }
+        return schema
 
 class Ruleset(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -53,16 +98,58 @@ class Ruleset(db.Model):
         db.Integer,
         db.ForeignKey("game.id", ondelete="SET NULL")
         )
+        
+    def serialize(self):
+        return {
+            "name": self.name
+        }
+        
+    def deserialize(self, doc):
+        self.name = doc["name"]
+
+    @staticmethod
+    def get_schema():
+        schema = {
+            "type": "object",
+            "required": ["name"]
+        }
+        props = schema["properties"] = {}
+        props["name"] = {
+            "description": "Ruleset's  name",
+            "type": "string"
+        }
+        return schema
 
 class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(16), unique=True, nullable=False)
+    
+    def serialize(self):
+        return {
+            "name": self.name
+        }
+        
+    def deserialize(self, doc):
+        self.name = doc["name"]
+
+    @staticmethod
+    def get_schema():
+        schema = {
+            "type": "object",
+            "required": ["name"]
+        }
+        props = schema["properties"] = {}
+        props["name"] = {
+            "description": "Game's  name",
+            "type": "string"
+        }
+        return schema
 
 class Match(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime, nullable=False)
     turns = db.Column(db.Integer, nullable=False)
-
+    
     game_id = db.Column(
         db.Integer,
         db.ForeignKey("game.id", ondelete="SET NULL")
@@ -75,11 +162,40 @@ class Match(db.Model):
         db.Integer,
         db.ForeignKey("map.id", ondelete="SET NULL")
         )
+        
+    def serialize(self):
+        return {
+            "name": self.date,
+            "turns": self.turns
+        }
+        
+    def deserialize(self, doc):
+        self.date = doc["date"]
+        self.turns = doc["turns"]
+
+    @staticmethod
+    def get_schema():
+        schema = {
+            "type": "object",
+            "required": ["date", "turns"]
+        }
+        props = schema["properties"] = {}
+        props["date"] = {
+            "description": "Match's date",
+            "type": "string",
+            "format": "date-time"
+        }
+        props["turns"] = {
+            "description": "Match's turns",
+            "type": "number"
+                    
+        }   
+        return schema    
 
 class Player_result(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     points = db.Column(db.Float, nullable=False)
-
+    
     match_id = db.Column(
         db.Integer,
         db.ForeignKey("match.id", ondelete="CASCADE")
@@ -96,6 +212,28 @@ class Player_result(db.Model):
     # games by player
     player = db.relationship("Player", back_populates="result")
     
+    def serialize(self):
+        return {
+            "points": self.points,
+        }
+        
+    def deserialize(self, doc):
+        self.points = doc["points"]
+
+    @staticmethod
+    def get_schema():
+        schema = {
+            "type": "object",
+            "required": ["points"]
+        }
+        props = schema["properties"] = {}
+        props["points"] = {
+            "description": "Player's points",
+            "type": "number"
+        }
+        
+        return schema
+    
     
 class Team_result(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -110,6 +248,34 @@ class Team_result(db.Model):
         db.Integer,
         db.ForeignKey("team.id", ondelete="SET NULL")
         )
+        
+    def serialize(self):
+        return {
+            "points": self.points,
+            "order" : self.order
+        }
+        
+    def deserialize(self, doc):
+        self.points = doc["points"]
+        self.order = doc["order"]
+
+    @staticmethod
+    def get_schema():
+        schema = {
+            "type": "object",
+            "required": ["points"]
+        }
+        props = schema["properties"] = {}
+        props["points"] = {
+            "description": "Player points",
+            "type": "number"
+        }
+        props["order"] = {
+            "description": "Order of team",
+            "type": "number"
+        }
+        
+        return schema
 
 
 
