@@ -37,13 +37,21 @@ def create_app(test_config=None):
 
     from . import models
     from . import api
-
+    from boardgametracker.utils import PlayerConverter
+    app.register_blueprint(api.api_bp)
+    
     # cli commands placed in models
     app.cli.add_command(models.init_db_command)
     app.cli.add_command(models.generate_test_data)
     
     # print instance path
     print(app.instance_path)
+    
+    app.url_map.converters["player"] = PlayerConverter
+    
+    @app.route("/")
+    def index():
+        return "This is index"
     
     
     return app

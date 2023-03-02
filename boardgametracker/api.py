@@ -11,4 +11,4 @@ api = Api(api_bp)
 from boardgametracker.resources.player import PlayerCollection, PlayerItem
 
 api.add_resource(PlayerCollection, "/player/")
-api.add_resource(PlayerItem, "/player/<player:player>/")
+api.add_resource(PlayerItem, "/player/<player>/")
