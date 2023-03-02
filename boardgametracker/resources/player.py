@@ -12,6 +12,9 @@ from boardgametracker.constants import *
 
 class PlayerCollection(Resource):
     def get(self):
+        '''
+        From exercise 2
+        '''
 
         # create list
         data_object = []
@@ -29,6 +32,34 @@ class PlayerCollection(Resource):
         response = data_object
         
         return response, 200
+        
+    def post(self):
+        '''
+        From exercise 2
+        '''
+        if not request.json:
+            raise UnsupportedMediaType
+        try:
+            validate(request.json, Player.get_schema())
+        except ValidationError as e:
+            raise BadRequest(description=str(e))
+        try:
+            player = Player(
+                name=request.json["name"]
+            )
+            db.session.add(player)
+            db.session.commit()
+        except KeyError:
+            abort(400)
+        except IntegrityError:
+            raise Conflict(
+                409,
+                description="Player with name '{name}' already exists.".format(
+                    **request.json
+                )
+            )
+
+        return Response(status=201)
     
 class PlayerItem(Resource):
     def get(self, player):
