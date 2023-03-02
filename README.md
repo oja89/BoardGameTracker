@@ -61,7 +61,7 @@ pip install -e .
 Set Flask variables:
 ```
 set FLASK_APP=boardgametracker
-set FLASK_DEBUG=development
+set FLASK_DEBUG=true
 ```
 
 Initialize database:
