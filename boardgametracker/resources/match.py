@@ -3,13 +3,15 @@
 
 import json
 from jsonschema import validate, ValidationError
-from flask import Response, request, url_for
+from flask import Response, request, url_for, abort
 from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError
 from boardgametracker.models import Match
 from boardgametracker import db
 from boardgametracker.constants import *
 import datetime
+from datetime import datetime
+from werkzeug.exceptions import NotFound, Conflict, BadRequest, UnsupportedMediaType
 
 class MatchCollection(Resource):
     def get(self):
@@ -35,7 +37,7 @@ class MatchCollection(Resource):
     
     def post(self):
         '''
-        Add a new player
+        Add a new match
         
         
         From exercise 2,
@@ -44,24 +46,18 @@ class MatchCollection(Resource):
         if not request.json:
             raise UnsupportedMediaType
         try:
-            validate(request.json, Player.get_schema())
+            validate(request.json, Match.get_schema())
         except ValidationError as e:
             raise BadRequest(description=str(e))
         try:
-            player = Player(
-                name=request.json["name"]
+            match = Match(
+                date=datetime.fromisoformat(request.json["date"]),
+                turns=request.json["turns"]
             )
-            db.session.add(player)
+            db.session.add(match)
             db.session.commit()
         except KeyError:
             abort(400)
-        except IntegrityError:
-            raise Conflict(
-                409,
-                description="Player with name '{name}' already exists.".format(
-                    **request.json
-                )
-            )
 
         return Response(status=201)
     
