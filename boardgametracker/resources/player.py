@@ -32,5 +32,5 @@ class PlayerCollection(Resource):
     
 class PlayerItem(Resource):
     def get(self, player):
-        pass
+        return player.serialize()
 

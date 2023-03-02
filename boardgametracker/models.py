@@ -14,6 +14,11 @@ class Player(db.Model):
     # games by player
     result = db.relationship("Player_result", back_populates="player")
 
+    def serialize(self):
+        return {
+            "name": self.name
+        }
+
     @staticmethod
     def get_schema():
         schema = {

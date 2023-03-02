@@ -12,8 +12,8 @@ from boardgametracker.models import *
 
 class PlayerConverter(BaseConverter):
     
-    def to_python(self, value):
-        db_player = Player.query.filter_by(name=value).first()
+    def to_python(self, player):
+        db_player = Player.query.filter_by(name=player).first()
         if db_player is None:
             raise NotFound
         return db_player
