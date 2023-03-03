@@ -19,10 +19,9 @@ api.add_resource(PlayerItem, "/player/<player:player>/")
 api.add_resource(TeamCollection, "/team/")
 api.add_resource(TeamItem, "/team/<team:team>/")
 
-
 api.add_resource(MatchCollection, "/match/")
 api.add_resource(MatchItem, "/match/<match:match>/")
 
 api.add_resource(RulesetCollection, "/ruleset/")
 api.add_resource(RulesetItem, "/ruleset/<ruleset:ruleset>/")
-api.add_resource(RulesetsFor, "/rulesets/<ruleset:ruleset>/")
+api.add_resource(RulesetsFor, "/game/<game>/rulesets/")

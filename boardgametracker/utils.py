@@ -55,8 +55,8 @@ class RulesetConverter(BaseConverter):
         return db_ruleset.id
 
 class RulesetsForConverter(BaseConverter):
-    def to_python(self, ruleset):
-        db_ruleset = Ruleset.query.filter_by(game_id=ruleset).first()
+    def to_python(self, game):
+        db_ruleset = Ruleset.query.filter_by(game_id=game).first()
         if db_ruleset is None:
             raise NotFound
         return db_ruleset

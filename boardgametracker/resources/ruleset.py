@@ -106,7 +106,7 @@ class RulesetItem(Resource):
         return Response(status=204)
         
 class RulesetsFor(Resource):
-    def get(self, ruleset):
+    def get(self, game):
         '''
         Get all rulesets for a certain game
         
@@ -115,7 +115,7 @@ class RulesetsFor(Resource):
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
         data_object = []
-        ruleset_list = Ruleset.query.filter_by(game_id=ruleset.game_id)
+        ruleset_list = Ruleset.query.filter_by(game_id=game)
         for ruleset in ruleset_list:
             data_object.append({
                 'name': ruleset.name,
