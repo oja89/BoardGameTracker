@@ -33,15 +33,13 @@ class MapCollection(Resource):
             
         # do the query for given game
         else:
-            thisgame = game.serialize()
-            maps = Map.query.filter_by(game_id=thisgame["id"])
+            game_id = game.serialize(long=True)["id"]
+            maps = Map.query.filter_by(game_id=game_id)
 
         for map in maps:
-            data_object.append({
-                'name': map.name,
-                'game_id': map.game_id
-            })
-            
+            # use serializer
+            data_object.append(map.serialize(long=True))
+
         response = data_object
         
         return response, 200
@@ -57,10 +55,10 @@ class MapCollection(Resource):
         
         if game is None:
         # check the correct error message
-        # game needs to exists
+        # game needs to exist
             abort(400)
         else:
-            thisgame = game.serialize()
+            game_id = game.serialize(long=True)["id"]
         
         if not request.json:
             raise UnsupportedMediaType
@@ -70,8 +68,8 @@ class MapCollection(Resource):
             raise BadRequest(description=str(e))
         try:
             map = Map(
-                name=request.json["name"],
-                game_id=thisgame["id"]
+                name = request.json["name"],
+                game_id = game_id
             )
             db.session.add(map)
             db.session.commit()
@@ -81,16 +79,16 @@ class MapCollection(Resource):
         return Response(status=201)
     
 class MapItem(Resource):
-    def get(self, map):
+    def get(self, map, game=None):
         '''
         Get information about a map
-        
+        (Game can be in the path, but doesn't make difference)
         
         From exercise 2 material,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
 
-        return map.serialize()
+        return map.serialize(long=True)
         
     def put(self, map):
         '''

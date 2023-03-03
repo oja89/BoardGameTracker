@@ -28,10 +28,8 @@ class MatchCollection(Resource):
         data_object = []
 
         for match in Match.query.all():
-            data_object.append({
-                'date': match.date.isoformat(),
-                'turns': match.turns
-            })
+            # use serializer
+            data_object.append(match.serialize(long=True))
             
         response = data_object
         

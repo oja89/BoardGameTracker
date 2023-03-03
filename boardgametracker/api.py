@@ -35,7 +35,7 @@ api.add_resource(RulesetCollection,
     "/game/<game:game>/ruleset/"
     )
 api.add_resource(RulesetItem, 
-    "/game/<game:game>/ruleset/"
+    "/game/<game:game>/ruleset/<ruleset:ruleset>/",
     "/ruleset/<ruleset:ruleset>/"
     )
     

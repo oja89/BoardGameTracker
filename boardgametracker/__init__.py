@@ -40,7 +40,6 @@ def create_app(test_config=None):
     
     from boardgametracker.utils import PlayerConverter, TeamConverter, MatchConverter, RulesetConverter, MapConverter, GameConverter
     
-    
     # cli commands placed in models
     app.cli.add_command(models.init_db_command)
     app.cli.add_command(models.generate_test_data)

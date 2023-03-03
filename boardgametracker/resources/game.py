@@ -25,10 +25,8 @@ class GameCollection(Resource):
         data_object= []
         
         for game in Game.query.all():
-            data_object.append({
-                'name': game.name
-            })
-            
+            data_object.append(game.serialize(long=True))
+
         response = data_object
         
         # If there are more than 50 games, cache the information for a minute so no need to run this function again

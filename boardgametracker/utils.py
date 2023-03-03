@@ -66,8 +66,8 @@ class RulesetConverter(BaseConverter):
         return db_ruleset.id
  
 class MapConverter(BaseConverter):
-    def to_python(self, game):
-        db_map = Map.query.filter_by(id=game).first()
+    def to_python(self, map):
+        db_map = Map.query.filter_by(id=map).first()
         if db_map is None:
             raise NotFound
         return db_map

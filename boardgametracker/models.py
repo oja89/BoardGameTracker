@@ -20,15 +20,10 @@ class Player(db.Model):
         if not long: 
             return {"name": self.name}
         else:
-            result_list = []
-            # self.result is a Player_result class object
-            for i in self.player_result:
-                result = i.serialize(long=True)
-                result_list.append(result)
             return {
                 "name": self.name,
                 "id": self.id,
-                "list_of_results": result_list
+                "matches": len(self.player_result)
             }
         
     def deserialize(self, doc):
@@ -53,21 +48,17 @@ class Team(db.Model):
     
     # result - team relation
     team_result = db.relationship("Team_result", back_populates="team")
+    # team - player_result relation
+    match_player = db.relationship("Player_result", back_populates="team")
     
     def serialize(self, long=False):
         if not long:
             return {"name": self.name}
         else:
-            result_list = []
-            # result is a Team_result class object
-            for i in self.team_result:
-                result = i.serialize(long=True)
-                result_list.append(result)
             return {
                 "name": self.name,
                 "id": self.id,
-                # user serializer to get team_result database
-                "results": result_list
+                "matches": len(self.team_result)
             }
         
     def deserialize(self, doc):
@@ -85,10 +76,49 @@ class Team(db.Model):
             "type": "string"
         }
         return schema
-
-class Map(db.Model):
+        
+class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(16), unique=True, nullable=False)
+    
+    # map - game relationship
+    map = db.relationship("Map", back_populates="game")
+    # ruleset - game relationship
+    ruleset = db.relationship("Ruleset", back_populates="game")
+    # match - game relationship
+    match = db.relationship("Match", back_populates="game")
+    
+    def serialize(self, long=False):
+        if not long:
+            return {"name": self.name}
+        else:
+            return {
+                "name": self.name,
+                "id": self.id,
+                "matches": len(self.match)
+            }           
+        
+    def deserialize(self, doc):
+        self.name = doc["name"]
+
+    @staticmethod
+    def get_schema():
+        schema = {
+            "type": "object",
+            "required": ["name"]
+        }
+        props = schema["properties"] = {}
+        props["name"] = {
+            "description": "Game's name",
+            "type": "string"
+        }
+        return schema
+        
+class Map(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    # different games might have same names for maps
+    # removed uniqueness
+    name = db.Column(db.String(16), nullable=False)
 
     game_id = db.Column(
         db.Integer,
@@ -103,7 +133,17 @@ class Map(db.Model):
     
     def serialize(self, long=False):
         if not long:
-            return {"name": self.name}
+            return {
+                "name": self.name,
+                "id": self.id
+                }
+        else:
+            return {
+                "name": self.name,
+                "id": self.id,
+                "game": self.game.serialize()["name"],
+                "matches": len(self.match)
+                }
         
     def deserialize(self, doc):
         self.name = doc["name"]
@@ -137,6 +177,14 @@ class Ruleset(db.Model):
     def serialize(self, long=False):
         if not long:
             return {"name": self.name}
+        else:
+            return {
+                "name": self.name,
+                "id": self.id,
+                "game": self.game.serialize()["name"],
+                "matches": len(self.match)
+                }
+               
         
     def deserialize(self, doc):
         self.name = doc["name"]
@@ -150,42 +198,6 @@ class Ruleset(db.Model):
         props = schema["properties"] = {}
         props["name"] = {
             "description": "Ruleset's  name",
-            "type": "string"
-        }
-        return schema
-
-class Game(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(16), unique=True, nullable=False)
-    
-    # map - game relationship
-    map = db.relationship("Map", back_populates="game")
-    # ruleset - game relationship
-    ruleset = db.relationship("Ruleset", back_populates="game")
-    # match - game relationship
-    match = db.relationship("Match", back_populates="game")
-    
-    def serialize(self, long=False):
-        if not long:
-            return {"name": self.name}
-        else:
-            return {
-                "name": self.name,
-                "id": self.id,
-            }           
-        
-    def deserialize(self, doc):
-        self.name = doc["name"]
-
-    @staticmethod
-    def get_schema():
-        schema = {
-            "type": "object",
-            "required": ["name"]
-        }
-        props = schema["properties"] = {}
-        props["name"] = {
-            "description": "Game's name",
             "type": "string"
         }
         return schema
@@ -236,8 +248,6 @@ class Match(db.Model):
                     "player_results": p_result_list,
                     "team_results": t_result_list
                     },
-                
-                
                 # serializers to get more details
                 "game_name": self.game.serialize()["name"],
                 "map_name": self.map.serialize()["name"],
@@ -288,11 +298,15 @@ class Player_result(db.Model):
     player = db.relationship("Player", back_populates="player_result")
     # result - match relation
     match = db.relationship("Match", back_populates="player_result")
+    # team relation
+    team = db.relationship("Team", back_populates="match_player")
     
     def serialize(self, long=False):
         if not long:
             return {
             "player": self.player.serialize()["name"],
+            # use "and" to deal with None
+            "team": self.team_id and self.team.serialize()["name"],
             "points": self.points
             }
         else:
@@ -392,12 +406,18 @@ class Team_result(db.Model):
 @click.command("init-db")
 @with_appcontext
 def init_db_command():
+    '''
+    Creates the database
+    '''
     db.create_all()
     
     
 @click.command("testgen")
 @with_appcontext
 def generate_test_data():
+    '''
+    Populates the database with some example data
+    '''
     ### Populate database
 
     # add a player
