@@ -26,6 +26,7 @@ There is a sample database called example_db.db provided.
 -pip
 
 -pytest (if testing)
+-pytest-cov
 
 (requirements.txt is used for installing dependencies using pip)
 
