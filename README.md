@@ -25,6 +25,8 @@ There is a sample database called example_db.db provided.
 
 -pip
 
+-pytest (if testing)
+
 (requirements.txt is used for installing dependencies using pip)
 
 (Guide is for Windows)
