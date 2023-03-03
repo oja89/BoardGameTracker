@@ -73,7 +73,7 @@ class TeamItem(Resource):
         From exercise 2 material,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
-        return team.serialize()
+        return team.serialize(long=True)
         
     def put(self, team):
         '''

@@ -58,9 +58,16 @@ class Team(db.Model):
         if not long:
             return {"name": self.name}
         else:
+            result_list = []
+            # result is a Team_result class object
+            for i in self.team_result:
+                result = i.serialize(long=True)
+                result_list.append(result)
             return {
                 "name": self.name,
-                "id": self.id
+                "id": self.id,
+                # user serializer to get team_result database
+                "results": result_list
             }
         
     def deserialize(self, doc):
@@ -211,13 +218,30 @@ class Match(db.Model):
         if not long:
             return {"date": self.date.isoformat()}
         else:
+            # get results
+            p_result_list = []
+            t_result_list = []
+            # self.player_result is a Player_result class object
+            for i in self.player_result:
+                p_result = i.serialize(long=False)
+                p_result_list.append(p_result)
+            # self.team is a Team_result class object
+            for i in self.team_result:
+                t_result = i.serialize(long=False)
+                t_result_list.append(t_result)
             return {
                 "date": self.date.isoformat(),
                 "turns": self.turns,
+                "results": {
+                    "player_results": p_result_list,
+                    "team_results": t_result_list
+                    },
+                
+                
                 # serializers to get more details
-                "game_info": self.game.serialize(),
-                "map_info": self.map.serialize(),
-                "ruleset_info": self.ruleset.serialize()
+                "game_name": self.game.serialize()["name"],
+                "map_name": self.map.serialize()["name"],
+                "ruleset_name": self.ruleset.serialize()["name"]
             }
         
     def deserialize(self, doc):
@@ -267,7 +291,10 @@ class Player_result(db.Model):
     
     def serialize(self, long=False):
         if not long:
-            return {"points": self.points}
+            return {
+            "player": self.player.serialize()["name"],
+            "points": self.points
+            }
         else:
             return {
                 "points": self.points,
@@ -318,9 +345,14 @@ class Team_result(db.Model):
        
     def serialize(self, long=False):
         if not long:
-            return {"points": self.points}
+            return {
+            "team": self.team.serialize()["name"],
+            "points": self.points,
+            "order" : self.order
+            }
         else:
             return {
+                "team": self.team.serialize(),
                 "points": self.points,
                 "order" : self.order
             }
