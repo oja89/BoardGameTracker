@@ -23,8 +23,8 @@ class RulesetCollection(Resource):
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
         data_object = []
-        ruleset_list = Ruleset.query.all()
-        for ruleset in ruleset_list:
+
+        for ruleset in Ruleset.query.all():
             data_object.append({
                 'name': ruleset.name,
                 'game_id': ruleset.game_id
@@ -115,8 +115,8 @@ class RulesetsFor(Resource):
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
         data_object = []
-        ruleset_list = Ruleset.query.filter_by(game_id=game)
-        for ruleset in ruleset_list:
+
+        for ruleset in Ruleset.query.filter_by(game_id=game):
             data_object.append({
                 'name': ruleset.name,
                 'game_id': ruleset.game_id

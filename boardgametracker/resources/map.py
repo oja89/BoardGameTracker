@@ -23,8 +23,8 @@ class MapCollection(Resource):
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
         data_object = []
-        map_list = Map.query.all()
-        for map in map_list:
+
+        for map in Map.query.all():
             data_object.append({
                 'name': map.name
             })
@@ -114,8 +114,8 @@ class MapsFor(Resource):
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
         data_object = []
-        map_list = Map.query.filter_by(game_id=game)
-        for map in map_list:
+
+        for map in Map.query.filter_by(game_id=game):
             data_object.append({
                 'name': map.name
             })

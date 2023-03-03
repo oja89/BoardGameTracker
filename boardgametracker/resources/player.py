@@ -19,10 +19,10 @@ class PlayerCollection(Resource):
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
-        data_object = []
-        player_list = Player.query.all()
+
+        data_object= []
         
-        for player in player_list:
+        for player in Player.query.all():
             data_object.append({
                 'name': player.name
             })

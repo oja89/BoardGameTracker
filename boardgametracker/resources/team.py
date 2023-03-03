@@ -20,9 +20,8 @@ class TeamCollection(Resource):
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
         data_object = []
-        team_list = Team.query.all()
         
-        for team in team_list:
+        for team in Team.query.all():
             data_object.append({
                 'name': team.name
             })

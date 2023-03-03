@@ -24,8 +24,8 @@ class MatchCollection(Resource):
         '''
         
         data_object = []
-        match_list = Match.query.all()
-        for match in match_list:
+
+        for match in Match.query.all():
             data_object.append({
                 'date': match.date.isoformat(),
                 'turns': match.turns
