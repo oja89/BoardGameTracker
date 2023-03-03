@@ -10,6 +10,7 @@ from boardgametracker.models import Player
 from boardgametracker import db
 from boardgametracker.constants import *
 from boardgametracker import cache
+from werkzeug.exceptions import NotFound, Conflict, BadRequest, UnsupportedMediaType
 
 class PlayerCollection(Resource):
     @cache.cached(timeout=5)
@@ -57,10 +58,7 @@ class PlayerCollection(Resource):
             abort(400)
         except IntegrityError:
             raise Conflict(
-                409,
-                description="Player with name '{name}' already exists.".format(
-                    **request.json
-                )
+                409
             )
 
         return Response(status=201)
@@ -98,10 +96,7 @@ class PlayerItem(Resource):
             db.session.commit()
         except IntegrityError:
             raise Conflict(
-                409,
-                description="Player with name '{name}' already exists.".format(
-                    **request.json
-                )
+                409
             )
             
     def delete(self, player):

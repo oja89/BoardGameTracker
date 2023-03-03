@@ -69,11 +69,25 @@ def client():
 def _populate_db():
     for i in range(1, 4):
         p = Player(
-            name=f"test-sensor-{i}"
+            name=f"Jorma-{i}"
         )
         db.session.add(p)
     db.session.commit()
-
+    
+def _get_player_json():
+    """
+    Creates a valid player JSON object to be used for PUT and POST tests.
+    """
+    
+    return {"name": "John"}
+    
+def _get_uplayer_json():
+    """
+    Creates a unvalid player JSON object to be used for PUT and POST tests.
+    """
+    
+    return {"name": 123}
+    
 class TestPlayerCollection(object):
 
     RESOURCE_URL = "/api/player/"
@@ -82,9 +96,33 @@ class TestPlayerCollection(object):
         resp = client.get(self.RESOURCE_URL)
         assert resp.status_code == 200
         body = json.loads(resp.data)
-        
-        #assert len(body["items"]) == 4
-        #for item in body["items"]:
-        #    assert "name" in item
+        assert len(body) == 3
+        for item in body:
+            print(item)
+            assert "name" in item
             
- 
+    def test_post_valid_request(self, client):
+        valid = _get_player_json()
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 201
+        
+        # Name is unique. Check that can't add with same name
+        valid["name"] = "Jorma-1"
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 409
+
+        # TODO CREATE KEYERROR
+
+        
+class TestPlayerItem(object):
+
+    RESOURCE_URL = "/api/player/Jorma-1/"
+    INVALID_URL = "/api/player/jorma-100/"
+        
+    def test_delete_valid(self, client):
+        resp = client.delete(self.RESOURCE_URL)
+        assert resp.status_code == 204
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 404      
+
+        
