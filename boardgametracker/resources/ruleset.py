@@ -12,8 +12,10 @@ from boardgametracker.constants import *
 import datetime
 from datetime import datetime
 from werkzeug.exceptions import NotFound, Conflict, BadRequest, UnsupportedMediaType
+from boardgametracker import cache
 
 class RulesetCollection(Resource):
+    @cache.cached(timeout=5)
     def get(self, game=None):
         '''
         Get all rulesets
