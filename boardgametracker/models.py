@@ -15,9 +15,16 @@ class Player(db.Model):
     result = db.relationship("Player_result", back_populates="player")
 
     def serialize(self):
+        # get all results of the player listed too
+        # self.result is a Player_result class object
+        result_list = []
+        for i in self.result:
+            result = i.serialize()
+            result_list.append(result)
         return {
             "name": self.name,
-            "id": self.id
+            "id": self.id,
+            "list_of_results": result_list
         }
         
     def deserialize(self, doc):
@@ -143,7 +150,7 @@ class Game(db.Model):
         }
         props = schema["properties"] = {}
         props["name"] = {
-            "description": "Game's  name",
+            "description": "Game's name",
             "type": "string"
         }
         return schema
@@ -218,7 +225,11 @@ class Player_result(db.Model):
     def serialize(self):
         return {
             "points": self.points,
+            "match_id": self.match_id,
+            "player_id": self.player_id,
+            "team_id": self.team_id
         }
+
         
     def deserialize(self, doc):
         self.points = doc["points"]
