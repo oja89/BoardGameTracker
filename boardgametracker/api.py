@@ -23,11 +23,18 @@ api.add_resource(PlayerItem, "/player/<player:player>/")
 api.add_resource(TeamCollection, "/team/")
 api.add_resource(TeamItem, "/team/<team:team>/")
 
-api.add_resource(MatchCollection, "/match/")
-api.add_resource(MatchItem, "/match/<match:match>/")
-
 api.add_resource(GameCollection, "/game/")
 api.add_resource(GameItem, "/game/<game:game>/")
+
+# 2 routes for map
+api.add_resource(MapCollection,
+    "/map/",
+    "/game/<game:game>/map/"
+    )
+api.add_resource(MapItem,
+    "/map/<map:map>/",
+    "/game/<game:game>/map/<map:map>/"
+    )
 
 # 2 routes for rulesets
 api.add_resource(RulesetCollection, 
@@ -38,17 +45,10 @@ api.add_resource(RulesetItem,
     "/game/<game:game>/ruleset/<ruleset:ruleset>/",
     "/ruleset/<ruleset:ruleset>/"
     )
-    
-# 2 routes for map
-api.add_resource(MapCollection,
-    "/map/",
-    "/game/<game:game>/map/"
-    )
-api.add_resource(MapItem,
-    "/map/<map:map>/",
-    "/game/<game:game>/map/<map:map>/"
-    )
-    
+
+api.add_resource(MatchCollection, "/match/")
+api.add_resource(MatchItem, "/match/<match:match>/")
+
 # results collections
 api.add_resource(PlayerResultCollection,
     "/player/<player:player>/result/"
