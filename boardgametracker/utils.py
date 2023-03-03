@@ -64,3 +64,22 @@ class RulesetsForConverter(BaseConverter):
     def to_url(self, db_ruleset):
         return db_ruleset.game_id    
  
+class MapConverter(BaseConverter):
+    def to_python(self, game):
+        db_map = Map.query.filter_by(id=game).first()
+        if db_map is None:
+            raise NotFound
+        return db_map
+        
+    def to_url(self, db_map):
+        return db_map.id
+
+class MapsForConverter(BaseConverter):
+    def to_python(self, map):
+        db_map = Map.query.filter_by(game_id=map).first()
+        if db_map is None:
+            raise NotFound
+        return db_map
+        
+    def to_url(self, db_map):
+        return db_map.game_id    
