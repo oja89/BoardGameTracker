@@ -32,7 +32,18 @@ class MatchConverter(BaseConverter):
     def to_url(self, db_match):
         return db_match.id
 
+class GameConverter(BaseConverter):
+    
+    def to_python(self, game):
+        db_game = Game.query.filter_by(name=game).first()
+        if db_game is None:
+            raise NotFound
+        return db_game
         
+    def to_url(self, db_game):
+        return db_game.name       
+
+       
 class TeamConverter(BaseConverter):
     
     def to_python(self, team):
@@ -54,7 +65,7 @@ class RulesetConverter(BaseConverter):
     def to_url(self, db_ruleset):
         return db_ruleset.id
 
-class RulesetsForConverter(BaseConverter):
+class RulesetForConverter(BaseConverter):
     def to_python(self, game):
         db_ruleset = Ruleset.query.filter_by(game_id=game).first()
         if db_ruleset is None:
@@ -74,7 +85,7 @@ class MapConverter(BaseConverter):
     def to_url(self, db_map):
         return db_map.id
 
-class MapsForConverter(BaseConverter):
+class MapForConverter(BaseConverter):
     def to_python(self, map):
         db_map = Map.query.filter_by(game_id=map).first()
         if db_map is None:

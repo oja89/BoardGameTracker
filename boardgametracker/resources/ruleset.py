@@ -105,7 +105,7 @@ class RulesetItem(Resource):
 
         return Response(status=204)
         
-class RulesetsFor(Resource):
+class RulesetFor(Resource):
     def get(self, game):
         '''
         Get all rulesets for a certain game
