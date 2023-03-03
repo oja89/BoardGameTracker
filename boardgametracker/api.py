@@ -12,8 +12,8 @@ from boardgametracker.resources.player import PlayerCollection, PlayerItem
 from boardgametracker.resources.team import TeamCollection, TeamItem
 from boardgametracker.resources.game import GameCollection, GameItem
 from boardgametracker.resources.match import MatchCollection, MatchItem
-from boardgametracker.resources.ruleset import RulesetCollection, RulesetItem, RulesetFor
-from boardgametracker.resources.map import MapCollection, MapItem, MapFor
+from boardgametracker.resources.ruleset import RulesetCollection, RulesetItem
+from boardgametracker.resources.map import MapCollection, MapItem
 
 api.add_resource(PlayerCollection, "/player/")
 api.add_resource(PlayerItem, "/player/<player:player>/")
@@ -33,16 +33,16 @@ api.add_resource(RulesetCollection,
     "/game/<game:game>/ruleset/"
     )
 api.add_resource(RulesetItem, 
-    "/game/<game>/ruleset/"
-    "/ruleset/<ruleset>/"
+    "/game/<game:game>/ruleset/"
+    "/ruleset/<ruleset:ruleset>/"
     )
     
 # 2 routes for map
 api.add_resource(MapCollection,
     "/map/",
-    "/game/<game>/map/"
+    "/game/<game:game>/map/"
     )
 api.add_resource(MapItem,
     "/map/<map:map>/",
-    "/game/<game:game>/map/<map>/"
+    "/game/<game:game>/map/<map:map>/"
     )

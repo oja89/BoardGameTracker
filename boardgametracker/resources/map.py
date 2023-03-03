@@ -15,33 +15,51 @@ from datetime import datetime
 from werkzeug.exceptions import NotFound, Conflict, BadRequest, UnsupportedMediaType
 
 class MapCollection(Resource):
-    def get(self):
+    def get(self, game=None):
         '''
         Get all maps
-        
+        If game given, all for that game
         
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
         data_object = []
 
-        for map in Map.query.all():
+        # do the query for all
+        if game is None:
+            maps = Map.query.all()
+            
+        # do the query for given game
+        else:
+            thisgame = game.serialize()
+            maps = Map.query.filter_by(game_id=thisgame["id"])
+
+        for map in maps:
             data_object.append({
-                'name': map.name
+                'name': map.name,
+                'game_id': map.game_id
             })
             
         response = data_object
         
         return response, 200
     
-    def post(self):
+    def post(self, game=None):
         '''
         Add a new map
-        
+        Cannot add a map without a game
         
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
+        
+        if game is None:
+        # check the correct error message
+        # game needs to exists
+            abort(400)
+        else:
+            thisgame = game.serialize()
+        
         if not request.json:
             raise UnsupportedMediaType
         try:
@@ -50,7 +68,8 @@ class MapCollection(Resource):
             raise BadRequest(description=str(e))
         try:
             map = Map(
-                name=request.json["name"]
+                name=request.json["name"],
+                game_id=thisgame["id"]
             )
             db.session.add(map)
             db.session.commit()
@@ -104,23 +123,3 @@ class MapItem(Resource):
         db.session.commit()
 
         return Response(status=204)
-        
-class MapFor(Resource):
-    def get(self, game):
-        '''
-        Get all maps for a certain game
-        
-        
-        From exercise 2,
-        https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
-        '''
-        data_object = []
-        map_id = Game.query.filter_by(name=game).first()
-        for map in Map.query.filter_by(game_id=map_id.id):
-            data_object.append({
-                'name': map.name
-            })
-            
-        response = data_object
-        
-        return response, 200
