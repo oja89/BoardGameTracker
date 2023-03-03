@@ -74,7 +74,7 @@ class PlayerItem(Resource):
         From exercise 2 material,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
-        return player.serialize()
+        return player.serialize(long=True)
         
     def put(self, player):
         '''

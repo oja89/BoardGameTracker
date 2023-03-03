@@ -72,7 +72,7 @@ class MatchItem(Resource):
         From exercise 2 material,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
-        return match.serialize()
+        return match.serialize(long=True)
         
     def put(self, match):
         '''

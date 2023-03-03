@@ -11,21 +11,25 @@ class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(16), unique=True, nullable=False)
 
-    # games by player
-    result = db.relationship("Player_result", back_populates="player")
+    # results by player
+    player_result = db.relationship("Player_result", back_populates="player")
 
-    def serialize(self):
+    def serialize(self, long=False):
         # get all results of the player listed too
-        # self.result is a Player_result class object
-        result_list = []
-        for i in self.result:
-            result = i.serialize()
-            result_list.append(result)
-        return {
-            "name": self.name,
-            "id": self.id,
-            "list_of_results": result_list
-        }
+        
+        if not long: 
+            return {"name": self.name}
+        else:
+            result_list = []
+            # self.result is a Player_result class object
+            for i in self.player_result:
+                result = i.serialize(long=True)
+                result_list.append(result)
+            return {
+                "name": self.name,
+                "id": self.id,
+                "list_of_results": result_list
+            }
         
     def deserialize(self, doc):
         self.name = doc["name"]
@@ -47,11 +51,17 @@ class Team(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(16), unique=True, nullable=False)
     
-    def serialize(self):
-        return {
-            "name": self.name,
-            "id": self.id
-        }
+    # result - team relation
+    team_result = db.relationship("Team_result", back_populates="team")
+    
+    def serialize(self, long=False):
+        if not long:
+            return {"name": self.name}
+        else:
+            return {
+                "name": self.name,
+                "id": self.id
+            }
         
     def deserialize(self, doc):
         self.name = doc["name"]
@@ -78,10 +88,15 @@ class Map(db.Model):
         db.ForeignKey("game.id", ondelete="SET NULL")
         )
         
-    def serialize(self):
-        return {
-            "name": self.name
-        }
+    # map - game relationship
+    game = db.relationship("Game", back_populates="map")
+        
+    # match - map relationship
+    match = db.relationship("Match", back_populates="map")
+    
+    def serialize(self, long=False):
+        if not long:
+            return {"name": self.name}
         
     def deserialize(self, doc):
         self.name = doc["name"]
@@ -107,11 +122,14 @@ class Ruleset(db.Model):
         db.Integer,
         db.ForeignKey("game.id", ondelete="SET NULL")
         )
+    
+    # ruleset - game relationship
+    game = db.relationship("Game", back_populates="ruleset")
+    match = db.relationship("Match", back_populates="ruleset")
         
-    def serialize(self):
-        return {
-            "name": self.name
-        }
+    def serialize(self, long=False):
+        if not long:
+            return {"name": self.name}
         
     def deserialize(self, doc):
         self.name = doc["name"]
@@ -133,11 +151,21 @@ class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(16), unique=True, nullable=False)
     
-    def serialize(self):
-        return {
-            "name": self.name,
-            "id": self.id
-        }
+    # map - game relationship
+    map = db.relationship("Map", back_populates="game")
+    # ruleset - game relationship
+    ruleset = db.relationship("Ruleset", back_populates="game")
+    # match - game relationship
+    match = db.relationship("Match", back_populates="game")
+    
+    def serialize(self, long=False):
+        if not long:
+            return {"name": self.name}
+        else:
+            return {
+                "name": self.name,
+                "id": self.id,
+            }           
         
     def deserialize(self, doc):
         self.name = doc["name"]
@@ -173,11 +201,24 @@ class Match(db.Model):
         db.ForeignKey("map.id", ondelete="SET NULL")
         )
         
-    def serialize(self):
-        return {
-            "name": self.date.isoformat(),
-            "turns": self.turns
-        }
+    game = db.relationship("Game", back_populates="match")
+    map = db.relationship("Map", back_populates="match")
+    ruleset = db.relationship("Ruleset", back_populates="match")
+    team_result = db.relationship("Team_result", back_populates="match")
+    player_result = db.relationship("Player_result", back_populates="match")
+        
+    def serialize(self, long=False):
+        if not long:
+            return {"date": self.date.isoformat()}
+        else:
+            return {
+                "date": self.date.isoformat(),
+                "turns": self.turns,
+                # serializers to get more details
+                "game_info": self.game.serialize(),
+                "map_info": self.map.serialize(),
+                "ruleset_info": self.ruleset.serialize()
+            }
         
     def deserialize(self, doc):
         self.date = datetime.fromisoformat(doc["date"])
@@ -219,16 +260,23 @@ class Player_result(db.Model):
         db.ForeignKey("team.id", ondelete="SET NULL")
         )
 
-    # games by player
-    player = db.relationship("Player", back_populates="result")
+    # result - player relation
+    player = db.relationship("Player", back_populates="player_result")
+    # result - match relation
+    match = db.relationship("Match", back_populates="player_result")
     
-    def serialize(self):
-        return {
-            "points": self.points,
-            "match_id": self.match_id,
-            "player_id": self.player_id,
-            "team_id": self.team_id
-        }
+    def serialize(self, long=False):
+        if not long:
+            return {"points": self.points}
+        else:
+            return {
+                "points": self.points,
+                "match_id": self.match_id,
+                "player_id": self.player_id,
+                "team_id": self.team_id,
+                # use match-serializer
+                "match_info": self.match.serialize(long=True)
+            }
 
         
     def deserialize(self, doc):
@@ -247,7 +295,7 @@ class Player_result(db.Model):
         }
         
         return schema
-    
+ 
     
 class Team_result(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -262,13 +310,21 @@ class Team_result(db.Model):
         db.Integer,
         db.ForeignKey("team.id", ondelete="SET NULL")
         )
-        
-    def serialize(self):
-        return {
-            "points": self.points,
-            "order" : self.order
-        }
-        
+       
+    # result - team relation
+    team = db.relationship("Team", back_populates="team_result")
+    # result - match relation
+    match = db.relationship("Match", back_populates="team_result")
+       
+    def serialize(self, long=False):
+        if not long:
+            return {"points": self.points}
+        else:
+            return {
+                "points": self.points,
+                "order" : self.order
+            }
+            
     def deserialize(self, doc):
         self.points = doc["points"]
         self.order = doc["order"]
