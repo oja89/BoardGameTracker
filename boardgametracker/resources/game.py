@@ -9,8 +9,10 @@ from sqlalchemy.exc import IntegrityError
 from boardgametracker.models import Game
 from boardgametracker import db
 from boardgametracker.constants import *
+from boardgametracker import cache
 
 class GameCollection(Resource):
+    @cache.cached(timeout=5)
     def get(self):
         '''
         Get all games
@@ -28,6 +30,10 @@ class GameCollection(Resource):
             })
             
         response = data_object
+        
+        # If there are more than 50 games, cache the information for a minute so no need to run this function again
+        if len(data_object) > 50:
+            print("We have more than 50 games")
         
         return response, 200
         

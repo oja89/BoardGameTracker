@@ -9,8 +9,10 @@ from sqlalchemy.exc import IntegrityError
 from boardgametracker.models import Team
 from boardgametracker import db
 from boardgametracker.constants import *
+from boardgametracker import cache
 
 class TeamCollection(Resource):
+    @cache.cached(timeout=5)
     def get(self):
         '''
         Get all teams
