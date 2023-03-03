@@ -30,10 +30,10 @@ api.add_resource(GameItem, "/game/<game:game>/")
 # 2 routes for rulesets
 api.add_resource(RulesetCollection, 
     "/ruleset/",
-    "/game/<game>/ruleset/"
+    "/game/<game:game>/ruleset/"
     )
 api.add_resource(RulesetItem, 
-    "/game/<game>/ruleset/",
+    "/game/<game>/ruleset/"
     "/ruleset/<ruleset>/"
     )
     

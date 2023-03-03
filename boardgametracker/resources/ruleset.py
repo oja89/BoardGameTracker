@@ -23,7 +23,6 @@ class RulesetCollection(Resource):
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
         data_object = []
-        game = None
         
         if game is None:
             for ruleset in Ruleset.query.all():
@@ -33,7 +32,7 @@ class RulesetCollection(Resource):
                 })
         else:
             thisgame = game.serialize()
-            for ruleset in Ruleset.query.by_name(game_id=thisgame.id):
+            for ruleset in Ruleset.query.filter_by(game_id=thisgame["id"]):
                 data_object.append({
                     'name': ruleset.name,
                     'game_id': ruleset.game_id

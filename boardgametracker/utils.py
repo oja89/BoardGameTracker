@@ -74,13 +74,3 @@ class MapConverter(BaseConverter):
         
     def to_url(self, db_map):
         return db_map.id
-
-class MapForConverter(BaseConverter):
-    def to_python(self, map):
-        db_map = Map.query.filter_by(game_id=map).first()
-        if db_map is None:
-            raise NotFound
-        return db_map
-        
-    def to_url(self, db_map):
-        return db_map.game_id    
