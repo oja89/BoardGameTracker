@@ -7,6 +7,7 @@ from flask import Response, request, url_for, abort
 from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError
 from boardgametracker.models import Map
+from boardgametracker.models import Game
 from boardgametracker import db
 from boardgametracker.constants import *
 import datetime
@@ -114,8 +115,8 @@ class MapFor(Resource):
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
         data_object = []
-
-        for map in Map.query.filter_by(game_id=game):
+        map_id = Game.query.filter_by(name=game).first()
+        for map in Map.query.filter_by(game_id=map_id.id):
             data_object.append({
                 'name': map.name
             })
