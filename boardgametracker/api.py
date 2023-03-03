@@ -51,12 +51,8 @@ api.add_resource(MapItem,
     
 # results collections
 api.add_resource(PlayerResultCollection,
-    "/player/<player:player>/result/",
-    # TODO: is this good path
-    "/match/<match:match>/playerresults/"
+    "/player/<player:player>/result/"
     )
 api.add_resource(TeamResultCollection,
-    "/team/<team:team>/result/",
-    # TODO: is this good path
-    "/match/<match:match>/teamresults/"
+    "/team/<team:team>/result/"
     )
