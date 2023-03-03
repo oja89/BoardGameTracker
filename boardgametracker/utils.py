@@ -43,3 +43,24 @@ class TeamConverter(BaseConverter):
         
     def to_url(self, db_team):
         return db_team.name
+        
+class RulesetConverter(BaseConverter):
+    def to_python(self, ruleset):
+        db_ruleset = Ruleset.query.filter_by(id=ruleset).first()
+        if db_ruleset is None:
+            raise NotFound
+        return db_ruleset
+        
+    def to_url(self, db_ruleset):
+        return db_ruleset.id
+
+class RulesetsForConverter(BaseConverter):
+    def to_python(self, ruleset):
+        db_ruleset = Ruleset.query.filter_by(game_id=ruleset).first()
+        if db_ruleset is None:
+            raise NotFound
+        return db_ruleset
+        
+    def to_url(self, db_ruleset):
+        return db_ruleset.game_id    
+ 
