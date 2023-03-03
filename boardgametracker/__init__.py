@@ -38,7 +38,7 @@ def create_app(test_config=None):
     from . import models
     from . import api
     
-    from boardgametracker.utils import PlayerConverter, TeamConverter, MatchConverter, RulesetConverter, RulesetForConverter, MapConverter, MapForConverter, GameConverter
+    from boardgametracker.utils import PlayerConverter, TeamConverter, MatchConverter, RulesetConverter, MapConverter, GameConverter
     
     
     # cli commands placed in models
@@ -52,9 +52,7 @@ def create_app(test_config=None):
     app.url_map.converters["team"] = TeamConverter
     app.url_map.converters["match"] = MatchConverter
     app.url_map.converters["ruleset"] = RulesetConverter
-    app.url_map.converters["rulesetfor"] = RulesetForConverter
     app.url_map.converters["map"] = MapConverter
-    app.url_map.converters["mapfor"] = MapForConverter
     app.url_map.converters["game"] = GameConverter
     
     #this has to be after converters

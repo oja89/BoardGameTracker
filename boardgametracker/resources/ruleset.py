@@ -14,21 +14,30 @@ from datetime import datetime
 from werkzeug.exceptions import NotFound, Conflict, BadRequest, UnsupportedMediaType
 
 class RulesetCollection(Resource):
-    def get(self):
+    def get(self, game=None):
         '''
         Get all rulesets
-        
+        If game given, all for that game
         
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
         data_object = []
-
-        for ruleset in Ruleset.query.all():
-            data_object.append({
-                'name': ruleset.name,
-                'game_id': ruleset.game_id
-            })
+        game = None
+        
+        if game is None:
+            for ruleset in Ruleset.query.all():
+                data_object.append({
+                    'name': ruleset.name,
+                    'game_id': ruleset.game_id
+                })
+        else:
+            thisgame = game.serialize()
+            for ruleset in Ruleset.query.by_name(game_id=thisgame.id):
+                data_object.append({
+                    'name': ruleset.name,
+                    'game_id': ruleset.game_id
+                })
             
         response = data_object
         
