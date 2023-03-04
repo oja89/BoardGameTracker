@@ -14,7 +14,7 @@ from sqlalchemy import event
 from sqlalchemy.engine import Engine
 
 from boardgametracker import create_app, db
-from boardgametracker.models import Player, Match, Game, Map, Ruleset
+from boardgametracker.models import Player, Match, Game, Map, Ruleset, Team
 
 from datetime import datetime
 
@@ -94,6 +94,13 @@ def _populate_db():
     match = Match(date=datetime.now(), turns=2, game_id=2, ruleset_id=1, map_id=2)
     db.session.add(match)
     
+    team = Team(name="alpha")
+    db.session.add(team)
+    team = Team(name="beta")
+    db.session.add(team)
+    team = Team(name="gamma")
+    db.session.add(team)
+    
     for i in range(1, 4):
         p = Player(
             name=f"John-{i}"
@@ -132,10 +139,26 @@ def _get_game_json():
     
 def _get_map_json():
     """
-    Creates a valid game JSON object to be used for PUT and POST tests.
+    Creates a valid map JSON object to be used for PUT and POST tests.
     """
     
     return{"name":"newmap", "game_id":1}
+    
+    
+def _get_ruleset_json():
+    """
+    Creates a valid ruleset JSON object to be used for PUT and POST tests.
+    """
+    
+    return{"name":"newruleset", "game_id":1}
+    
+    
+def _get_team_json():
+    """
+    Creates a valid team JSON object to be used for PUT and POST tests.
+    """
+    
+    return {"name": "newteam"}
     
 class TestPlayerCollection(object):
 
@@ -257,9 +280,11 @@ class TestGameItem(object):
         assert resp.status_code == 404  
         
     # TODO TEST PUT
+    # TODO TEST UNIQUENESS
     
 class TestMapCollection(object):
     RESOURCE_URL = "/api/map/"
+    RESOURCE_URL_FOR_POST = "/api/game/CS:GO/map/"
 
     def test_get(self, client):
         resp = client.get(self.RESOURCE_URL)
@@ -274,7 +299,7 @@ class TestMapCollection(object):
             
     def test_post_valid_request(self, client):
         valid = _get_map_json()
-        resp = client.post(self.RESOURCE_URL, json=valid)
+        resp = client.post(self.RESOURCE_URL_FOR_POST, json=valid)
         assert resp.status_code == 201
 
 
@@ -284,6 +309,89 @@ class TestMapItem(object):
 
     RESOURCE_URL = "/api/map/1/"
     INVALID_URL = "/api/map/invalid/"
+        
+    def test_delete_valid(self, client):
+        resp = client.delete(self.RESOURCE_URL)
+        assert resp.status_code == 204
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 404      
+        
+    def test_delete_missing(self, client):
+        resp = client.delete(self.INVALID_URL)
+        assert resp.status_code == 404  
+        
+    # TODO TEST PUT
+    
+    
+class TestRulesetCollection(object):
+    RESOURCE_URL = "/api/ruleset/"
+    RESOURCE_URL_FOR_POST = "api/game/CS:GO/ruleset/"
+
+    def test_get(self, client):
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        assert len(body) == 2
+        for item in body:
+            assert "name" in item
+            assert "id" in item
+            assert "game" in item
+            assert "matches" in item
+            
+    def test_post_valid_request(self, client):
+        valid = _get_ruleset_json()
+        resp = client.post(self.RESOURCE_URL_FOR_POST, json=valid)
+        assert resp.status_code == 201
+
+
+        # TODO CREATE KEYERROR
+    
+class TestRulesetItem(object):
+
+    RESOURCE_URL = "/api/ruleset/1/"
+    INVALID_URL = "/api/ruleset/invalid/"
+        
+    def test_delete_valid(self, client):
+        resp = client.delete(self.RESOURCE_URL)
+        assert resp.status_code == 204
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 404      
+        
+    def test_delete_missing(self, client):
+        resp = client.delete(self.INVALID_URL)
+        assert resp.status_code == 404  
+        
+    # TODO TEST PUT
+    
+class TestTeamCollection(object):
+
+    RESOURCE_URL = "/api/team/"
+    
+    def test_get(self, client):
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        assert len(body) == 3
+        for item in body:
+            assert "name" in item
+            
+    def test_post_valid_request(self, client):
+        valid = _get_team_json()
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 201
+        
+        # Team name is unique. Check that can't add with same name
+        valid["name"] = "gamma"
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 409
+
+        # TODO CREATE KEYERROR
+
+        
+class TestTeamItem(object):
+
+    RESOURCE_URL = "/api/player/John-1/"
+    INVALID_URL = "/api/player/John-100/"
         
     def test_delete_valid(self, client):
         resp = client.delete(self.RESOURCE_URL)

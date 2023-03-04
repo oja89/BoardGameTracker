@@ -10,6 +10,7 @@ from boardgametracker.models import Team
 from boardgametracker import db
 from boardgametracker.constants import *
 from boardgametracker import cache
+from werkzeug.exceptions import NotFound, Conflict, BadRequest, UnsupportedMediaType
 
 class TeamCollection(Resource):
     @cache.cached(timeout=5)
@@ -40,6 +41,8 @@ class TeamCollection(Resource):
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
+        name = ""
+
         if not request.json:
             raise UnsupportedMediaType
         try:
@@ -55,15 +58,9 @@ class TeamCollection(Resource):
         except KeyError:
             abort(400)
         except IntegrityError:
-            raise Conflict(
-                409,
-                description="Team with name '{name}' already exists.".format(
-                    **request.json
-                )
-            )
-
+            raise Conflict(description="Team with name '{name}' already exists.".format(name=name))
         return Response(status=201)
-    
+
 class TeamItem(Resource):
     def get(self, team):
         '''
