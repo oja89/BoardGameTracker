@@ -98,6 +98,8 @@ class PlayerItem(Resource):
             raise Conflict(
                 409
             )
+        
+        return Response(status=204)
             
     def delete(self, player):
         '''
@@ -107,6 +109,7 @@ class PlayerItem(Resource):
         ''' 
         db.session.delete(player)
         db.session.commit()
+        
 
         return Response(status=204)
 

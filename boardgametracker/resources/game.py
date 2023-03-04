@@ -10,6 +10,7 @@ from boardgametracker.models import Game
 from boardgametracker import db
 from boardgametracker.constants import *
 from boardgametracker import cache
+from werkzeug.exceptions import NotFound, Conflict, BadRequest, UnsupportedMediaType
 
 class GameCollection(Resource):
     @cache.cached(timeout=5)
@@ -28,11 +29,7 @@ class GameCollection(Resource):
             data_object.append(game.serialize(long=True))
 
         response = data_object
-        
-        # If there are more than 50 games, cache the information for a minute so no need to run this function again
-        if len(data_object) > 50:
-            print("We have more than 50 games")
-        
+   
         return response, 200
         
     def post(self):
