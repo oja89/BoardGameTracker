@@ -260,10 +260,14 @@ class TestGameCollection(object):
         valid = _get_game_json()
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 201
-
+        
+        # Game name is unique. Check that can't add with same name
+        valid["name"] = "CS:GO"
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 409
 
         # TODO CREATE KEYERROR
-    
+
 class TestGameItem(object):
 
     RESOURCE_URL = "/api/game/CS:GO/"
@@ -390,8 +394,8 @@ class TestTeamCollection(object):
         
 class TestTeamItem(object):
 
-    RESOURCE_URL = "/api/player/John-1/"
-    INVALID_URL = "/api/player/John-100/"
+    RESOURCE_URL = "/api/team/gamma/"
+    INVALID_URL = "/api/team/invalid/"
         
     def test_delete_valid(self, client):
         resp = client.delete(self.RESOURCE_URL)

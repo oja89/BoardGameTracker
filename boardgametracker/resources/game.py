@@ -40,6 +40,7 @@ class GameCollection(Resource):
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
+        name=""
         if not request.json:
             raise UnsupportedMediaType
         try:
@@ -55,12 +56,7 @@ class GameCollection(Resource):
         except KeyError:
             abort(400)
         except IntegrityError:
-            raise Conflict(
-                409,
-                description="Game with name '{name}' already exists.".format(
-                    **request.json
-                )
-            )
+            raise Conflict(description="Game with name '{name}' already exists.".format(name=name))
 
         return Response(status=201)
     
@@ -83,6 +79,7 @@ class GameItem(Resource):
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
+        name = ""
         if not request.json:
             raise UnsupportedMediaType
 
@@ -96,12 +93,7 @@ class GameItem(Resource):
             db.session.add(game)
             db.session.commit()
         except IntegrityError:
-            raise Conflict(
-                409,
-                description="Game with name '{name}' already exists.".format(
-                    **request.json
-                )
-            )
+            raise Conflict(description="Game with name '{name}' already exists.".format(name=name))
             
     def delete(self, game):
         '''
