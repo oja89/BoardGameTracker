@@ -6,7 +6,7 @@ from jsonschema import validate, ValidationError
 from flask import Response, request, url_for, abort
 from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError
-from boardgametracker.models import Player, Player_result 
+from boardgametracker.models import Player, PlayerResult 
 from boardgametracker import db
 from boardgametracker.constants import *
 import datetime
