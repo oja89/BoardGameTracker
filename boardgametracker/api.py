@@ -51,8 +51,10 @@ api.add_resource(MatchItem, "/match/<match:match>/")
 
 # results collections
 api.add_resource(PlayerResultCollection,
-    "/player/<player:player>/result/"
+    "/player/<player:player>/result/",
+    "/match/<match:match>/playerresult/"
     )
 api.add_resource(TeamResultCollection,
-    "/team/<team:team>/result/"
+    "/team/<team:team>/result/",
+    "/match/<match:match>/teamresult/"
     )

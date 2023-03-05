@@ -32,12 +32,12 @@ class TeamResultCollection(Resource):
             
         # do the query for given team
         elif match is None:
-            thisteam = team.serialize()
-            t_results = Team_result.query.filter_by(team_id=thisteam["id"])
+            team_id = team.serialize(long=True)["id"]
+            t_results = Team_result.query.filter_by(team_id=team_id)
             
         elif team is None:
-            thismatch = match.serialize()
-            t_results = Team_result.query.filter_by(match_id=thismatch["id"])
+            match_id = match.serialize(long=True)["id"]
+            t_results = Team_result.query.filter_by(match_id=match_id)
         
         else:
         # should not come here
@@ -48,12 +48,7 @@ class TeamResultCollection(Resource):
             
 
         for result in t_results:
-            data_object.append({
-                'points': result.points,
-                'order': result.order,
-                'match_id': result.match_id,
-                'team_id': result.team_id
-            })
+            data_object.append(result.serialize(long=True))
             
         response = data_object
         

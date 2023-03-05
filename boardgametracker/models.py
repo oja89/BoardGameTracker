@@ -242,6 +242,7 @@ class Match(db.Model):
                 t_result = i.serialize(long=False)
                 t_result_list.append(t_result)
             return {
+                "id": self.id,
                 "date": self.date.isoformat(),
                 "turns": self.turns,
                 "results": {
@@ -360,16 +361,18 @@ class Team_result(db.Model):
     def serialize(self, long=False):
         if not long:
             return {
-            "team": self.team.serialize()["name"],
+            "team": self.team_id and self.team.serialize()["name"],
             "points": self.points,
             "order" : self.order
             }
         else:
             return {
-                "team": self.team.serialize(),
+                "team": self.team_id and self.team.serialize()["name"],
                 "points": self.points,
-                "order" : self.order
+                "order" : self.order,
+                "match_info": self.match.serialize(long=True)
             }
+            
             
     def deserialize(self, doc):
         self.points = doc["points"]
