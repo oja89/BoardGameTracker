@@ -1,18 +1,23 @@
-# from sensorhub example
-# https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
+'''
+Functions for team class objects
 
-import json
+from sensorhub example 
+https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
+'''
+
 from jsonschema import validate, ValidationError
-from flask import Response, request, url_for
+from flask import Response, request, abort
 from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError
 from boardgametracker.models import Team
 from boardgametracker import db
-from boardgametracker.constants import *
 from boardgametracker import cache
-from werkzeug.exceptions import NotFound, Conflict, BadRequest, UnsupportedMediaType
+from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
 
 class TeamCollection(Resource):
+    '''
+    Collection of teams
+    '''
     @cache.cached(timeout=5)
     def get(self):
         '''
@@ -23,20 +28,19 @@ class TeamCollection(Resource):
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
         data_object = []
-        
+
         for team in Team.query.all():
             data_object.append({
                 'name': team.name
             })
-            
+
         response = data_object
-        
+
         return response, 200
-        
+
     def post(self):
         '''
         Add a new team
-        
         
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
@@ -47,8 +51,8 @@ class TeamCollection(Resource):
             raise UnsupportedMediaType
         try:
             validate(request.json, Team.get_schema())
-        except ValidationError as e:
-            raise BadRequest(description=str(e))
+        except ValidationError as err:
+            raise BadRequest(description=str(err))
         try:
             team = Team(
                 name=request.json["name"]
@@ -58,10 +62,14 @@ class TeamCollection(Resource):
         except KeyError:
             abort(400)
         except IntegrityError:
-            raise Conflict(description="Team with name '{name}' already exists.".format(name=name))
+            name = request.json["name"]
+            raise Conflict(description=f"Team with name {name} already exists.")
         return Response(status=201)
 
 class TeamItem(Resource):
+    '''
+    One item of team
+    '''
     def get(self, team):
         '''
         Get information about a team
@@ -71,7 +79,7 @@ class TeamItem(Resource):
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
         return team.serialize(long=True)
-        
+
     def put(self, team):
         '''
         Change information of a team
@@ -85,23 +93,25 @@ class TeamItem(Resource):
 
         try:
             validate(request.json, Team.get_schema())
-        except ValidationError as e:
-            raise BadRequest(description=str(e))
+        except ValidationError as err:
+            raise BadRequest(description=str(err))
 
         team.name = request.json["name"]
         try:
             db.session.commit()
         except IntegrityError:
-            raise Conflict("Team with this name already exists")
-            
+            raise Conflict(description=f"Team with name '{team.name}' already exists.")
+
+        return Response(status=204)
+
     def delete(self, team):
         '''
         Delete a team
         
-        From https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
-        ''' 
+        From 
+        https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
+        '''
         db.session.delete(team)
         db.session.commit()
 
         return Response(status=204)
-
