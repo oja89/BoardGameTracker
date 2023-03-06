@@ -72,7 +72,7 @@ Initialize database:
 flask init-db
 ```
 
-Try to populate database:
+Populate database with example data:
 ```
 flask testgen
 ```
