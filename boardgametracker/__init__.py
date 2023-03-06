@@ -68,7 +68,7 @@ def create_app(test_config=None):
     app.url_map.converters["team"] = TeamConverter
     app.url_map.converters["match"] = MatchConverter
     app.url_map.converters["ruleset"] = RulesetConverter
-    app.url_map.converters["map"] = MapConverter
+    app.url_map.converters["map_"] = MapConverter
     app.url_map.converters["game"] = GameConverter
 
     #this has to be after converters
