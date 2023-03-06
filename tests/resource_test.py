@@ -14,7 +14,7 @@ from sqlalchemy import event
 from sqlalchemy.engine import Engine
 
 from boardgametracker import create_app, db
-from boardgametracker.models import Player, Match, Game, Map, Ruleset, Team
+from boardgametracker.models import Player, Match, Game, Map, Ruleset, Team, PlayerResult, TeamResult
 
 from datetime import datetime
 
@@ -100,13 +100,21 @@ def _populate_db():
     db.session.add(team)
     team = Team(name="gamma")
     db.session.add(team)
-    
+
     for i in range(1, 4):
         p = Player(
             name=f"John-{i}"
             
         )
         db.session.add(p)
+        
+        
+    p_res = PlayerResult(points=100, match_id=1, player_id=1, team_id=1)
+    db.session.add(p_res)
+    
+    t_res = TeamResult(points=1000, order=3, match_id=1, team_id=1)
+    db.session.add(t_res)
+    
     db.session.commit()
 
 def _get_player_json():
@@ -181,6 +189,17 @@ class TestPlayerCollection(object):
         valid["name"] = "John-1"
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 409
+        
+        # test wrong mediatype
+        resp = client.put(self.RESOURCE_URL, data="notjson", headers=Headers({"Content-Type": "text"}))
+        assert resp.status_code == 405
+        
+        # test key error
+        key_err = {"player":"asd"}
+        resp = client.post(self.RESOURCE_URL, json=key_err)
+        assert resp.status_code == 400
+        
+        
  
 class TestPlayerItem(object):
 
@@ -199,12 +218,25 @@ class TestPlayerItem(object):
         
     def test_put(self, client):
         valid = _get_player_json()
-
+            
+        # test invalid url
+        resp = client.put(self.INVALID_URL, json=valid)
+        assert resp.status_code == 404
+        
+        # test valid
+        valid["name"] = "John-1"
+        resp = client.put(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 204
+        
         # test put with unique name
         valid["name"] = "John-2"
         print(valid)
         resp = client.put(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 409
+        
+        # test wrong mediatype
+        resp = client.put(self.RESOURCE_URL, data="notjson", headers=Headers({"Content-Type": "text"}))
+        assert resp.status_code in (400, 415)
 
 
 class TestMatchCollection(object):
@@ -238,7 +270,15 @@ class TestMatchCollection(object):
         valid.pop("turns")
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 400
-        # TODO CREATE KEYERROR
+       
+        # test wrong mediatype
+        resp = client.put(self.RESOURCE_URL, data="notjson", headers=Headers({"Content-Type": "text"}))
+        assert resp.status_code == 405
+        
+        # test key error
+        key_err = {"match":"asd"}
+        resp = client.post(self.RESOURCE_URL, json=key_err)
+        assert resp.status_code == 400
     
 class TestMatchItem(object):
 
@@ -255,7 +295,20 @@ class TestMatchItem(object):
         resp = client.delete(self.INVALID_URL)
         assert resp.status_code == 404  
         
-    # TODO TEST PUT
+    def test_put(self, client):
+        valid = _get_match_json()
+        
+        # test invalid url
+        resp = client.put(self.INVALID_URL, json=valid)
+        assert resp.status_code == 404
+        
+        # test valid
+        resp = client.put(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 204
+        
+        # test wrong mediatype
+        resp = client.put(self.RESOURCE_URL, data="notjson", headers=Headers({"Content-Type": "text"}))
+        assert resp.status_code in (400,415)
 
 class TestGameCollection(object):
     RESOURCE_URL = "/api/game/"
@@ -278,7 +331,14 @@ class TestGameCollection(object):
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 409
 
-        # TODO CREATE KEYERROR
+        # test wrong mediatype
+        resp = client.put(self.RESOURCE_URL, data="notjson", headers=Headers({"Content-Type": "text"}))
+        assert resp.status_code == 405
+        
+        # test key error
+        key_err = {"game":"asd"}
+        resp = client.post(self.RESOURCE_URL, json=key_err)
+        assert resp.status_code == 400
 
 class TestGameItem(object):
 
@@ -297,15 +357,26 @@ class TestGameItem(object):
         
     def test_put(self, client):
         valid = _get_game_json()
-
+        
+        # test invalid url
+        resp = client.put(self.INVALID_URL, json=valid)
+        assert resp.status_code == 404
+        
+        # test valid
+        valid["name"] = "CS:GO"
+        resp = client.put(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 204
+        
         # test put with unique name
         valid["name"] = "Battlefield"
         print(valid)
         resp = client.put(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 409
         
+        # test wrong mediatype
+        resp = client.put(self.RESOURCE_URL, data="notjson", headers=Headers({"Content-Type": "text"}))
+        assert resp.status_code in (400, 415)
         
-    # TODO TEST PUT
     
 class TestMapCollection(object):
     RESOURCE_URL = "/api/map/"
@@ -327,6 +398,15 @@ class TestMapCollection(object):
         resp = client.post(self.RESOURCE_URL_FOR_POST, json=valid)
         assert resp.status_code == 201
         
+        # test wrong mediatype
+        resp = client.put(self.RESOURCE_URL, data="notjson", headers=Headers({"Content-Type": "text"}))
+        assert resp.status_code == 405
+        
+        # test key error
+        key_err = {"match":"asd"}
+        resp = client.post(self.RESOURCE_URL, json=key_err)
+        assert resp.status_code == 400
+        
         
     def test_post_missing_field(self, client):
         valid = _get_map_json()
@@ -337,7 +417,6 @@ class TestMapCollection(object):
         valid.pop("name")
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 400
-        # TODO CREATE KEYERROR
     
 class TestMapItem(object):
 
@@ -354,7 +433,20 @@ class TestMapItem(object):
         resp = client.delete(self.INVALID_URL)
         assert resp.status_code == 404  
         
-    # TODO TEST PUT
+    def test_put(self, client):
+        valid = _get_map_json()
+        
+        # test invalid url
+        resp = client.put(self.INVALID_URL, json=valid)
+        assert resp.status_code == 404
+        
+        # test valid
+        resp = client.put(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 204
+        
+        # test wrong mediatype
+        resp = client.put(self.RESOURCE_URL, data="notjson", headers=Headers({"Content-Type": "text"}))
+        assert resp.status_code in (400, 415)
     
 class TestRulesetCollection(object):
     RESOURCE_URL = "/api/ruleset/"
@@ -377,6 +469,15 @@ class TestRulesetCollection(object):
         assert resp.status_code == 201
         
         
+        # test wrong mediatype
+        resp = client.put(self.RESOURCE_URL, data="notjson", headers=Headers({"Content-Type": "text"}))
+        assert resp.status_code == 405
+        
+        # test key error
+        key_err = {"map":"asd"}
+        resp = client.post(self.RESOURCE_URL, json=key_err)
+        assert resp.status_code == 400
+        
     def test_post_missing_field(self, client):
         valid = _get_ruleset_json()
         valid.pop("name")
@@ -386,10 +487,6 @@ class TestRulesetCollection(object):
         valid.pop("game_id")
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 400
-        # TODO CREATE KEYERROR
-
-
-        # TODO CREATE KEYERROR
     
 class TestRulesetItem(object):
 
@@ -406,7 +503,20 @@ class TestRulesetItem(object):
         resp = client.delete(self.INVALID_URL)
         assert resp.status_code == 404  
         
-    # TODO TEST PUT
+    def test_put(self, client):
+        valid = _get_ruleset_json()
+        
+        # test invalid url
+        resp = client.put(self.INVALID_URL, json=valid)
+        assert resp.status_code == 404
+        
+        # test valid
+        resp = client.put(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 204
+        
+        # test wrong mediatype
+        resp = client.put(self.RESOURCE_URL, data="notjson", headers=Headers({"Content-Type": "text"}))
+        assert resp.status_code in (400, 415)
     
 class TestTeamCollection(object):
 
@@ -430,8 +540,14 @@ class TestTeamCollection(object):
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 409
 
-        # TODO CREATE KEYERROR
-
+        # test wrong mediatype
+        resp = client.put(self.RESOURCE_URL, data="notjson", headers=Headers({"Content-Type": "text"}))
+        assert resp.status_code == 405
+        
+        # test key error
+        key_err = {"team":"asd"}
+        resp = client.post(self.RESOURCE_URL, json=key_err)
+        assert resp.status_code == 400
         
 class TestTeamItem(object):
 
@@ -447,13 +563,58 @@ class TestTeamItem(object):
     def test_delete_missing(self, client):
         resp = client.delete(self.INVALID_URL)
         assert resp.status_code == 404  
-        
-    # TODO TEST PUT
     
     def test_put(self, client):
         valid = _get_team_json()
+        
+        # test invalid url
+        resp = client.put(self.INVALID_URL, json=valid)
+        assert resp.status_code == 404
+        
+        # test valid
+        valid["name"] = "gamma"
+        resp = client.put(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 204
         
         # test put with unique name
         valid["name"] = "alpha"
         resp = client.put(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 409
+        
+        # test wrong mediatype
+        resp = client.put(self.RESOURCE_URL, data="notjson", headers=Headers({"Content-Type": "text"}))
+        assert resp.status_code in (400, 415)
+        
+        
+        
+class TestPlayerResultCollection(object):
+
+    RESOURCE_URL = "api/player/John-1/result/"
+    RESOURCE_URL2 = "api/player///"
+    RESOURCE_URL3 = "api/player//result/"
+    
+    def test_get(self, client):
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        assert len(body) == 1
+        for item in body:
+            assert "points" in item
+            assert "match_id" in item
+            assert "player_id" in item
+            assert "match_info" in item  
+        
+class TestTeamResultCollection(object):
+    RESOURCE_URL = "api/match/1/teamresult/"
+    
+    def test_get(self, client):
+        resp = client.get(self.RESOURCE_URL)
+        assert resp.status_code == 200
+        body = json.loads(resp.data)
+        assert len(body) == 1
+        for item in body:
+            assert "team" in item
+            assert "points" in item
+            assert "order" in item
+            assert "match_info" in item
+    

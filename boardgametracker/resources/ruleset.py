@@ -121,6 +121,8 @@ class RulesetItem(Resource):
             db.session.rollback()
             raise Conflict(409)
 
+        return Response(status=204)
+
     def delete(self, ruleset):
         '''
         Delete a ruleset

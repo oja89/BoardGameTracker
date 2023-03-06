@@ -111,7 +111,6 @@ class MapItem(Resource):
         except ValidationError as err:
             raise BadRequest(description=str(err))
 
-        map_.deserialize(request.json)
         try:
             map_ = Map(
             name=request.json["name"],
@@ -122,7 +121,7 @@ class MapItem(Resource):
         except IntegrityError:
             db.session.rollback()
             raise Conflict(409)
-        return Response(status=201)
+        return Response(status=204)
 
     def delete(self, map_):
         '''

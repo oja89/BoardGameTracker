@@ -108,6 +108,8 @@ class MatchItem(Resource):
             db.session.rollback()
             raise Conflict(409)
 
+        return Response(status=204)
+
     def delete(self, match):
         '''
         Delete a match
