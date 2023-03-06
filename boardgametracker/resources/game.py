@@ -59,8 +59,10 @@ class GameCollection(Resource):
             db.session.add(game)
             db.session.commit()
         except KeyError:
+            db.session.rollback()
             abort(400)
         except IntegrityError:
+            db.session.rollback()
             name=request.json["name"]
             raise Conflict(description=f"Game with name '{name}' already exists.")
         return Response(status=201)
@@ -100,6 +102,7 @@ class GameItem(Resource):
         try:
             db.session.commit()
         except IntegrityError:
+            db.session.rollback()
             raise Conflict(description=f"Game with name '{game.name}' already exists.")
 
         return Response(status=204)

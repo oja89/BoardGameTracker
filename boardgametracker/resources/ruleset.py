@@ -76,6 +76,7 @@ class RulesetCollection(Resource):
             db.session.add(ruleset)
             db.session.commit()
         except KeyError:
+            db.session.rollback()
             abort(400)
         # ruleset names are not unique, no need to test that
 
@@ -117,6 +118,7 @@ class RulesetItem(Resource):
             db.session.add(ruleset)
             db.session.commit()
         except IntegrityError:
+            db.session.rollback()
             raise Conflict(409)
 
     def delete(self, ruleset):

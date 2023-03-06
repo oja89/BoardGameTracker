@@ -59,8 +59,10 @@ class TeamCollection(Resource):
             db.session.add(team)
             db.session.commit()
         except KeyError:
+            db.session.rollback()
             abort(400)
         except IntegrityError:
+            db.session.rollback()
             name = request.json["name"]
             raise Conflict(description=f"Team with name '{name}' already exists.")
         return Response(status=201)
@@ -99,6 +101,7 @@ class TeamItem(Resource):
         try:
             db.session.commit()
         except IntegrityError:
+            db.session.rollback()
             raise Conflict(description=f"Team with name '{team.name}' already exists.")
 
         return Response(status=204)

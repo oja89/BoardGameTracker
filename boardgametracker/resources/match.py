@@ -62,6 +62,7 @@ class MatchCollection(Resource):
 
         #If a field is missing raise except
         except KeyError:
+            db.session.rollback()
             abort(400)
 
         return Response(status=201)
@@ -104,6 +105,7 @@ class MatchItem(Resource):
             db.session.add(match)
             db.session.commit()
         except IntegrityError:
+            db.session.rollback()
             raise Conflict(409)
 
     def delete(self, match):

@@ -75,6 +75,7 @@ class MapCollection(Resource):
             db.session.add(map_)
             db.session.commit()
         except KeyError:
+            db.session.rollback()
             abort(400)
 
         return Response(status=201)
@@ -119,6 +120,7 @@ class MapItem(Resource):
             db.session.add(map_)
             db.session.commit()
         except IntegrityError:
+            db.session.rollback()
             raise Conflict(409)
         return Response(status=201)
 
