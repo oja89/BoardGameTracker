@@ -6,7 +6,7 @@ from jsonschema import validate, ValidationError
 from flask import Response, request, url_for, abort
 from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError
-from boardgametracker.models import Player, Player_result 
+from boardgametracker.models import Player, PlayerResult 
 from boardgametracker import db
 from boardgametracker.constants import *
 import datetime
@@ -34,12 +34,12 @@ class PlayerResultCollection(Resource):
             
         # do the query for given player
         elif match is None:
-            thisplayer = player.serialize()
-            p_results = Player_result.query.filter_by(player_id=thisplayer["id"])
+            player_id = player.serialize(long=True)["id"]
+            p_results = Player_result.query.filter_by(player_id=player_id)
             
         elif player is None:
-            thismatch = match.serialize()
-            p_results = Player_result.query.filter_by(match_id=thismatch["id"])
+            match_id = match.serialize(long=True)["id"]
+            p_results = Player_result.query.filter_by(match_id=match_id)
         
         else:
         # should not come here
@@ -50,11 +50,7 @@ class PlayerResultCollection(Resource):
             
 
         for result in p_results:
-            data_object.append({
-                'match_id': result.match_id,
-                'player_id': result.player_id,
-                'team_id': result.team_id
-            })
+            data_object.append(result.serialize(long=True))
             
         response = data_object
         
