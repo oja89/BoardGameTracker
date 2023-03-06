@@ -37,9 +37,9 @@ class MapCollection(Resource):
             game_id = game.serialize(long=True)["id"]
             maps = Map.query.filter_by(game_id=game_id)
 
-        for map in maps:
+        for map_ in maps:
             # use serializer
-            data_object.append(map.serialize(long=True))
+            data_object.append(map_.serialize(long=True))
 
         response = data_object
 
@@ -68,11 +68,11 @@ class MapCollection(Resource):
         except ValidationError as err:
             raise BadRequest(description=str(err))
         try:
-            map = Map(
+            map_ = Map(
                 name = request.json["name"],
                 game_id = game_id
             )
-            db.session.add(map)
+            db.session.add(map_)
             db.session.commit()
         except KeyError:
             abort(400)
@@ -83,7 +83,7 @@ class MapItem(Resource):
     '''
     One item of team
     '''
-    def get(self, map, game=None):
+    def get(self, map_, game=None):
         '''
         Get information about a map
         (Game can be in the path, but doesn't make difference)
@@ -92,9 +92,9 @@ class MapItem(Resource):
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
 
-        return map.serialize(long=True)
+        return map_.serialize(long=True)
 
-    def put(self, map):
+    def put(self, map_):
         '''
         Change information of a map
         
@@ -110,26 +110,26 @@ class MapItem(Resource):
         except ValidationError as err:
             raise BadRequest(description=str(err))
 
-        map.deserialize(request.json)
+        map_.deserialize(request.json)
         try:
-            map = Map(
+            map_ = Map(
             name=request.json["name"],
             game_id=request.json["game_id"]
             )
-            db.session.add(map)
+            db.session.add(map_)
             db.session.commit()
         except IntegrityError:
             raise Conflict(409)
         return Response(status=201)
 
-    def delete(self, map):
+    def delete(self, map_):
         '''
         Delete a map
         
         From 
         https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
         '''
-        db.session.delete(map)
+        db.session.delete(map_)
         db.session.commit()
 
         return Response(status=204)
