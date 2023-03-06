@@ -1,7 +1,7 @@
 '''
 Functions for team class objects
 
-from sensorhub example 
+from sensorhub example
 https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
 '''
 

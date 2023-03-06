@@ -1,20 +1,22 @@
-# from sensorhub example
-# https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
+'''
+Functions for ruleset class objects
 
-import json
+from sensorhub example
+https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
+'''
 from jsonschema import validate, ValidationError
-from flask import Response, request, url_for, abort
+from flask import Response, request, abort
 from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError
 from boardgametracker.models import Ruleset
 from boardgametracker import db
-from boardgametracker.constants import *
-import datetime
-from datetime import datetime
-from werkzeug.exceptions import NotFound, Conflict, BadRequest, UnsupportedMediaType
 from boardgametracker import cache
+from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
 
 class RulesetCollection(Resource):
+    '''
+    Collection of rulesets
+    '''
     @cache.cached(timeout=5)
     def get(self, game=None):
         '''
@@ -25,25 +27,25 @@ class RulesetCollection(Resource):
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
         data_object = []
-        
+
         # do the query for all
         if game is None:
             rulesets = Ruleset.query.all()
-            
+
         # do the query for given game
         else:
             game_id = game.serialize(long=True)["id"]
             rulesets = Ruleset.query.filter_by(game_id=game_id)
-            
+
         # append objects to list
         for ruleset in rulesets:
             # use serializer
             data_object.append(ruleset.serialize(long=True))
-            
+
         response = data_object
-        
+
         return response, 200
-    
+
     def post(self, game=None):
         '''
         Add a new ruleset
@@ -51,21 +53,20 @@ class RulesetCollection(Resource):
         
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
-        '''       
+        '''
         if game is None:
         # check the correct error message
         # game needs to exist
             abort(400)
         else:
             game_id = game.serialize(long=True)["id"]
-        
-        
+
         if not request.json:
             raise UnsupportedMediaType
         try:
             validate(request.json, Ruleset.get_schema())
-        except ValidationError as e:
-            raise BadRequest(description=str(e))
+        except ValidationError as err:
+            raise BadRequest(description=str(err))
 
         try:
             ruleset = Ruleset(
@@ -76,10 +77,14 @@ class RulesetCollection(Resource):
             db.session.commit()
         except KeyError:
             abort(400)
+        # ruleset names are not unique, no need to test that
 
         return Response(status=201)
-    
+
 class RulesetItem(Resource):
+    '''
+    One item of ruleset
+    '''
     def get(self, ruleset, game=None):
         '''
         Get information about a ruleset
@@ -90,7 +95,7 @@ class RulesetItem(Resource):
         '''
 
         return ruleset.serialize(long=True)
-        
+
     def put(self, ruleset):
         '''
         Change information of a ruleset
@@ -104,22 +109,23 @@ class RulesetItem(Resource):
 
         try:
             validate(request.json, Ruleset.get_schema())
-        except ValidationError as e:
-            raise BadRequest(description=str(e))
+        except ValidationError as err:
+            raise BadRequest(description=str(err))
 
-        ruleset.deserialize(request.json)
         try:
+            ruleset.name = request.json["name"]
             db.session.add(ruleset)
             db.session.commit()
         except IntegrityError:
             raise Conflict(409)
-            
+
     def delete(self, ruleset):
         '''
         Delete a ruleset
         
-        From https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
-        ''' 
+        From
+        https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
+        '''
         db.session.delete(ruleset)
         db.session.commit()
 
