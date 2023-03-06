@@ -88,17 +88,11 @@ class TeamItem(Resource):
         except ValidationError as e:
             raise BadRequest(description=str(e))
 
-        team.deserialize(request.json)
+        team.name = request.json["name"]
         try:
-            db.session.add(team)
             db.session.commit()
         except IntegrityError:
-            raise Conflict(
-                409,
-                description="Team with name '{team}' already exists.".format(
-                    **request.json
-                )
-            )
+            raise Conflict("Team with this name already exists")
             
     def delete(self, team):
         '''

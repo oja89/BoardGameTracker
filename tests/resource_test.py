@@ -181,10 +181,7 @@ class TestPlayerCollection(object):
         valid["name"] = "John-1"
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 409
-
-        # TODO CREATE KEYERROR
-
-        
+ 
 class TestPlayerItem(object):
 
     RESOURCE_URL = "/api/player/John-1/"
@@ -200,9 +197,16 @@ class TestPlayerItem(object):
         resp = client.delete(self.INVALID_URL)
         assert resp.status_code == 404  
         
-    # TODO TEST PUT
-    
-    
+    def test_put(self, client):
+        valid = _get_player_json()
+
+        # test put with unique name
+        valid["name"] = "John-2"
+        print(valid)
+        resp = client.put(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 409
+
+
 class TestMatchCollection(object):
     RESOURCE_URL = "/api/match/"
 
@@ -224,8 +228,16 @@ class TestMatchCollection(object):
         valid = _get_match_json()
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 201
-
-
+        
+    def test_post_missing_field(self, client):
+        valid = _get_match_json()
+        valid.pop("date")
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 400
+        valid = _get_match_json()
+        valid.pop("turns")
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 400
         # TODO CREATE KEYERROR
     
 class TestMatchItem(object):
@@ -283,8 +295,17 @@ class TestGameItem(object):
         resp = client.delete(self.INVALID_URL)
         assert resp.status_code == 404  
         
+    def test_put(self, client):
+        valid = _get_game_json()
+
+        # test put with unique name
+        valid["name"] = "Battlefield"
+        print(valid)
+        resp = client.put(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 409
+        
+        
     # TODO TEST PUT
-    # TODO TEST UNIQUENESS
     
 class TestMapCollection(object):
     RESOURCE_URL = "/api/map/"
@@ -305,8 +326,17 @@ class TestMapCollection(object):
         valid = _get_map_json()
         resp = client.post(self.RESOURCE_URL_FOR_POST, json=valid)
         assert resp.status_code == 201
-
-
+        
+        
+    def test_post_missing_field(self, client):
+        valid = _get_map_json()
+        valid.pop("game_id")
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 400
+        valid = _get_map_json()
+        valid.pop("name")
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 400
         # TODO CREATE KEYERROR
     
 class TestMapItem(object):
@@ -325,7 +355,6 @@ class TestMapItem(object):
         assert resp.status_code == 404  
         
     # TODO TEST PUT
-    
     
 class TestRulesetCollection(object):
     RESOURCE_URL = "/api/ruleset/"
@@ -346,6 +375,18 @@ class TestRulesetCollection(object):
         valid = _get_ruleset_json()
         resp = client.post(self.RESOURCE_URL_FOR_POST, json=valid)
         assert resp.status_code == 201
+        
+        
+    def test_post_missing_field(self, client):
+        valid = _get_ruleset_json()
+        valid.pop("name")
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 400
+        valid = _get_ruleset_json()
+        valid.pop("game_id")
+        resp = client.post(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 400
+        # TODO CREATE KEYERROR
 
 
         # TODO CREATE KEYERROR
@@ -408,3 +449,11 @@ class TestTeamItem(object):
         assert resp.status_code == 404  
         
     # TODO TEST PUT
+    
+    def test_put(self, client):
+        valid = _get_team_json()
+        
+        # test put with unique name
+        valid["name"] = "alpha"
+        resp = client.put(self.RESOURCE_URL, json=valid)
+        assert resp.status_code == 409

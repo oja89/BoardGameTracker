@@ -56,6 +56,8 @@ class MatchCollection(Resource):
             )
             db.session.add(match)
             db.session.commit()
+            
+        #If a field is missing raise except
         except KeyError:
             abort(400)
 

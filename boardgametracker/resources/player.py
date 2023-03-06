@@ -42,6 +42,7 @@ class PlayerCollection(Resource):
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
+        name = ""
         if not request.json:
             raise UnsupportedMediaType
         try:
@@ -57,9 +58,7 @@ class PlayerCollection(Resource):
         except KeyError:
             abort(400)
         except IntegrityError:
-            raise Conflict(
-                409
-            )
+            raise Conflict(description="Team with name '{name}' already exists.".format(name=name))
 
         return Response(status=201)
     
@@ -90,14 +89,11 @@ class PlayerItem(Resource):
         except ValidationError as e:
             raise BadRequest(description=str(e))
 
-        player.deserialize(request.json)
+        player.name = request.json["name"]
         try:
-            db.session.add(player)
             db.session.commit()
         except IntegrityError:
-            raise Conflict(
-                409
-            )
+            raise Conflict(419)
         
         return Response(status=204)
             

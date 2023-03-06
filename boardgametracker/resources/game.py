@@ -79,7 +79,6 @@ class GameItem(Resource):
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
-        name = ""
         if not request.json:
             raise UnsupportedMediaType
 
@@ -87,13 +86,13 @@ class GameItem(Resource):
             validate(request.json, Game.get_schema())
         except ValidationError as e:
             raise BadRequest(description=str(e))
-
-        game.deserialize(request.json)
+        
+        game.name = request.json["name"]
+        
         try:
-            db.session.add(game)
             db.session.commit()
         except IntegrityError:
-            raise Conflict(description="Game with name '{name}' already exists.".format(name=name))
+            raise Conflict(description="Game with this name already exists")
             
     def delete(self, game):
         '''
