@@ -1,19 +1,19 @@
-# from sensorhub example
-# https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
+'''
+Functions for team_result class objects
 
-import json
-from jsonschema import validate, ValidationError
-from flask import Response, request, url_for, abort
+from sensorhub example
+https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
+'''
+
 from flask_restful import Resource
-from sqlalchemy.exc import IntegrityError
-from boardgametracker.models import Player, TeamResult 
-from boardgametracker import db
-from boardgametracker.constants import *
-import datetime
-from datetime import datetime
-from werkzeug.exceptions import NotFound, Conflict, BadRequest, UnsupportedMediaType
+from boardgametracker.models import TeamResult
+from boardgametracker import cache
 
 class TeamResultCollection(Resource):
+    '''
+    Collection of team_results
+    '''
+    @cache.cached(timeout=5)
     def get(self, match=None, team=None):
         '''
         Get all results
@@ -28,28 +28,20 @@ class TeamResultCollection(Resource):
 
         # do the query for all
         if team is None and match is None:
-            t_results = Team_result.query.all()
-            
+            t_results = TeamResult.query.all()
+
         # do the query for given team
         elif match is None:
             team_id = team.serialize(long=True)["id"]
-            t_results = Team_result.query.filter_by(team_id=team_id)
-            
+            t_results = TeamResult.query.filter_by(team_id=team_id)
+
         elif team is None:
             match_id = match.serialize(long=True)["id"]
-            t_results = Team_result.query.filter_by(match_id=match_id)
-        
-        else:
-        # should not come here
-        # both match and team given, that should find an item
-        # throw an error
-        # Todo: what error?
-            abort(400)
-            
+            t_results = TeamResult.query.filter_by(match_id=match_id)
 
         for result in t_results:
             data_object.append(result.serialize(long=True))
-            
+
         response = data_object
-        
+
         return response, 200
