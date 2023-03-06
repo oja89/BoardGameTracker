@@ -45,7 +45,6 @@ class TeamCollection(Resource):
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
-        name = ""
 
         if not request.json:
             raise UnsupportedMediaType
@@ -63,7 +62,7 @@ class TeamCollection(Resource):
             abort(400)
         except IntegrityError:
             name = request.json["name"]
-            raise Conflict(description=f"Team with name {name} already exists.")
+            raise Conflict(description=f"Team with name '{name}' already exists.")
         return Response(status=201)
 
 class TeamItem(Resource):
