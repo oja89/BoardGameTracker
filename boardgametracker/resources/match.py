@@ -7,12 +7,12 @@ https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhu
 from datetime import datetime
 from jsonschema import validate, ValidationError
 from flask import Response, request, abort
-from flask_restful import Resource
+from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
 from sqlalchemy.exc import IntegrityError
+from flask_restful import Resource
 from boardgametracker.models import Match
 from boardgametracker import db
 from boardgametracker import cache
-from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
 
 class MatchCollection(Resource):
     '''
@@ -22,8 +22,6 @@ class MatchCollection(Resource):
     def get(self):
         '''
         Get all matches
-        
-        
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
@@ -41,12 +39,10 @@ class MatchCollection(Resource):
     def post(self):
         '''
         Add a new match
-        
-        
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
-        if not request.json:
+        if not request.mimetype == "application/json":
             raise UnsupportedMediaType
         try:
             validate(request.json, Match.get_schema())
@@ -74,8 +70,6 @@ class MatchItem(Resource):
     def get(self, match):
         '''
         Get information about a match
-        
-        
         From exercise 2 material,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
@@ -84,14 +78,11 @@ class MatchItem(Resource):
     def put(self, match):
         '''
         Change information of a match
-        
-        
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
-        if not request.json:
+        if not request.mimetype == "application/json":
             raise UnsupportedMediaType
-
         try:
             validate(request.json, Match.get_schema())
         except ValidationError as err:
@@ -113,7 +104,6 @@ class MatchItem(Resource):
     def delete(self, match):
         '''
         Delete a match
-        
         From 
         https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
         '''

@@ -6,13 +6,13 @@ https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhu
 '''
 
 from jsonschema import validate, ValidationError
-from flask import Response, request, abort
-from flask_restful import Resource
+from flask import Response, request
+from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
 from sqlalchemy.exc import IntegrityError
+from flask_restful import Resource
 from boardgametracker.models import Player
 from boardgametracker import db
 from boardgametracker import cache
-from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
 
 class PlayerCollection(Resource):
     '''
@@ -22,13 +22,11 @@ class PlayerCollection(Resource):
     def get(self):
         '''
         Get all players
-        
-        
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
 
-        data_object= []
+        data_object = []
 
         for player in Player.query.all():
             data_object.append({
@@ -38,17 +36,15 @@ class PlayerCollection(Resource):
         response = data_object
 
         return response, 200
-        
+
     def post(self):
         '''
         Add a new player
-        
-        
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
 
-        if not request.json:
+        if not request.mimetype == "application/json":
             raise UnsupportedMediaType
         try:
             validate(request.json, Player.get_schema())
@@ -60,15 +56,12 @@ class PlayerCollection(Resource):
             )
             db.session.add(player)
             db.session.commit()
-        except KeyError:
-            db.session.rollback()
-            abort(400)
         except IntegrityError:
             db.session.rollback()
-            name =  name=request.json["name"]
+            name = request.json["name"]
             raise Conflict(description=f"Player with name '{name}' already exists.")
         return Response(status=201)
-    
+
 class PlayerItem(Resource):
     '''
     One item of player
@@ -76,8 +69,6 @@ class PlayerItem(Resource):
     def get(self, player):
         '''
         Get information about a player
-        
-        
         From exercise 2 material,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
@@ -86,14 +77,11 @@ class PlayerItem(Resource):
     def put(self, player):
         '''
         Change information of a player
-        
-        
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
-        if not request.json:
+        if not request.mimetype == "application/json":
             raise UnsupportedMediaType
-
         try:
             validate(request.json, Player.get_schema())
         except ValidationError as err:
@@ -111,11 +99,10 @@ class PlayerItem(Resource):
     def delete(self, player):
         '''
         Delete a player
-        
-        From https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
-        ''' 
+        From
+        https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
+        '''
         db.session.delete(player)
         db.session.commit()
 
         return Response(status=204)
-

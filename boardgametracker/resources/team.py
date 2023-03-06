@@ -6,13 +6,13 @@ https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhu
 '''
 
 from jsonschema import validate, ValidationError
-from flask import Response, request, abort
-from flask_restful import Resource
+from flask import Response, request
+from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
 from sqlalchemy.exc import IntegrityError
+from flask_restful import Resource
 from boardgametracker.models import Team
 from boardgametracker import db
 from boardgametracker import cache
-from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
 
 class TeamCollection(Resource):
     '''
@@ -22,8 +22,6 @@ class TeamCollection(Resource):
     def get(self):
         '''
         Get all teams
-        
-        
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
@@ -41,12 +39,10 @@ class TeamCollection(Resource):
     def post(self):
         '''
         Add a new team
-        
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
-
-        if not request.json:
+        if not request.mimetype == "application/json":
             raise UnsupportedMediaType
         try:
             validate(request.json, Team.get_schema())
@@ -58,9 +54,6 @@ class TeamCollection(Resource):
             )
             db.session.add(team)
             db.session.commit()
-        except KeyError:
-            db.session.rollback()
-            abort(400)
         except IntegrityError:
             db.session.rollback()
             name = request.json["name"]
@@ -74,8 +67,6 @@ class TeamItem(Resource):
     def get(self, team):
         '''
         Get information about a team
-        
-        
         From exercise 2 material,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
@@ -84,14 +75,11 @@ class TeamItem(Resource):
     def put(self, team):
         '''
         Change information of a team
-        
-        
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
-        if not request.json:
+        if not request.mimetype == "application/json": 
             raise UnsupportedMediaType
-
         try:
             validate(request.json, Team.get_schema())
         except ValidationError as err:
@@ -109,8 +97,8 @@ class TeamItem(Resource):
     def delete(self, team):
         '''
         Delete a team
-        
-        From 
+
+        From
         https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
         '''
         db.session.delete(team)

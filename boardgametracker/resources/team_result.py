@@ -20,7 +20,6 @@ class TeamResultCollection(Resource):
         If match is given, all for that match
         If team given, all for that team
         If both, that should be an item, so abort?
-        
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''

@@ -6,12 +6,12 @@ https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhu
 '''
 from jsonschema import validate, ValidationError
 from flask import Response, request, abort
-from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError
+from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
+from flask_restful import Resource
 from boardgametracker.models import Ruleset
 from boardgametracker import db
 from boardgametracker import cache
-from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
 
 class RulesetCollection(Resource):
     '''
@@ -22,7 +22,6 @@ class RulesetCollection(Resource):
         '''
         Get all rulesets
         If game given, all for that game
-        
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
@@ -50,10 +49,12 @@ class RulesetCollection(Resource):
         '''
         Add a new ruleset
         Cannot add a ruleset without a game
-        
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
+        if not request.mimetype == "application/json":
+            raise UnsupportedMediaType
+
         if game is None:
         # check the correct error message
         # game needs to exist
@@ -61,8 +62,6 @@ class RulesetCollection(Resource):
         else:
             game_id = game.serialize(long=True)["id"]
 
-        if not request.json:
-            raise UnsupportedMediaType
         try:
             validate(request.json, Ruleset.get_schema())
         except ValidationError as err:
@@ -70,8 +69,8 @@ class RulesetCollection(Resource):
 
         try:
             ruleset = Ruleset(
-                name = request.json["name"],
-                game_id = game_id
+                name=request.json["name"],
+                game_id=game_id
             )
             db.session.add(ruleset)
             db.session.commit()
@@ -90,7 +89,6 @@ class RulesetItem(Resource):
         '''
         Get information about a ruleset
         (Game can be in the path, but doesn't make difference)
-        
         From exercise 2 material,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
@@ -100,14 +98,11 @@ class RulesetItem(Resource):
     def put(self, ruleset):
         '''
         Change information of a ruleset
-        
-        
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
-        if not request.json:
+        if not request.mimetype == "application/json":
             raise UnsupportedMediaType
-
         try:
             validate(request.json, Ruleset.get_schema())
         except ValidationError as err:
@@ -126,7 +121,6 @@ class RulesetItem(Resource):
     def delete(self, ruleset):
         '''
         Delete a ruleset
-        
         From
         https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
         '''

@@ -22,7 +22,6 @@ class MapCollection(Resource):
         '''
         Get all maps
         If game given, all for that game
-
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
@@ -53,6 +52,8 @@ class MapCollection(Resource):
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
+        if not request.mimetype == "application/json":
+            raise UnsupportedMediaType
 
         if game is None:
         # check the correct error message
@@ -61,8 +62,6 @@ class MapCollection(Resource):
         else:
             game_id = game.serialize(long=True)["id"]
 
-        if not request.json:
-            raise UnsupportedMediaType
         try:
             validate(request.json, Map.get_schema())
         except ValidationError as err:
@@ -88,7 +87,6 @@ class MapItem(Resource):
         '''
         Get information about a map
         (Game can be in the path, but doesn't make difference)
-        
         From exercise 2 material,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
@@ -98,14 +96,11 @@ class MapItem(Resource):
     def put(self, map_):
         '''
         Change information of a map
-        
-        
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
-        if not request.json:
+        if not request.mimetype == "application/json":
             raise UnsupportedMediaType
-
         try:
             validate(request.json, Map.get_schema())
         except ValidationError as err:

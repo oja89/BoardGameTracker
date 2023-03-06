@@ -45,8 +45,7 @@ class GameCollection(Resource):
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
-
-        if not request.json:
+        if not request.mimetype == "application/json":
             raise UnsupportedMediaType
         try:
             validate(request.json, Game.get_schema())
@@ -58,9 +57,6 @@ class GameCollection(Resource):
             )
             db.session.add(game)
             db.session.commit()
-        except KeyError:
-            db.session.rollback()
-            abort(400)
         except IntegrityError:
             db.session.rollback()
             name=request.json["name"]
@@ -89,9 +85,8 @@ class GameItem(Resource):
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         '''
-        if not request.json:
+        if not request.mimetype == "application/json":
             raise UnsupportedMediaType
-
         try:
             validate(request.json, Game.get_schema())
         except ValidationError as err:
