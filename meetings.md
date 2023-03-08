@@ -35,7 +35,7 @@ During this meeting we went through wiki 3, code, pylint and pytest.
 
 ### Action points
 *List here the actions points discussed with assistants*
-- PlayerCollection have thee route in plural if want to get all the players
+- PlayerCollection route in plural if want to get all the players
 - Repetitive to have two of same collections for example mapcollection and mapitem so maybe remove
 - Amount of resources could be decreased
 - More information to description in resource table in wiki
