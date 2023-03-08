@@ -26,16 +26,31 @@ Add relationships in the code. Add them on top of relationships to shortcut data
 
 
 ## Meeting 3.
-* **DATE:**
-* **ASSISTANTS:**
+* **DATE: 8.3.2023**
+* **ASSISTANTS:Ivan Sanchez Milara**
 
 ### Minutes
-*Summary of what was discussed during the meeting*
+During this meeting we went through wiki 3, code, pylint and pytest. 
+
 
 ### Action points
 *List here the actions points discussed with assistants*
-
-
+- PlayerCollection have thee route in plural if want to get all the players
+- Repetitive to have two of same collections for example mapcollection and mapitem so maybe remove
+- Amount of resources could be decreased
+- More information to description in resource table in wiki
+- Maybe have match under a game
+- Add an example of stalesness
+- Explain in more detail in utils.py. Look up exercise 3
+- How often are resources going to be updated. Change caching times.
+- Flask run is missing
+- Schema validation formats not justified in text
+- Cache is not justified and invalidation not explained
+- Check cyclic-import problem
+- Check to_url to get more coverage in test
+- Getting something, format of error should be json not html
+- Add location header when creating a new match for example
+- Over all ok. Big scope
 
 
 ## Meeting 4.
