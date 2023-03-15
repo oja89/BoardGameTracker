@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2023-03-15T16:52:25.186Z" agent="5.0 (Windows)" etag="dN_tRsO_Idb5KquWtfXS" version="20.8.13" type="github">
+<mxfile host="app.diagrams.net" modified="2023-03-15T17:26:06.824Z" agent="5.0 (Windows)" etag="N_gkiIvp4xvr8mr2SHb1" version="20.8.13" type="github">
   <diagram name="Page-1" id="58cdce13-f638-feb5-8d6f-7d28b1aa9fa0">
-    <mxGraphModel dx="1434" dy="754" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" background="none" math="0" shadow="0">
+    <mxGraphModel dx="1434" dy="1604" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" background="none" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -20,7 +20,7 @@
           <mxGeometry x="40" y="280" width="120" height="50" as="geometry" />
         </mxCell>
         <mxCell id="sAuv1rMniGw2Tb26CjWJ-1" value="" style="group" vertex="1" connectable="0" parent="1">
-          <mxGeometry x="480" y="150" width="170" height="90" as="geometry" />
+          <mxGeometry x="490" y="335" width="170" height="90" as="geometry" />
         </mxCell>
         <mxCell id="dXTx0Du7Se45ZJ5eSAot-6" value="GameCollection" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="sAuv1rMniGw2Tb26CjWJ-1" vertex="1">
           <mxGeometry x="50" y="40" width="120" height="50" as="geometry" />
@@ -84,7 +84,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="sAuv1rMniGw2Tb26CjWJ-9" value="" style="group" vertex="1" connectable="0" parent="1">
-          <mxGeometry x="650" y="140" width="170" height="90" as="geometry" />
+          <mxGeometry x="630" y="140" width="170" height="90" as="geometry" />
         </mxCell>
         <mxCell id="sAuv1rMniGw2Tb26CjWJ-10" value="TeamCollection" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="sAuv1rMniGw2Tb26CjWJ-9">
           <mxGeometry x="50" y="40" width="120" height="50" as="geometry" />
@@ -116,7 +116,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="sAuv1rMniGw2Tb26CjWJ-15" value="" style="group" vertex="1" connectable="0" parent="1">
-          <mxGeometry x="480" y="40" width="170" height="90" as="geometry" />
+          <mxGeometry x="490" y="225" width="170" height="90" as="geometry" />
         </mxCell>
         <mxCell id="sAuv1rMniGw2Tb26CjWJ-16" value="GameItem" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="sAuv1rMniGw2Tb26CjWJ-15">
           <mxGeometry x="50" y="40" width="120" height="50" as="geometry" />
@@ -189,7 +189,7 @@
           <mxGeometry x="40" y="340" width="120" height="50" as="geometry" />
         </mxCell>
         <mxCell id="sAuv1rMniGw2Tb26CjWJ-30" value="" style="group" vertex="1" connectable="0" parent="1">
-          <mxGeometry x="650" y="40" width="170" height="90" as="geometry" />
+          <mxGeometry x="630" y="40" width="170" height="90" as="geometry" />
         </mxCell>
         <mxCell id="sAuv1rMniGw2Tb26CjWJ-31" value="&lt;div&gt;TeamItem&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="sAuv1rMniGw2Tb26CjWJ-30">
           <mxGeometry x="50" y="40" width="120" height="50" as="geometry" />
@@ -224,7 +224,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="sAuv1rMniGw2Tb26CjWJ-46" value="" style="group" vertex="1" connectable="0" parent="1">
-          <mxGeometry x="280" y="140" width="170" height="90" as="geometry" />
+          <mxGeometry x="250" y="70" width="170" height="90" as="geometry" />
         </mxCell>
         <mxCell id="sAuv1rMniGw2Tb26CjWJ-47" value="MatchCollection" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="sAuv1rMniGw2Tb26CjWJ-46">
           <mxGeometry x="50" y="40" width="120" height="50" as="geometry" />
@@ -256,7 +256,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="sAuv1rMniGw2Tb26CjWJ-52" value="" style="group" vertex="1" connectable="0" parent="1">
-          <mxGeometry x="280" y="40" width="170" height="90" as="geometry" />
+          <mxGeometry x="250" y="-30" width="170" height="90" as="geometry" />
         </mxCell>
         <mxCell id="sAuv1rMniGw2Tb26CjWJ-53" value="MatchItem" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="sAuv1rMniGw2Tb26CjWJ-52">
           <mxGeometry x="50" y="40" width="120" height="50" as="geometry" />
@@ -270,13 +270,14 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="sAuv1rMniGw2Tb26CjWJ-55" value="&lt;div&gt;edit&lt;/div&gt;&lt;div&gt;delete&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;" vertex="1" parent="sAuv1rMniGw2Tb26CjWJ-52">
-          <mxGeometry width="50" height="30" as="geometry" />
+        <mxCell id="sAuv1rMniGw2Tb26CjWJ-55" value="&lt;div&gt;edit&lt;/div&gt;&lt;div&gt;delete&lt;br&gt;&lt;/div&gt;&lt;div&gt;add-results&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;" vertex="1" parent="sAuv1rMniGw2Tb26CjWJ-52">
+          <mxGeometry x="-20" y="-5" width="70" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="sAuv1rMniGw2Tb26CjWJ-56" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeColor=none;" edge="1" parent="sAuv1rMniGw2Tb26CjWJ-52" source="sAuv1rMniGw2Tb26CjWJ-53" target="sAuv1rMniGw2Tb26CjWJ-55">
+        <mxCell id="sAuv1rMniGw2Tb26CjWJ-56" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;strokeColor=none;" edge="1" parent="sAuv1rMniGw2Tb26CjWJ-52" source="sAuv1rMniGw2Tb26CjWJ-53" target="sAuv1rMniGw2Tb26CjWJ-55">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="80" y="10" />
+              <mxPoint x="50" y="10" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -289,6 +290,45 @@
         </mxCell>
         <mxCell id="sAuv1rMniGw2Tb26CjWJ-58" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="sAuv1rMniGw2Tb26CjWJ-47" target="sAuv1rMniGw2Tb26CjWJ-53">
           <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sAuv1rMniGw2Tb26CjWJ-59" value="(all matches for player, team or game)" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="490" y="80" width="90" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="sAuv1rMniGw2Tb26CjWJ-60" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="sAuv1rMniGw2Tb26CjWJ-16" target="sAuv1rMniGw2Tb26CjWJ-47">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="440" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sAuv1rMniGw2Tb26CjWJ-61" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="sAuv1rMniGw2Tb26CjWJ-31" target="sAuv1rMniGw2Tb26CjWJ-47">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="610" y="275" as="sourcePoint" />
+            <mxPoint x="430" y="145" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="740" y="10" />
+              <mxPoint x="480" y="10" />
+              <mxPoint x="480" y="135" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sAuv1rMniGw2Tb26CjWJ-62" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="sAuv1rMniGw2Tb26CjWJ-23" target="sAuv1rMniGw2Tb26CjWJ-47">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="750" y="90" as="sourcePoint" />
+            <mxPoint x="430" y="145" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="930" y="10" />
+              <mxPoint x="480" y="10" />
+              <mxPoint x="480" y="135" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sAuv1rMniGw2Tb26CjWJ-64" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;jumpStyle=arc;" edge="1" parent="1" source="sAuv1rMniGw2Tb26CjWJ-53" target="sAuv1rMniGw2Tb26CjWJ-16">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="610" y="275" as="sourcePoint" />
+            <mxPoint x="430" y="145" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sAuv1rMniGw2Tb26CjWJ-65" value="look at the game" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="540" y="30" width="90" height="40" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
