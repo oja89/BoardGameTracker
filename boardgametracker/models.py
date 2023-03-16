@@ -297,6 +297,7 @@ class Match(db.Model):
                 "player_results":p_result_list,
                 "team_results":t_result_list
                 },
+                
             # serializers to get more details
             "game_name":self.game.serialize()["name"],
             "map_name":self.map.serialize()["name"],

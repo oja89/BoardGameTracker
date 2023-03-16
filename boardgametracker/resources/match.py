@@ -6,13 +6,14 @@ https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhu
 '''
 from datetime import datetime
 from jsonschema import validate, ValidationError
-from flask import Response, request, abort
+from flask import Response, request, abort, url_for
 from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
 from sqlalchemy.exc import IntegrityError
 from flask_restful import Resource
 from boardgametracker.models import Match
-from boardgametracker import db
-from boardgametracker import cache
+from boardgametracker.utils import BGTBuilder
+from boardgametracker import db, cache, api
+from boardgametracker.constants import *
 
 class MatchCollection(Resource):
     '''
@@ -24,15 +25,24 @@ class MatchCollection(Resource):
         Get all matches
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
+        
+        modified to use MasonBuilder after ex3
+        
         '''
 
-        data_object = []
-
+        body = BGTBuilder()
+        body.add_namespace("BGT", LINK_RELATIONS_URL)
+        # cannot use, api is defined inside function...?
+        body.add_control("self", url_for("api.matchcollection"))
+        body.add_control_add_match()
+        body["items"] = []
+        
         for match in Match.query.all():
             # use serializer
-            data_object.append(match.serialize(long=True))
+            #body["items"].append(match.serialize(long=True))
+            pass
 
-        response = data_object
+        response = body
 
         return response, 200
 

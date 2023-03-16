@@ -53,7 +53,9 @@ def create_app(test_config=None):
     MatchConverter,
     RulesetConverter,
     MapConverter,
-    GameConverter
+    GameConverter,
+    MasonBuilder,
+    BGTBuilder
     )
 
 
@@ -74,6 +76,10 @@ def create_app(test_config=None):
     #this has to be after converters
     app.register_blueprint(api.api_bp)
 
+    @app.route(LINK_RELATIONS_URL)
+    def get_relations():
+        return "links"
+    
     @app.route("/api/")
     def index():
         '''

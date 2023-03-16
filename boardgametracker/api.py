@@ -7,11 +7,6 @@ https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhu
 from flask import Blueprint
 from flask_restful import Api
 
-api_bp = Blueprint("api", __name__, url_prefix="/api")
-api = Api(api_bp)
-
-# after api creation to avoid circular imports
-# pylint gives error, but no can do
 from boardgametracker.resources.player import PlayerCollection, PlayerItem
 from boardgametracker.resources.team import TeamCollection, TeamItem
 from boardgametracker.resources.game import GameCollection, GameItem
@@ -21,12 +16,13 @@ from boardgametracker.resources.map import MapCollection, MapItem
 from boardgametracker.resources.player_result import PlayerResultCollection
 from boardgametracker.resources.team_result import TeamResultCollection
 
+api_bp = Blueprint("api", __name__, url_prefix="/api")
+api = Api(api_bp)
+
 api.add_resource(PlayerCollection, "/player/")
 api.add_resource(PlayerItem, "/player/<player:player>/")
-
 api.add_resource(TeamCollection, "/team/")
 api.add_resource(TeamItem, "/team/<team:team>/")
-
 api.add_resource(GameCollection, "/game/")
 api.add_resource(GameItem, "/game/<game:game>/")
 
