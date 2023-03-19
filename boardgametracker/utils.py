@@ -1,12 +1,8 @@
-'''
+"""
 Converters for URL calls
 
 from example
-https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/utils.py'''
-
-from flask import Response, url_for
-from werkzeug.exceptions import NotFound
-from werkzeug.routing import BaseConverter
+https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/utils.py"""
 
 from boardgametracker.models import (
     Player,
@@ -15,7 +11,11 @@ from boardgametracker.models import (
     Map,
     Ruleset,
     Match
-    )
+)
+from flask import url_for
+from werkzeug.exceptions import NotFound
+from werkzeug.routing import BaseConverter
+
 
 class MasonBuilder(dict):
     """
@@ -86,18 +86,18 @@ class MasonBuilder(dict):
         self["@controls"][ctrl_name]["href"] = href
         
     def add_control_get(self, ctrl_name, title, href):
-        '''
+        """
         Not in the original example, added for uniformity
         Utility method for adding GET type controls.
         Method and encoding are
         fixed to "GET" and "json" respectively.
-        
+
         : param str ctrl_name: name of the control (including namespace if any)
         : param str href: target URI for the control
         : param str title: human-readable title for the control
         : param dict schema: a dictionary representing a valid JSON schema
-        
-        '''
+
+        """
         self.add_control(
             ctrl_name,
             href,
@@ -128,7 +128,7 @@ class MasonBuilder(dict):
             schema=schema
         )
 
-    def add_control_put(self, title, href, schema):
+    def add_control_put(self, ctrl_name, title, href, schema):
         """
         Utility method for adding PUT type controls. The control is
         constructed from the method's parameters. Control name, method and
@@ -137,10 +137,12 @@ class MasonBuilder(dict):
         : param str href: target URI for the control
         : param str title: human-readable title for the control
         : param dict schema: a dictionary representing a valid JSON schema
+
+        TODO: add notion about ctrl_name
         """
 
         self.add_control(
-            "edit",
+            ctrl_name,
             href,
             method="PUT",
             encoding="json",
@@ -167,16 +169,16 @@ class MasonBuilder(dict):
         )
 
 class BGTBuilder(MasonBuilder):
-    '''
+    """
     Class for building the hypermedia
     from exercise 3 material
     https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/exercise-3-api-documentation-and-hypermedia/
-    '''
+    """
     def add_control_match_collection(self):
-        '''
+        """
         Match collection
         leads to GET /api/matches/
-        '''
+        """
         self.add_control_get(
             ctrl_name="BGT:matches-all",
             href=url_for("api.matchcollection"),
@@ -184,9 +186,9 @@ class BGTBuilder(MasonBuilder):
             )
 
     def add_control_add_match(self):
-        '''
-        
-        '''
+        """
+
+        """
         self.add_control_post(
             ctrl_name="BGT:add-match",
             href=url_for("api.matchcollection"),
@@ -195,115 +197,115 @@ class BGTBuilder(MasonBuilder):
             )
 
 class PlayerConverter(BaseConverter):
-    '''
+    """
     Converter for player URL
-    '''
+    """
     def to_python(self, value):
-        '''
+        """
         URL to python
-        '''
+        """
         db_player = Player.query.filter_by(name=value).first()
         if db_player is None:
             raise NotFound
         return db_player
 
     def to_url(self, value):
-        '''
+        """
         python to URL
-        '''
+        """
         return value.name
 
 class MatchConverter(BaseConverter):
-    '''
+    """
     Converter for match URL
-    '''
+    """
     def to_python(self, value):
-        '''
+        """
         URL to python
-        '''
+        """
         db_match = Match.query.filter_by(id=value).first()
         if db_match is None:
             raise NotFound
         return db_match
 
     def to_url(self, value):
-        '''
+        """
         python to URL
-        '''
+        """
         return value.id
 
 class GameConverter(BaseConverter):
-    '''
+    """
     Converter for game URL
-    '''
+    """
     def to_python(self, value):
-        '''
+        """
         URL to python
-        '''
+        """
         db_game = Game.query.filter_by(name=value).first()
         if db_game is None:
             raise NotFound
         return db_game
 
     def to_url(self, value):
-        '''
+        """
         python to URL
-        '''
+        """
         return value.name
 
 class TeamConverter(BaseConverter):
-    '''
+    """
     Converter for team URL
-    '''
+    """
     def to_python(self, value):
-        '''
+        """
         URL to python
-        '''
+        """
         db_team = Team.query.filter_by(name=value).first()
         if db_team is None:
             raise NotFound
         return db_team
 
     def to_url(self, value):
-        '''
+        """
         python to URL
-        '''
+        """
         return value.name
 
 class RulesetConverter(BaseConverter):
-    '''
+    """
     Converter for ruleset URL
-    '''
+    """
     def to_python(self, value):
-        '''
+        """
         URL to python
-        '''
+        """
         db_ruleset = Ruleset.query.filter_by(id=value).first()
         if db_ruleset is None:
             raise NotFound
         return db_ruleset
 
     def to_url(self, value):
-        '''
+        """
         python to URL
-        '''
+        """
         return value.id
 
 class MapConverter(BaseConverter):
-    '''
+    """
     Converter for map url
-    '''
+    """
     def to_python(self, value):
-        '''
+        """
         URL to python
-        '''
+        """
         db_map = Map.query.filter_by(id=value).first()
         if db_map is None:
             raise NotFound
         return db_map
 
     def to_url(self, value):
-        '''
+        """
         python to URL
-        '''
+        """
         return value.id

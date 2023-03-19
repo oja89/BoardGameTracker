@@ -1,28 +1,29 @@
-'''
+"""
 Functions for team_result class objects
 
 from sensorhub example
 https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
-'''
+"""
 
-from flask_restful import Resource
-from boardgametracker.models import TeamResult
 from boardgametracker import cache
+from boardgametracker.models import TeamResult
+from flask_restful import Resource
+
 
 class TeamResultCollection(Resource):
-    '''
+    """
     Collection of team_results
-    '''
+    """
     @cache.cached(timeout=5)
     def get(self, match=None, team=None):
-        '''
+        """
         Get all results
         If match is given, all for that match
         If team given, all for that team
         If both, that should be an item, so abort?
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
-        '''
+        """
         data_object = []
 
         # do the query for all

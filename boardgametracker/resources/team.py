@@ -1,30 +1,31 @@
-'''
+"""
 Functions for team class objects
 
 from sensorhub example
 https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
-'''
+"""
 
-from jsonschema import validate, ValidationError
-from flask import Response, request
-from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
-from sqlalchemy.exc import IntegrityError
-from flask_restful import Resource
-from boardgametracker.models import Team
-from boardgametracker import db
 from boardgametracker import cache
+from boardgametracker import db
+from boardgametracker.models import Team
+from flask import Response, request
+from flask_restful import Resource
+from jsonschema import validate, ValidationError
+from sqlalchemy.exc import IntegrityError
+from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
+
 
 class TeamCollection(Resource):
-    '''
+    """
     Collection of teams
-    '''
+    """
     @cache.cached(timeout=5)
     def get(self):
-        '''
+        """
         Get all teams
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
-        '''
+        """
         data_object = []
 
         for team in Team.query.all():
@@ -37,11 +38,11 @@ class TeamCollection(Resource):
         return response, 200
 
     def post(self):
-        '''
+        """
         Add a new team
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
-        '''
+        """
         if not request.mimetype == "application/json":
             raise UnsupportedMediaType
         try:
@@ -61,23 +62,23 @@ class TeamCollection(Resource):
         return Response(status=201)
 
 class TeamItem(Resource):
-    '''
+    """
     One item of team
-    '''
+    """
     def get(self, team):
-        '''
+        """
         Get information about a team
         From exercise 2 material,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
-        '''
+        """
         return team.serialize(long=True)
 
     def put(self, team):
-        '''
+        """
         Change information of a team
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
-        '''
+        """
         if not request.mimetype == "application/json": 
             raise UnsupportedMediaType
         try:
@@ -95,12 +96,12 @@ class TeamItem(Resource):
         return Response(status=204)
 
     def delete(self, team):
-        '''
+        """
         Delete a team
 
         From
         https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
-        '''
+        """
         db.session.delete(team)
         db.session.commit()
 
