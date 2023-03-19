@@ -115,31 +115,33 @@ class MatchItem(Resource):
 
         # do controls for results
         # do not use them as their own resource anymore
-        # if no result, post
-        #print(body["results"]["player_results"])
+        # TODO: change urls, titles, check the ctrl-name
+        # TODO: probably need match id into the ctrl-name? 
+        # if no results, add a route to add result
         if body["results"]["player_results"] is None:
                 body.add_control_post("BGT:add-player-result",
-                        "TODO:title",
-                        "TODO:url",
+                        "TODO:add-pres-title",
+                        "TODO:add-pres-url",
                         PlayerResult.get_schema())
-         # if result exists, put
+         # if result exists, add rout to edit result
         else:
                 body.add_control_put("BGT:edit-player-result",
-                        "TODO:title",
-                        "TODO:url",
+                        "TODO:edit-pres-title",
+                        "TODO:edit-pres-url",
                         PlayerResult.get_schema())
 
 
+        # if no results, add a route to add result
         if body["results"]["team_results"] is None:
                 body.add_control_post("BGT:add-team-result",
-                        "TODO:title",
-                        "TODO:url",
+                        "TODO:add-tres-title",
+                        "TODO:add-tres-url",
                         TeamResult.get_schema())
          # if result exists, put
         else:
                 body.add_control_put("BGT:edit-team-result",
-                        "TODO:title",
-                        "TODO:url",
+                        "TODO:edit-tres-title",
+                        "TODO:edit-tres-url",
                         TeamResult.get_schema())
 
         response = Response(json.dumps(body), 200, mimetype=MASON)
