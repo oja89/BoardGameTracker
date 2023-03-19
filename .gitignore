@@ -130,10 +130,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-
-# Ignore venv -folder
-venv/
-# Ignore instance -folder (has the db)
-instance/
-# Ignore _pycache_ -folder
-__pycache__/
+# PyCharm folder
+.idea/
