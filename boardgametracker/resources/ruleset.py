@@ -1,30 +1,31 @@
-'''
+"""
 Functions for ruleset class objects
 
 from sensorhub example
 https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
-'''
-from jsonschema import validate, ValidationError
+"""
+from boardgametracker import cache
+from boardgametracker import db
+from boardgametracker.models import Ruleset
 from flask import Response, request, abort
+from flask_restful import Resource
+from jsonschema import validate, ValidationError
 from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
-from flask_restful import Resource
-from boardgametracker.models import Ruleset
-from boardgametracker import db
-from boardgametracker import cache
+
 
 class RulesetCollection(Resource):
-    '''
+    """
     Collection of rulesets
-    '''
+    """
     @cache.cached(timeout=5)
     def get(self, game=None):
-        '''
+        """
         Get all rulesets
         If game given, all for that game
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
-        '''
+        """
         data_object = []
 
         # do the query for all
@@ -46,12 +47,12 @@ class RulesetCollection(Resource):
         return response, 200
 
     def post(self, game=None):
-        '''
+        """
         Add a new ruleset
         Cannot add a ruleset without a game
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
-        '''
+        """
         if not request.mimetype == "application/json":
             raise UnsupportedMediaType
 
@@ -82,25 +83,25 @@ class RulesetCollection(Resource):
         return Response(status=201)
 
 class RulesetItem(Resource):
-    '''
+    """
     One item of ruleset
-    '''
+    """
     def get(self, ruleset, game=None):
-        '''
+        """
         Get information about a ruleset
         (Game can be in the path, but doesn't make difference)
         From exercise 2 material,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
-        '''
+        """
 
         return ruleset.serialize(long=True)
 
     def put(self, ruleset):
-        '''
+        """
         Change information of a ruleset
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
-        '''
+        """
         if not request.mimetype == "application/json":
             raise UnsupportedMediaType
         try:
@@ -119,11 +120,11 @@ class RulesetItem(Resource):
         return Response(status=204)
 
     def delete(self, ruleset):
-        '''
+        """
         Delete a ruleset
         From
         https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
-        '''
+        """
         db.session.delete(ruleset)
         db.session.commit()
 

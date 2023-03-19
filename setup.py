@@ -1,9 +1,9 @@
-'''
+"""
 Setup for boardgametracker
 
 from course material
 # https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/flask-api-project-layout/
-'''
+"""
 from setuptools import find_packages, setup
 
 

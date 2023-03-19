@@ -1,30 +1,32 @@
-'''
+"""
 Functions for map class objects
 
-from sensorhub example 
+from sensorhub example
 https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
-'''
-from jsonschema import validate, ValidationError
+"""
+from boardgametracker import cache
+from boardgametracker import db
+from boardgametracker.models import Map
 from flask import Response, request, abort
 from flask_restful import Resource
+from jsonschema import validate, ValidationError
 from sqlalchemy.exc import IntegrityError
-from boardgametracker.models import Map
-from boardgametracker import db
-from boardgametracker import cache
 from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
 
+
 class MapCollection(Resource):
-    '''
+    """
     Collection of maps
-    '''
+    """
+
     @cache.cached(timeout=5)
     def get(self, game=None):
-        '''
+        """
         Get all maps
         If game given, all for that game
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
-        '''
+        """
         data_object = []
 
         # do the query for all
@@ -45,19 +47,19 @@ class MapCollection(Resource):
         return response, 200
 
     def post(self, game=None):
-        '''
+        """
         Add a new map
         Cannot add a map without a game
 
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
-        '''
+        """
         if not request.mimetype == "application/json":
             raise UnsupportedMediaType
 
         if game is None:
-        # check the correct error message
-        # game needs to exist
+            # check the correct error message
+            # game needs to exist
             abort(400)
         else:
             game_id = game.serialize(long=True)["id"]
@@ -68,8 +70,8 @@ class MapCollection(Resource):
             raise BadRequest(description=str(err))
         try:
             map_ = Map(
-                name = request.json["name"],
-                game_id = game_id
+                name=request.json["name"],
+                game_id=game_id
             )
             db.session.add(map_)
             db.session.commit()
@@ -79,26 +81,28 @@ class MapCollection(Resource):
 
         return Response(status=201)
 
+
 class MapItem(Resource):
-    '''
+    """
     One item of team
-    '''
+    """
+
     def get(self, map_, game=None):
-        '''
+        """
         Get information about a map
         (Game can be in the path, but doesn't make difference)
         From exercise 2 material,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
-        '''
+        """
 
         return map_.serialize(long=True)
 
     def put(self, map_):
-        '''
+        """
         Change information of a map
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
-        '''
+        """
         if not request.mimetype == "application/json":
             raise UnsupportedMediaType
         try:
@@ -108,8 +112,8 @@ class MapItem(Resource):
 
         try:
             map_ = Map(
-            name=request.json["name"],
-            game_id=request.json["game_id"]
+                name=request.json["name"],
+                game_id=request.json["game_id"]
             )
             db.session.add(map_)
             db.session.commit()
@@ -119,12 +123,12 @@ class MapItem(Resource):
         return Response(status=204)
 
     def delete(self, map_):
-        '''
+        """
         Delete a map
-        
-        From 
+
+        From
         https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
-        '''
+        """
         db.session.delete(map_)
         db.session.commit()
 

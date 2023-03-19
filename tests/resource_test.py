@@ -1,8 +1,8 @@
-'''
+"""
 Pytest
 from https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/testing-flask-applications-part-2/
 which is based onhttp://flask.pocoo.org/docs/1.0/testing/
-'''
+"""
 
 
 import datetime
@@ -58,10 +58,10 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
 
 @pytest.fixture
 def client():
-    '''
+    """
     from
     https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/tests/resource_test.py
-    '''
+    """
     db_fd, db_fname = tempfile.mkstemp()
     config = {
         "SQLALCHEMY_DATABASE_URI": "sqlite:///" + db_fname,

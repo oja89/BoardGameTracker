@@ -1,22 +1,22 @@
-'''
+"""
 Functions for team_result class objects
 
 from sensorhub example
 https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
-'''
+"""
 
-from flask_restful import Resource
-from boardgametracker.models import PlayerResult
 from boardgametracker import cache
+from boardgametracker.models import PlayerResult
+from flask_restful import Resource
 
 
 class PlayerResultCollection(Resource):
-    '''
+    """
     Collection of player_results
-    '''
+    """
     @cache.cached(timeout=5)
     def get(self, match=None, player=None):
-        '''
+        """
         Get all results
         If match is given, all for that match
         If player given, all for that player
@@ -24,7 +24,7 @@ class PlayerResultCollection(Resource):
 
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
-        '''
+        """
         data_object = []
 
         # do the query for all

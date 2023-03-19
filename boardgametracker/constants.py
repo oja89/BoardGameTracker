@@ -1,9 +1,9 @@
-'''
+"""
 Constants used (or to be used) in the project
 
-from 
+from
 https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/constants.py
-'''
+"""
 MASON = "application/vnd.mason+json"
 LINK_RELATIONS_URL = "/boardgametracker/link-relations/"
 ERROR_PROFILE = "/profiles/error/"
