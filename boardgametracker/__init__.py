@@ -14,6 +14,7 @@ from boardgametracker.constants import *
 from flask import Flask
 from flask_caching import Cache
 from flask_sqlalchemy import SQLAlchemy
+from flasgger import Swagger, swag_from
 
 db = SQLAlchemy()
 cache = Cache()
@@ -31,6 +32,15 @@ def create_app(test_config=None):
         CACHE_TYPE="FileSystemCache",
         CACHE_DIR=os.path.join(app.instance_path, "cache"),
     )
+
+    app.config["SWAGGER"] = {
+        "title": "Sensorhub API",
+        "openapi": "3.0.3",
+        "uiversion": 3,
+        "doc_dir": "./doc"
+    }
+
+    swagger = Swagger(app, template_file="doc/bgt.yml")
 
     if test_config is None:
         app.config.from_pyfile("config.py", silent=True)

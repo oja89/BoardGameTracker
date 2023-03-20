@@ -36,7 +36,6 @@ class MatchCollection(Resource):
 
         body = BGTBuilder()
         body.add_namespace("BGT", LINK_RELATIONS_URL)
-        # cannot use, api is defined inside function...?
         body.add_control("self", url_for("api.matchcollection"))
         body.add_control_add_match()
         body["items"] = []
@@ -86,8 +85,8 @@ class MatchCollection(Resource):
 
         return Response(status=201, headers={
             "Location": url_for("api.matchitem", match=match.id)
-        }
-                        )
+                }
+            )
 
 
 class MatchItem(Resource):
@@ -110,41 +109,44 @@ class MatchItem(Resource):
         body.add_namespace("BGT", LINK_RELATIONS_URL)
         body.add_control("self", url_for("api.matchitem", match=body["id"]))
         body.add_control("profile", MATCH_PROFILE)
-        body.add_control_put("edit", "TODO:title", url_for("api.matchitem", match=body["id"]), schema=Match.get_schema())
+        body.add_control_put("edit", "TODO:title", url_for("api.matchitem", match=body["id"]),
+                             schema=Match.get_schema())
         body.add_control_match_collection()
-
 
         # do controls for results
         # do not use them as their own resource anymore
         # TODO: change urls, titles, check the ctrl-name
         # TODO: probably need match id into the ctrl-name?
-         # if result exists, add route to edit result
+        # TODO: results need their id in the put?
+
+        # if result exists, add route to edit result
         if body["results"]["player_results"] is not None:
             # for each "row" in this games results:
             for row, list in enumerate(body["results"]["player_results"]):
                 body.add_control_put(f"BGT:edit-player-result-{row}",
-                        f"TODO:edit-pres-title-{row}",
-                        f"TODO:edit-pres-url-{row}",
-                        PlayerResult.get_schema())
+                                     f"TODO:edit-pres-title-{row}",
+                                     f"TODO:edit-pres-url-{row}",
+                                     PlayerResult.get_schema())
 
         # always add "add" control for a row of results
         body.add_control_post("BGT:add-player-result",
-            "TODO:add-pres-title",
-            "TODO:add-pres-url",
-            PlayerResult.get_schema())
+                              "TODO:add-pres-title",
+                              "TODO:add-pres-url",
+                              PlayerResult.get_schema())
 
         # if result exists, add route to edit result
         if body["results"]["team_results"] is not None:
             for row, list in enumerate(body["results"]["team_results"]):
                 body.add_control_put(f"BGT:edit-team-result-{row}",
-                            f"TODO:edit-tres-title-{row}",
-                            f"TODO:edit-tres-url-{row}",
-                            TeamResult.get_schema())
+                                     f"TODO:edit-tres-title-{row}",
+                                     f"TODO:edit-tres-url-{row}",
+                                     TeamResult.get_schema())
+
         # always add "add" control for a row of results
-            body.add_control_post("BGT:add-team-result",
-                    "TODO:add-tres-title",
-                    "TODO:add-tres-url",
-                    TeamResult.get_schema())
+        body.add_control_post("BGT:add-team-result",
+                              "TODO:add-tres-title",
+                              "TODO:add-tres-url",
+                              TeamResult.get_schema())
 
         response = Response(json.dumps(body), 200, mimetype=MASON)
         return response
