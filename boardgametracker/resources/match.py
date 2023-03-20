@@ -44,7 +44,7 @@ class MatchCollection(Resource):
             # use serializer and BGTBuilder
             item = BGTBuilder(match.serialize(long=True))
             # create controls for all items
-            item.add_control("self", url_for("api.matchitem", match=match.id))
+            item.add_control("self", url_for("api.match", match=match.id))
             item.add_control("profile", MATCH_PROFILE)
             body["items"].append(item)
 
@@ -84,7 +84,7 @@ class MatchCollection(Resource):
             abort(400)
 
         return Response(status=201, headers={
-            "Location": url_for("api.matchitem", match=match.id)
+            "Location": url_for("api.match", match=match.id)
                 }
             )
 
@@ -107,9 +107,9 @@ class MatchItem(Resource):
         db_match = Match.query.filter_by(id=match).first()
         body = BGTBuilder(db_match.serialize(long=True))
         body.add_namespace("BGT", LINK_RELATIONS_URL)
-        body.add_control("self", url_for("api.matchitem", match=body["id"]))
+        body.add_control("self", url_for("api.match", match=body["id"]))
         body.add_control("profile", MATCH_PROFILE)
-        body.add_control_put("edit", "TODO:title", url_for("api.matchitem", match=body["id"]),
+        body.add_control_put("edit", "TODO:title", url_for("api.match", match=body["id"]),
                              schema=Match.get_schema())
         body.add_control_match_collection()
 

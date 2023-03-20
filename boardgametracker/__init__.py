@@ -36,11 +36,10 @@ def create_app(test_config=None):
     app.config["SWAGGER"] = {
         "title": "Sensorhub API",
         "openapi": "3.0.3",
-        "uiversion": 3,
-        "doc_dir": "./doc"
+        "uiversion": 3
     }
 
-    swagger = Swagger(app, template_file="doc/bgt.yml")
+    swagger = Swagger(app, template_file="static/yml_template.yml")
 
     if test_config is None:
         app.config.from_pyfile("config.py", silent=True)

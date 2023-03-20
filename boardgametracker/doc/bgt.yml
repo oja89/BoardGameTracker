@@ -1,7 +1,0 @@
----
-parameters:
-  - test: test
-    test2: test2
-responses:
-  200:
-    description: test stuff
