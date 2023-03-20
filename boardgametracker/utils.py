@@ -84,7 +84,7 @@ class MasonBuilder(dict):
 
         self["@controls"][ctrl_name] = kwargs
         self["@controls"][ctrl_name]["href"] = href
-        
+
     def add_control_get(self, ctrl_name, title, href):
         """
         Not in the original example, added for uniformity
@@ -104,9 +104,8 @@ class MasonBuilder(dict):
             method="GET",
             encoding="json",
             title=title
-            )
-        
-        
+        )
+
     def add_control_post(self, ctrl_name, title, href, schema):
         """
         Utility method for adding POST type controls. The control is
@@ -118,7 +117,7 @@ class MasonBuilder(dict):
         : param str title: human-readable title for the control
         : param dict schema: a dictionary representing a valid JSON schema
         """
-    
+
         self.add_control(
             ctrl_name,
             href,
@@ -149,7 +148,7 @@ class MasonBuilder(dict):
             title=title,
             schema=schema
         )
-        
+
     def add_control_delete(self, title, href):
         """
         Utility method for adding PUT type controls. The control is
@@ -160,7 +159,7 @@ class MasonBuilder(dict):
         : param str href: target URI for the control
         : param str title: human-readable title for the control
         """
-        
+
         self.add_control(
             "BGT:delete",
             href,
@@ -168,12 +167,14 @@ class MasonBuilder(dict):
             title=title,
         )
 
+
 class BGTBuilder(MasonBuilder):
     """
     Class for building the hypermedia
     from exercise 3 material
     https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/exercise-3-api-documentation-and-hypermedia/
     """
+
     def add_control_match_collection(self):
         """
         Match collection
@@ -183,23 +184,26 @@ class BGTBuilder(MasonBuilder):
             ctrl_name="BGT:matches-all",
             href=url_for("api.matchcollection"),
             title="All matches"
-            )
+        )
 
     def add_control_add_match(self):
         """
-
+        Add a new match
+        leads to Post /api/match/
         """
         self.add_control_post(
             ctrl_name="BGT:add-match",
             href=url_for("api.matchcollection"),
             schema=Match.get_schema(),
             title="Add match"
-            )
+        )
+
 
 class PlayerConverter(BaseConverter):
     """
     Converter for player URL
     """
+
     def to_python(self, value):
         """
         URL to python
@@ -215,10 +219,12 @@ class PlayerConverter(BaseConverter):
         """
         return value.name
 
+
 class MatchConverter(BaseConverter):
     """
     Converter for match URL
     """
+
     def to_python(self, value):
         """
         URL to python
@@ -234,10 +240,12 @@ class MatchConverter(BaseConverter):
         """
         return value.id
 
+
 class GameConverter(BaseConverter):
     """
     Converter for game URL
     """
+
     def to_python(self, value):
         """
         URL to python
@@ -253,10 +261,12 @@ class GameConverter(BaseConverter):
         """
         return value.name
 
+
 class TeamConverter(BaseConverter):
     """
     Converter for team URL
     """
+
     def to_python(self, value):
         """
         URL to python
@@ -272,10 +282,12 @@ class TeamConverter(BaseConverter):
         """
         return value.name
 
+
 class RulesetConverter(BaseConverter):
     """
     Converter for ruleset URL
     """
+
     def to_python(self, value):
         """
         URL to python
@@ -291,10 +303,12 @@ class RulesetConverter(BaseConverter):
         """
         return value.id
 
+
 class MapConverter(BaseConverter):
     """
     Converter for map url
     """
+
     def to_python(self, value):
         """
         URL to python

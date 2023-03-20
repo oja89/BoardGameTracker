@@ -258,9 +258,9 @@ class Match(db.Model):
     turns = db.Column(db.Integer, nullable=False)
 
     game_id = db.Column(
-        db.Integer,
-        db.ForeignKey("game.id", ondelete="SET NULL")
-    )
+                db.Integer,
+                db.ForeignKey("game.id", ondelete="SET NULL")
+                )
     ruleset_id = db.Column(
         db.Integer,
         db.ForeignKey("ruleset.id", ondelete="SET NULL")

@@ -70,6 +70,7 @@ class MatchCollection(Resource):
             raise BadRequest(description=str(err))
 
         # TODO: serializer?
+        # TODO: game?
         match = Match(
             date=datetime.fromisoformat(request.json["date"]),
             turns=request.json["turns"]
@@ -116,33 +117,34 @@ class MatchItem(Resource):
         # do controls for results
         # do not use them as their own resource anymore
         # TODO: change urls, titles, check the ctrl-name
-        # TODO: probably need match id into the ctrl-name? 
-        # if no results, add a route to add result
-        if body["results"]["player_results"] is None:
-                body.add_control_post("BGT:add-player-result",
-                        "TODO:add-pres-title",
-                        "TODO:add-pres-url",
-                        PlayerResult.get_schema())
-         # if result exists, add rout to edit result
-        else:
-                body.add_control_put("BGT:edit-player-result",
-                        "TODO:edit-pres-title",
-                        "TODO:edit-pres-url",
+        # TODO: probably need match id into the ctrl-name?
+         # if result exists, add route to edit result
+        if body["results"]["player_results"] is not None:
+            # for each "row" in this games results:
+            for row, list in enumerate(body["results"]["player_results"]):
+                body.add_control_put(f"BGT:edit-player-result-{row}",
+                        f"TODO:edit-pres-title-{row}",
+                        f"TODO:edit-pres-url-{row}",
                         PlayerResult.get_schema())
 
+        # always add "add" control for a row of results
+        body.add_control_post("BGT:add-player-result",
+            "TODO:add-pres-title",
+            "TODO:add-pres-url",
+            PlayerResult.get_schema())
 
-        # if no results, add a route to add result
-        if body["results"]["team_results"] is None:
-                body.add_control_post("BGT:add-team-result",
-                        "TODO:add-tres-title",
-                        "TODO:add-tres-url",
-                        TeamResult.get_schema())
-         # if result exists, put
-        else:
-                body.add_control_put("BGT:edit-team-result",
-                        "TODO:edit-tres-title",
-                        "TODO:edit-tres-url",
-                        TeamResult.get_schema())
+        # if result exists, add route to edit result
+        if body["results"]["team_results"] is not None:
+            for row, list in enumerate(body["results"]["team_results"]):
+                body.add_control_put(f"BGT:edit-team-result-{row}",
+                            f"TODO:edit-tres-title-{row}",
+                            f"TODO:edit-tres-url-{row}",
+                            TeamResult.get_schema())
+        # always add "add" control for a row of results
+            body.add_control_post("BGT:add-team-result",
+                    "TODO:add-tres-title",
+                    "TODO:add-tres-url",
+                    TeamResult.get_schema())
 
         response = Response(json.dumps(body), 200, mimetype=MASON)
         return response
@@ -160,6 +162,8 @@ class MatchItem(Resource):
         except ValidationError as err:
             raise BadRequest(description=str(err))
 
+        # match-info has date and turns,
+        # TODO: and game?
         match.date = datetime.fromisoformat(request.json["date"])
         match.turns = request.json["turns"]
 
