@@ -28,15 +28,6 @@ class GameCollection(Resource):
 
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
-
-        YML
-        ---
-        parameters:
-            - name: somtin
-              type: string
-
-
-
         """
 
         data_object = []

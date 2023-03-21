@@ -1,0 +1,32 @@
+---
+info:
+  title: BoardgameTracker
+  version: 0.1
+  description: API for tracking game results
+components:
+  schemas:
+    Match:
+      type: object
+      properties:
+        date:
+          description: When the match was played
+          type: datetime
+        turns:
+          description: Number of turns in the match
+          type: integer
+      required:
+        - date
+        - turns
+  parameters:
+    date:
+      description: date of the match
+      name: date
+      required: true
+      schema:
+        type: datetime
+    turns:
+      description: turns of the match
+      name: turns
+      required: true
+      schema:
+        type: integer

@@ -30,8 +30,20 @@ class MatchCollection(Resource):
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
 
-        modified to use MasonBuilder after ex3
-
+        modified to use MasonBuilder after ex3, and added YAML
+        https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/exercise-3-api-documentation-and-hypermedia/
+        ---
+        tags:
+            - match
+        description: Get all matches
+        responses:
+            200:
+                description: List of matches
+                content:
+                    application/json:
+                        example:
+                            - date: 31.12.2012T20:30:00
+                              turns: 1
         """
 
         body = BGTBuilder()
@@ -55,11 +67,34 @@ class MatchCollection(Resource):
     def post(self):
         """
         Add a new match
+
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
 
         Added also Mason stuff from:
         https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
+
+        And OpenAPI stuff from:
+        https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/exercise-3-api-documentation-and-hypermedia/#openapi-structure
+
+        OpenAPI:
+        ---
+        tags:
+            - match
+        description: Add a new match
+        parameters:
+            - $ref: '#/components/parameters/date'
+            - $ref: '#/components/parameters/turns'
+        responses:
+            201:
+                description: Match added
+                content:
+                    application/json:
+                        example:
+                            - date: 31.12.2012T20:30:00
+                              turns: 1
+            400:
+                description: Key error
         """
         if not request.mimetype == "application/json":
             raise UnsupportedMediaType
