@@ -56,7 +56,7 @@ class MatchCollection(Resource):
             # use serializer and BGTBuilder
             item = BGTBuilder(match.serialize(long=True))
             # create controls for all items
-            item.add_control("self", url_for("api.match", match=match.id))
+            item.add_control("self", url_for("api.matchitem", match=match.id))
             item.add_control("profile", MATCH_PROFILE)
             body["items"].append(item)
 
@@ -85,14 +85,24 @@ class MatchCollection(Resource):
         parameters:
             - $ref: '#/components/parameters/date'
             - $ref: '#/components/parameters/turns'
+        requestBody:
+            description: JSON containing data for the match
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/Match'
+                    example:
+                        date: '2022-12-25 00:00:00.000000'
+                        turns: 21
         responses:
             201:
                 description: Match added
-                content:
-                    application/json:
-                        example:
-                            - date: 31.12.2012T20:30:00
-                              turns: 1
+                headers:
+                    Location:
+                        description: URI of the match
+                        schema:
+                            type: string
+                    example: "asdfadf"
             400:
                 description: Key error
         """
@@ -119,7 +129,7 @@ class MatchCollection(Resource):
             abort(400)
 
         return Response(status=201, headers={
-            "Location": url_for("api.match", match=match.id)
+            "Location": url_for("api.matchitem", match=match.id)
                 }
             )
 
