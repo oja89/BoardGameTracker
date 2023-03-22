@@ -4,11 +4,14 @@ Functions for player class objects
 from sensorhub example
 https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
 """
+import json
 
 from boardgametracker import cache
 from boardgametracker import db
 from boardgametracker.models import Player
-from flask import Response, request
+from boardgametracker.constants import *
+from boardgametracker.utils import BGTBuilder
+from flask import Response, request, url_for
 from flask_restful import Resource
 from jsonschema import validate, ValidationError
 from sqlalchemy.exc import IntegrityError
@@ -25,18 +28,37 @@ class PlayerCollection(Resource):
         Get all players
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
+
+        modified to use MasonBuilder after ex3, and added YAML
+        ---
+        tags:
+            - player
+        description: Get all players
+        responses:
+            200:
+                description: List of players
+                content:
+                    application/json:
+                        example:
+                            - name: Bob
         """
 
-        data_object = []
+        body = BGTBuilder()
+        body.add_namespace("BGT", LINK_RELATIONS_URL)
+        body.add_control("self", url_for("api.playercollection"))
+        body.add_control_add_player()
+        body["items"] = []
 
         for player in Player.query.all():
-            data_object.append({
-                'name': player.name
-            })
+            item = BGTBuilder(player.serialize(long=True))
+            # create controls
+            item.add_control("self", url_for("api.playeritem", player=player))
+            item.add_control("profile", PLAYER_PROFILE)
+            body["items"].append(item)
 
-        response = data_object
+        response = Response(json.dumps(body), 200, mimetype=MASON)
 
-        return response, 200
+        return response
 
     def post(self):
         """

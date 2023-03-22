@@ -198,7 +198,17 @@ class BGTBuilder(MasonBuilder):
             title="Add match"
         )
 
-
+    def add_control_add_player(self):
+        """
+        Add a new player
+        leads to Post /api/player/
+        """
+        self.add_control_post(
+            ctrl_name="BGT:add-player",
+            href=url_for("api.playercollection"),
+            schema=Player.get_schema(),
+            title="Add player"
+        )
 class PlayerConverter(BaseConverter):
     """
     Converter for player URL
