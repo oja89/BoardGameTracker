@@ -141,12 +141,12 @@ class GameItem(Resource):
                 content:
                     application/json:
                         example:
-                            - name: Bob
+                            - name: CS:GO
                               maps:
                                 - Dust
-                                - other
+                                - inferno
                               rulesets:
-                                - comp
+                                - competitive
                                 - arcade
         """
 
@@ -159,10 +159,14 @@ class GameItem(Resource):
         body.add_control_delete("Delete this game", url_for("api.gameitem", game=game))
 
 
+        # TODO: IS THIS THE RIGHT WAY?
         # game and rulesets and controls
+
+
         # needs to pass the game
         body.add_control_add_map(game)
         body.add_control_add_ruleset(game)
+
 
         # if map(s) exists, add route to edit and delete it
         if game.map is not None:
@@ -177,6 +181,7 @@ class GameItem(Resource):
                                 )
                 item.add_control_delete("Delete this map", url_for("api.mapitem", game=game, map_=map_.id))
                 body["maps"].append(item)
+
 
         # if ruleset(s) exists, add route to edit and delete it
         if game.ruleset is not None:
@@ -195,7 +200,6 @@ class GameItem(Resource):
                 body["rulesets"].append(item)
 
 
-
         response = Response(json.dumps(body), 200, mimetype=MASON)
 
         return response
@@ -207,14 +211,40 @@ class GameItem(Resource):
 
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
+
+        added YAML
+                ---
+        tags:
+            - game
+        description: Modify a game
+        parameters:
+            - $ref: '#/components/parameters/game_name'
+        requestBody:
+            description: JSON containing new data for the game
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/Game'
+                    example:
+                        name: Chess
+        responses:
+            204:
+                description: Game modified, return new URI
+                headers:
+                    Location:
+                        description: URI of the match
+                        schema:
+                            type: string
+                        example: "/api/Game/Chess"
+            409:
+                description: Name exists already
         """
-        if not request.mimetype == "application/json":
+        if not request.mimetype == JSON:
             raise UnsupportedMediaType
         try:
             validate(request.json, Game.get_schema())
         except ValidationError as err:
             raise BadRequest(description=str(err))
-
         game.name = request.json["name"]
 
         try:
@@ -223,7 +253,11 @@ class GameItem(Resource):
             db.session.rollback()
             raise Conflict(description=f"Game with name '{game.name}' already exists.")
 
-        return Response(status=204)
+        # return the location?
+        return Response(status=204, headers={
+            "Location": url_for("api.gameitem", game=game)
+                }
+                        )
 
     def delete(self, game):
         """
@@ -231,7 +265,19 @@ class GameItem(Resource):
 
         From
         https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
+
+        YAML added
+        ---
+        tags:
+            - game
+        description: Delete a game
+        parameters:
+            - $ref: '#/components/parameters/game_name'
+        responses:
+            204:
+                description: Game deleted, nothing to return
         """
+
         db.session.delete(game)
         db.session.commit()
 
