@@ -209,6 +209,18 @@ class BGTBuilder(MasonBuilder):
             schema=Player.get_schema(),
             title="Add player"
         )
+
+    def add_control_add_game(self):
+        """
+        Add a new game
+        leads to Post /api/game/
+        """
+        self.add_control_post(
+            ctrl_name="BGT:add-game",
+            href=url_for("api.gamecollection"),
+            schema=Game.get_schema(),
+            title="Add game"
+        )
 class PlayerConverter(BaseConverter):
     """
     Converter for player URL

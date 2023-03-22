@@ -65,9 +65,33 @@ class PlayerCollection(Resource):
         Add a new player
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
+
+        added mason and openapi
+        ---
+        tags:
+            - player
+        description: Add a new player
+        requestBody:
+            description: JSON containing data for the player
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/Player'
+                    example:
+                        name: Tim
+        responses:
+            201:
+                description: Player added
+                headers:
+                    Location:
+                        description: URI of the player
+                        schema:
+                            type: string
+            409:
+                description: Name already exists
         """
 
-        if not request.mimetype == "application/json":
+        if not request.mimetype == JSON:
             raise UnsupportedMediaType
         try:
             validate(request.json, Player.get_schema())
@@ -83,7 +107,11 @@ class PlayerCollection(Resource):
             db.session.rollback()
             name = request.json["name"]
             raise Conflict(description=f"Player with name '{name}' already exists.")
-        return Response(status=201)
+        return Response(
+                status=201,
+                headers={"Location": url_for("api.playeritem", player=player)
+                 }
+        )
 
 class PlayerItem(Resource):
     """

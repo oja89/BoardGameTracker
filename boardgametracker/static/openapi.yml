@@ -15,6 +15,18 @@ components:
         turns:
           description: Number of turns in the match
           type: integer
+    Player:
+      type: object
+      properties:
+        name:
+          description: Name of the player
+          type: string
+    Game:
+      type: object
+      properties:
+        name:
+          description: Name of the game
+          type: string
 
   parameters:
     date:
