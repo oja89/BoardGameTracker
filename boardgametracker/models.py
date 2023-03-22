@@ -284,30 +284,34 @@ class Match(db.Model):
         if not long:
             return {"date": self.date.isoformat()}
 
+
+        # TODO: these results mess up with controls, commented out for now for testing
+
         # get results
-        p_result_list = []
-        t_result_list = []
+        #p_result_list = []
+        #t_result_list = []
         # self.player_result is a PlayerResult class object
-        for i in self.player_result:
-            p_result = i.serialize(long=False)
-            p_result_list.append(p_result)
+        #for i in self.player_result:
+        #    p_result = i.serialize(long=False)
+        #    p_result_list.append(p_result)
         # self.team is a Team_result class object
-        for i in self.team_result:
-            t_result = i.serialize(long=False)
-            t_result_list.append(t_result)
+        # for i in self.team_result:
+        #    t_result = i.serialize(long=False)
+        #   t_result_list.append(t_result)
         return {
             "id": self.id,
             "date": self.date.isoformat(),
             "turns": self.turns,
-            "results": {
-                "player_results": p_result_list,
-                "team_results": t_result_list
-            },
+            #"results": {
+            #    "player_results": p_result_list,
+            #    "team_results": t_result_list
+            #},
 
             # serializers to get more details
-            "game_name": self.game.serialize()["name"],
-            "map_name": self.map.serialize()["name"],
-            "ruleset_name": self.ruleset.serialize()["name"]
+            # use "and" to make it work even if there are nulls
+            "game_name": self.game and self.game.serialize()["name"],
+            "map_name": self.map and self.map.serialize()["name"],
+            "ruleset_name": self.ruleset and self.ruleset.serialize()["name"]
         }
 
     @staticmethod

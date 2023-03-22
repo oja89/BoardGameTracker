@@ -82,9 +82,6 @@ class MatchCollection(Resource):
         tags:
             - match
         description: Add a new match
-        parameters:
-            - $ref: '#/components/parameters/date'
-            - $ref: '#/components/parameters/turns'
         requestBody:
             description: JSON containing data for the match
             content:
@@ -102,11 +99,11 @@ class MatchCollection(Resource):
                         description: URI of the match
                         schema:
                             type: string
-                    example: "asdfadf"
+                        example: "asdfadf"
             400:
                 description: Key error
         """
-        if not request.mimetype == "application/json":
+        if not request.mimetype == JSON:
             raise UnsupportedMediaType
         try:
             validate(request.json, Match.get_schema())
@@ -150,11 +147,12 @@ class MatchItem(Resource):
         """
         # get match, use serializer for data
         db_match = Match.query.filter_by(id=match).first()
+        # this serializer cannot give the results, the controls add them again
         body = BGTBuilder(db_match.serialize(long=True))
         body.add_namespace("BGT", LINK_RELATIONS_URL)
-        body.add_control("self", url_for("api.match", match=body["id"]))
+        body.add_control("self", url_for("api.matchitem", match=body["id"]))
         body.add_control("profile", MATCH_PROFILE)
-        body.add_control_put("edit", "TODO:title", url_for("api.match", match=body["id"]),
+        body.add_control_put("edit", "TODO:title", url_for("api.matchitem", match=body["id"]),
                              schema=Match.get_schema())
         body.add_control_match_collection()
 
@@ -164,14 +162,19 @@ class MatchItem(Resource):
         # TODO: probably need match id into the ctrl-name?
         # TODO: results need their id in the put?
 
-        # if result exists, add route to edit result
-        if body["results"]["player_results"] is not None:
+        body["results"] = []
+
+        # if player_result exists, add route to edit player_result
+        if db_match.player_result is not None:
             # for each "row" in this games results:
-            for row, list in enumerate(body["results"]["player_results"]):
-                body.add_control_put(f"BGT:edit-player-result-{row}",
-                                     f"TODO:edit-pres-title-{row}",
-                                     f"TODO:edit-pres-url-{row}",
-                                     PlayerResult.get_schema())
+            for p_res in db_match.player_result:
+                item = BGTBuilder(p_res.serialize(long=False))
+                item.add_control_put("edit",
+                                 "TODO:title_for_row",
+                                 "TODO:url_edit_row",
+                                PlayerResult.get_schema()
+                                )
+                body["results"].append(item)
 
         # always add "add" control for a row of results
         body.add_control_post("BGT:add-player-result",
@@ -179,19 +182,23 @@ class MatchItem(Resource):
                               "TODO:add-pres-url",
                               PlayerResult.get_schema())
 
-        # if result exists, add route to edit result
-        if body["results"]["team_results"] is not None:
-            for row, list in enumerate(body["results"]["team_results"]):
-                body.add_control_put(f"BGT:edit-team-result-{row}",
-                                     f"TODO:edit-tres-title-{row}",
-                                     f"TODO:edit-tres-url-{row}",
-                                     TeamResult.get_schema())
+        # # if result exists, add route to edit result
+        if db_match.team_result is not None:
+            for t_res in db_match.team_result:
+                item = BGTBuilder(t_res.serialize(long=False))
+                item.add_control_put("edit",
+                                     "TODO:title_for_row",
+                                     "TODO:url_edit_row",
+                                     TeamResult.get_schema()
+                                     )
+                body["results"].append(item)
 
-        # always add "add" control for a row of results
+         # always add "add" control for a row of results
         body.add_control_post("BGT:add-team-result",
                               "TODO:add-tres-title",
                               "TODO:add-tres-url",
-                              TeamResult.get_schema())
+                             TeamResult.get_schema()
+                              )
 
         response = Response(json.dumps(body), 200, mimetype=MASON)
         return response
@@ -202,7 +209,7 @@ class MatchItem(Resource):
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
         """
-        if not request.mimetype == "application/json":
+        if not request.mimetype == JSON:
             raise UnsupportedMediaType
         try:
             validate(request.json, Match.get_schema())
