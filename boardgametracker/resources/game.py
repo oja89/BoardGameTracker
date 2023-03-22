@@ -9,7 +9,7 @@ import json
 from boardgametracker import cache
 from boardgametracker import db
 from boardgametracker.constants import *
-from boardgametracker.models import Game
+from boardgametracker.models import Game, Map, Ruleset
 from boardgametracker.utils import BGTBuilder
 from flask import Response, request, url_for
 from flask_restful import Resource
@@ -129,8 +129,76 @@ class GameItem(Resource):
 
         From exercise 2 material,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
+
+        modified to use MasonBuilder after ex3, and added YAML
+        ---
+        tags:
+            - game
+        description: Get one game
+        responses:
+            200:
+                description: Game and stuff
+                content:
+                    application/json:
+                        example:
+                            - name: Bob
+                              maps:
+                                - Dust
+                                - other
+                              rulesets:
+                                - comp
+                                - arcade
         """
-        return game.serialize()
+
+        body = BGTBuilder(game.serialize(long=True))
+        body.add_namespace("BGT", LINK_RELATIONS_URL)
+        body.add_control("self", url_for("api.gameitem", game=game))
+        body.add_control("profile", PLAYER_PROFILE)
+        body.add_control("collection", url_for("api.gamecollection"))
+        body.add_control_put("edit", "Edit this game", url_for("api.gameitem", game=game), schema=Game.get_schema())
+        body.add_control_delete("Delete this game", url_for("api.gameitem", game=game))
+
+
+        # game and rulesets and controls
+        # needs to pass the game
+        body.add_control_add_map(game)
+        body.add_control_add_ruleset(game)
+
+        # if map(s) exists, add route to edit and delete it
+        if game.map is not None:
+            body["maps"] = []
+            # for each "row" in this games results:
+            for map_ in game.map:
+                item = BGTBuilder(map_.serialize(long=False))
+                item.add_control_put("edit",
+                                 "Edit this map",
+                                 url_for("api.mapitem", game=game, map_=map_.id),
+                                Map.get_schema()
+                                )
+                item.add_control_delete("Delete this map", url_for("api.mapitem", game=game, map_=map_.id))
+                body["maps"].append(item)
+
+        # if ruleset(s) exists, add route to edit and delete it
+        if game.ruleset is not None:
+            body["rulesets"] = []
+            # for each "row" in this games results:
+            for ruleset in game.ruleset:
+                item = BGTBuilder(ruleset.serialize(long=False))
+                item.add_control_put("edit",
+                                 "Edit this ruleset",
+                        url_for("api.rulesetitem", game=game, ruleset=ruleset.id),
+                                Ruleset.get_schema()
+                                )
+                item.add_control_delete("Delete this ruleset",
+                        url_for("api.rulesetitem", game=game, ruleset=ruleset.id)
+                                )
+                body["rulesets"].append(item)
+
+
+
+        response = Response(json.dumps(body), 200, mimetype=MASON)
+
+        return response
 
     def put(self, game):
         """

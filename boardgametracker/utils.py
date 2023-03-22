@@ -151,7 +151,7 @@ class MasonBuilder(dict):
 
     def add_control_delete(self, title, href):
         """
-        Utility method for adding PUT type controls. The control is
+        Utility method for adding DELETE type controls. The control is
         constructed from the method's parameters. Control method is fixed to
         "DELETE", and control's name is read from the class attribute
         *DELETE_RELATION* which needs to be overridden by the child class.
@@ -189,7 +189,7 @@ class BGTBuilder(MasonBuilder):
     def add_control_add_match(self):
         """
         Add a new match
-        leads to Post /api/match/
+        leads to Post /api/matches/
         """
         self.add_control_post(
             ctrl_name="BGT:add-match",
@@ -201,7 +201,7 @@ class BGTBuilder(MasonBuilder):
     def add_control_add_player(self):
         """
         Add a new player
-        leads to Post /api/player/
+        leads to Post /api/players/
         """
         self.add_control_post(
             ctrl_name="BGT:add-player",
@@ -213,13 +213,37 @@ class BGTBuilder(MasonBuilder):
     def add_control_add_game(self):
         """
         Add a new game
-        leads to Post /api/game/
+        leads to Post /api/games/
         """
         self.add_control_post(
             ctrl_name="BGT:add-game",
             href=url_for("api.gamecollection"),
             schema=Game.get_schema(),
             title="Add game"
+        )
+
+    def add_control_add_map(self, game):
+        """
+        Add a new map to a game
+        leads to Post /api/<game:game>/maps/
+        """
+        self.add_control_post(
+            ctrl_name="BGT:add-map",
+            href=url_for("api.mapcollection", game=game),
+            schema=Ruleset.get_schema(),
+            title="Add map"
+        )
+
+    def add_control_add_ruleset(self, game):
+        """
+        Add a new ruleset to a game
+        leads to Post /api/<game:game>/rulesets/
+        """
+        self.add_control_post(
+            ctrl_name="BGT:add-ruleset",
+            href=url_for("api.rulesetcollection", game=game),
+            schema=Ruleset.get_schema(),
+            title="Add ruleset"
         )
 class PlayerConverter(BaseConverter):
     """

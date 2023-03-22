@@ -27,22 +27,22 @@ api.add_resource(GameItem, "/game/<game:game>/")
 
 # 2 routes for map
 api.add_resource(MapCollection,
-                 "/maps/",
+                 #"/maps/",
                  "/game/<game:game>/maps/"
                  )
 api.add_resource(MapItem,
-                 "/map/<map_:map_>/",
-                 "/game/<game:game>/map/<map_:map_>/"
+                 #"/map/<map_:map_>/",
+                 "/game/<game:game>/map/<int:map_>/"
                  )
 
 # 2 routes for rulesets
 api.add_resource(RulesetCollection,
-                 "/rulesets/",
+                 #"/rulesets/",
                  "/game/<game:game>/rulesets/"
                  )
 api.add_resource(RulesetItem,
-                 "/game/<game:game>/ruleset/<ruleset:ruleset>/",
-                 "/ruleset/<ruleset:ruleset>/"
+                #"/ruleset/<ruleset:ruleset>/",
+                 "/game/<game:game>/ruleset/<int:ruleset>/"
                  )
 
 api.add_resource(MatchCollection, "/matches/")
