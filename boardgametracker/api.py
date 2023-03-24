@@ -4,6 +4,9 @@ Creating of the api
  from sensorhub example
 https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/api.py''"""
 
+from flask import Blueprint
+from flask_restful import Api
+
 from boardgametracker.resources.game import GameCollection, GameItem
 from boardgametracker.resources.map import MapCollection, MapItem
 from boardgametracker.resources.match import MatchCollection, MatchItem
@@ -12,8 +15,6 @@ from boardgametracker.resources.player_result import PlayerResultCollection
 from boardgametracker.resources.ruleset import RulesetCollection, RulesetItem
 from boardgametracker.resources.team import TeamCollection, TeamItem
 from boardgametracker.resources.team_result import TeamResultCollection
-from flask import Blueprint
-from flask_restful import Api
 
 api_bp = Blueprint("api", __name__, url_prefix="/api")
 api = Api(api_bp)

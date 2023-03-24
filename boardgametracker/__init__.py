@@ -10,11 +10,12 @@ http://flask.pocoo.org/docs/1.0/tutorial/factory/#the-application-factory
 
 import os
 
-from boardgametracker.constants import *
+from flasgger import Swagger
 from flask import Flask
 from flask_caching import Cache
 from flask_sqlalchemy import SQLAlchemy
-from flasgger import Swagger, swag_from
+
+from boardgametracker.constants import *
 
 db = SQLAlchemy()
 cache = Cache()

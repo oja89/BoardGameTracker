@@ -4,6 +4,10 @@ Converters for URL calls
 from example
 https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/utils.py"""
 
+from flask import url_for
+from werkzeug.exceptions import NotFound
+from werkzeug.routing import BaseConverter
+
 from boardgametracker.models import (
     Player,
     Team,
@@ -12,9 +16,6 @@ from boardgametracker.models import (
     Ruleset,
     Match
 )
-from flask import url_for
-from werkzeug.exceptions import NotFound
-from werkzeug.routing import BaseConverter
 
 
 class MasonBuilder(dict):

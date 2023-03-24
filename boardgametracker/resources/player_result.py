@@ -5,9 +5,10 @@ from sensorhub example
 https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
 """
 
+from flask_restful import Resource
+
 from boardgametracker import cache
 from boardgametracker.models import PlayerResult
-from flask_restful import Resource
 
 
 class PlayerResultCollection(Resource):
