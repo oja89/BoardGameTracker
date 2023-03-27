@@ -4,10 +4,14 @@ Functions for map class objects
 from sensorhub example
 https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
 """
+import json
+
 from boardgametracker import cache
 from boardgametracker import db
-from boardgametracker.models import Map
-from flask import Response, request, abort
+from boardgametracker.constants import *
+from boardgametracker.models import Map, Game
+from boardgametracker.utils import BGTBuilder
+from flask import Response, request, abort, url_for
 from flask_restful import Resource
 from jsonschema import validate, ValidationError
 from sqlalchemy.exc import IntegrityError
@@ -20,39 +24,81 @@ class MapCollection(Resource):
     """
 
     @cache.cached(timeout=5)
-    def get(self, game=None):
+    def get(self, game):
         """
-        Get all maps
-        If game given, all for that game
+        Get all maps for the game given
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
+        
+        ---
+        tags:
+            - map
+        description: Get all maps for one game
+        parameters:
+            - $ref: '#/components/parameters/game_name'
+        responses:
+            200:
+                description: List of maps
+                content:
+                    application/json:
+                        example:
+                            - name: Dust
+                            - name: Verdun
         """
-        data_object = []
 
-        # do the query for all
-        if game is None:
-            maps = Map.query.all()
+        body = BGTBuilder()
+        body.add_namespace("BGT", LINK_RELATIONS_URL)
+        body.add_control("self", url_for("api.mapcollection", game=game))
+        body.add_control_add_map(game)  #NOT SURE IF THIS IS CORRECT!
+        body["items"] = []
 
-        # do the query for given game
-        else:
-            game_id = game.serialize(long=True)["id"]
-            maps = Map.query.filter_by(game_id=game_id)
+        #for map_ in Map.query.filter_by(game_id=db_game.id):
+        for map_ in game.map:
+            # use serializer and BGTBuilder
+            item = BGTBuilder(map_.serialize(long=True))
+            # create controls for all items
+            item.add_control("self", url_for("api.mapitem", game=game.name, map_=map_.id))
+            item.add_control("profile", MAP_PROFILE)
+            body["items"].append(item)
 
-        for map_ in maps:
-            # use serializer
-            data_object.append(map_.serialize(long=True))
+        response = Response(json.dumps(body), 200, mimetype=MASON)
 
-        response = data_object
+        return response
 
-        return response, 200
-
-    def post(self, game=None):
+    def post(self, game):
         """
         Add a new map
         Cannot add a map without a game
 
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
+        
+        ---
+        tags:
+            - map
+        description: Add a new map
+        parameters:
+            - $ref: '#/components/parameters/game_name'
+        requestBody:
+            description: JSON containing data for the map
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/Map'
+                    example:
+                        name: Sauna
+                        game_id: 1
+        responses:
+            201:
+                description: Map added
+                headers:
+                    Location:
+                        description: URI of the match
+                        schema:
+                            type: string
+                        example: "asdfadf"
+            400:
+                description: Key error
         """
         if not request.mimetype == "application/json":
             raise UnsupportedMediaType

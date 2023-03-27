@@ -230,7 +230,7 @@ class BGTBuilder(MasonBuilder):
         self.add_control_post(
             ctrl_name="BGT:add-map",
             href=url_for("api.mapcollection", game=game),
-            schema=Ruleset.get_schema(),
+            schema=Map.get_schema(),
             title="Add map"
         )
 

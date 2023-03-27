@@ -27,6 +27,13 @@ components:
         name:
           description: Name of the game
           type: string
+    Map:
+      type: object
+      properties:
+        name:
+          description: Name of the map
+          type: string
+      
 
   parameters:
     date:
