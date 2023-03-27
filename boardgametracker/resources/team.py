@@ -18,6 +18,7 @@ from boardgametracker.constants import JSON, MASON, TEAM_PROFILE, LINK_RELATIONS
 from boardgametracker.models import Team
 from boardgametracker.utils import BGTBuilder
 
+
 class TeamCollection(Resource):
     """
     Collection of teams
@@ -45,6 +46,7 @@ class TeamCollection(Resource):
         body.add_namespace("BGT", LINK_RELATIONS_URL)
         body.add_control("self", url_for("api.teamcollection"))
         body.add_control_all_teams()
+        body.add_control_add_team()
         body["items"] = []
 
         for team in Team.query.all():
@@ -138,7 +140,7 @@ class TeamItem(Resource):
         body.add_namespace("BGT", LINK_RELATIONS_URL)
         body.add_control("self", url_for("api.teamitem", team=team))
         body.add_control("profile", TEAM_PROFILE)
-        body.add_control("collection", url_for("api.teamcollection", team=team))
+        body.add_control("collection", url_for("api.teamcollection"))
         body.add_control_put("edit", "Edit this team", \
         url_for("api.teamitem", team=team), schema=Team.get_schema())
         body.add_control_delete("Delete this team", url_for("api.teamitem", team=team))
