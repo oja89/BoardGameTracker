@@ -58,7 +58,7 @@ class RulesetCollection(Resource):
             # use serializer and BGTBuilder
             item = BGTBuilder(ruleset.serialize(long=True))
             # create controls for all items
-            item.add_control("self", url_for("api.rulesetitem", game=game.name, ruleset=ruleset.id))
+            item.add_control("self", url_for("api.rulesetitem", game=game, ruleset=ruleset))
             item.add_control("profile", RULESET_PROFILE)
             body["items"].append(item)
 
