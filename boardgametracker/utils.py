@@ -184,7 +184,7 @@ class BGTBuilder(MasonBuilder):
         leads to GET /api/matches/
         """
         self.add_control_get(
-            ctrl_name="BGT:matches-all",
+            ctrl_name="BGT:all-matches",
             href=url_for("api.matchcollection"),
             title="All matches"
         )
@@ -222,6 +222,29 @@ class BGTBuilder(MasonBuilder):
             href=url_for("api.playercollection"),
             schema=Player.get_schema(),
             title="Add player"
+        )
+
+    def add_control_all_teams(self):
+        """
+        Get all teams
+        leads to GET /api/teams/
+        """
+        self.add_control_get(
+            ctrl_name="BGT:all-teams",
+            href=url_for("api.teamcollection"),
+            title="All teams"
+        )
+
+    def add_control_add_team(self):
+        """
+        Add a new team
+        leads to POST /api/teams/
+        """
+        self.add_control_post(
+            ctrl_name="BGT:add-team",
+            href=url_for("api.teamcollection"),
+            schema=Team.get_schema(),
+            title="Add team"
         )
 
     def add_control_all_games(self):
@@ -293,28 +316,6 @@ class BGTBuilder(MasonBuilder):
             title="Add ruleset"
         )
 
-    def add_control_all_teams(self):
-        """
-        Get all teams
-        leads to GET /api/teams/
-        """
-        self.add_control_get(
-            ctrl_name="BGT:all-teams",
-            href=url_for("api.teamcollection"),
-            title="All teams"
-        )
-
-    def add_control_add_team(self):
-        """
-        Add a new team
-        leads to POST /api/teams/
-        """
-        self.add_control_post(
-            ctrl_name="BGT:add-team",
-            href=url_for("api.teamcollection"),
-            schema=Team.get_schema(),
-            title="Add team"
-        )
 
     def add_control_get_match(self, match):
         """
