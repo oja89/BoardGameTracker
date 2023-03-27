@@ -12,7 +12,6 @@ from boardgametracker.constants import *
 from boardgametracker.models import Map, Game
 from boardgametracker.utils import BGTBuilder
 from flask import Response, request, abort, url_for
-from flask import Response, request, abort
 from flask_restful import Resource
 from jsonschema import validate, ValidationError
 from sqlalchemy.exc import IntegrityError
@@ -82,8 +81,6 @@ class MapCollection(Resource):
         tags:
             - map
         description: Add a new map
-        parameters:
-            - $ref: '#/components/parameters/game_name'
         requestBody:
             description: JSON containing data for the map
             content:

@@ -4,8 +4,12 @@ Functions for ruleset class objects
 from sensorhub example
 https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
 """
-from flask import Response, request, abort
+import json
+
+from flask import Response, request, abort, url_for
 from flask_restful import Resource
+from boardgametracker.constants import *
+from boardgametracker.utils import BGTBuilder
 from jsonschema import validate, ValidationError
 from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
@@ -20,32 +24,47 @@ class RulesetCollection(Resource):
     Collection of rulesets
     """
     @cache.cached(timeout=5)
-    def get(self, game=None):
+    def get(self, game):
         """
         Get all rulesets
         If game given, all for that game
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
+        
+        ---
+        tags:
+            - rulesets
+        description: Get all rulesets for one game
+        parameters:
+            - $ref: '#/components/parameters/game_name'
+        responses:
+            200:
+                description: List of rulesets
+                content:
+                    application/json:
+                        example:
+                            - name: Competitive
+                            - name: Wingman
         """
-        data_object = []
 
-        # do the query for all
-        if game is None:
-            rulesets = Ruleset.query.all()
-
-        # do the query for given game
-        else:
-            game_id = game.serialize(long=True)["id"]
-            rulesets = Ruleset.query.filter_by(game_id=game_id)
+        body = BGTBuilder()
+        body.add_namespace("BGT", LINK_RELATIONS_URL)
+        body.add_control("self", url_for("api.rulesetcollection", game=game))
+        body.add_control_add_ruleset(game) 
+        body["items"] = []
 
         # append objects to list
-        for ruleset in rulesets:
-            # use serializer
-            data_object.append(ruleset.serialize(long=True))
+        for ruleset in game.ruleset:
+            # use serializer and BGTBuilder
+            item = BGTBuilder(ruleset.serialize(long=True))
+            # create controls for all items
+            item.add_control("self", url_for("api.rulesetitem", game=game.name, ruleset=ruleset.id))
+            item.add_control("profile", RULESET_PROFILE)
+            body["items"].append(item)
 
-        response = data_object
+        response = Response(json.dumps(body), 200, mimetype=MASON)
 
-        return response, 200
+        return response
 
     def post(self, game=None):
         """
