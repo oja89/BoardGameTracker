@@ -5,14 +5,15 @@ from sensorhub example
 https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
 """
 
-from boardgametracker import cache
-from boardgametracker import db
-from boardgametracker.models import Team
 from flask import Response, request
 from flask_restful import Resource
 from jsonschema import validate, ValidationError
 from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
+
+from boardgametracker import cache
+from boardgametracker import db
+from boardgametracker.models import Team
 
 
 class TeamCollection(Resource):

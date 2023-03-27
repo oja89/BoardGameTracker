@@ -10,8 +10,9 @@ https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhu
 import datetime
 
 import click
-from boardgametracker import db
 from flask.cli import with_appcontext
+
+from boardgametracker import db
 
 
 class Player(db.Model):

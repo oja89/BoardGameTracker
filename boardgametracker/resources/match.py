@@ -7,15 +7,16 @@ https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhu
 import json
 from datetime import datetime
 
-from boardgametracker import db, cache
-from boardgametracker.constants import *
-from boardgametracker.models import Match, PlayerResult, TeamResult
-from boardgametracker.utils import BGTBuilder
 from flask import Response, request, abort, url_for
 from flask_restful import Resource
 from jsonschema import validate, ValidationError
 from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
+
+from boardgametracker import db, cache
+from boardgametracker.constants import *
+from boardgametracker.models import Match, PlayerResult, TeamResult
+from boardgametracker.utils import BGTBuilder
 
 
 class MatchCollection(Resource):
