@@ -42,7 +42,7 @@ def create_app(test_config=None):
         "uiversion": 3
     }
 
-    swagger = Swagger(app, template_file="static/openapi.yml")
+    swagger = Swagger(app, template_file="doc/openapi.yml")
 
     if test_config is None:
         app.config.from_pyfile("config.py", silent=True)
