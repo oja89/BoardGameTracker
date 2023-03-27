@@ -6,17 +6,20 @@ https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhu
 """
 import json
 
-from flask import Response, request, abort, url_for
-from flask_restful import Resource
-from boardgametracker.constants import *
-from boardgametracker.utils import BGTBuilder
-from jsonschema import validate, ValidationError
 from sqlalchemy.exc import IntegrityError
+from flask import Response, request, abort, url_for
+from jsonschema import validate, ValidationError
 from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
+from flask_restful import Resource
 
+from boardgametracker.constants import JSON, MASON, RULESET_PROFILE, LINK_RELATIONS_URL
+from boardgametracker.utils import BGTBuilder
 from boardgametracker import cache
 from boardgametracker import db
 from boardgametracker.models import Ruleset
+
+
+
 
 
 class RulesetCollection(Resource):
@@ -30,7 +33,7 @@ class RulesetCollection(Resource):
         If game given, all for that game
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
-        
+
         ---
         tags:
             - ruleset
@@ -50,7 +53,7 @@ class RulesetCollection(Resource):
         body = BGTBuilder()
         body.add_namespace("BGT", LINK_RELATIONS_URL)
         body.add_control("self", url_for("api.rulesetcollection", game=game))
-        body.add_control_all_rulesets(game) 
+        body.add_control_all_rulesets(game)
         body["items"] = []
 
         # append objects to list
@@ -72,7 +75,7 @@ class RulesetCollection(Resource):
         Cannot add a ruleset without a game
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
-        
+
         ---
         tags:
             - ruleset
@@ -100,7 +103,7 @@ class RulesetCollection(Resource):
             400:
                 description: Key error
         """
-        if not request.mimetype == "application/json":
+        if not request.mimetype == JSON:
             raise UnsupportedMediaType
 
         if game is None:
@@ -139,7 +142,7 @@ class RulesetItem(Resource):
         (Game can be in the path, but doesn't make difference)
         From exercise 2 material,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
-        
+
         ---
         tags:
             - ruleset
@@ -157,14 +160,27 @@ class RulesetItem(Resource):
                             - game_id: 1
         """
 
-        return ruleset.serialize(long=True)
+        body = BGTBuilder()
+        body["item"] = BGTBuilder(ruleset.serialize(long=True))
+        body.add_namespace("BGT", LINK_RELATIONS_URL)
+        body.add_control("self", url_for("api.rulesetitem", game=game, ruleset=ruleset))
+        body.add_control("profile", RULESET_PROFILE)
+        body.add_control("collection", url_for("api.rulesetcollection", game=game))
+        body.add_control_put("edit", "Edit this ruleset", url_for("api.rulesetitem",\
+        game=game, ruleset=ruleset), schema=Ruleset.get_schema())
+        body.add_control_delete("Delete this ruleset",\
+        url_for("api.rulesetitem", game=game, ruleset=ruleset))
+
+        response = Response(json.dumps(body), 200, mimetype=MASON)
+
+        return response
 
     def put(self, game, ruleset):
         """
         Change information of a ruleset
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
-        
+
         ---
         tags:
             - ruleset
@@ -184,7 +200,7 @@ class RulesetItem(Resource):
             204:
                 description: Map information changed
         """
-        if not request.mimetype == "application/json":
+        if not request.mimetype == JSON:
             raise UnsupportedMediaType
         try:
             validate(request.json, Ruleset.get_schema())
@@ -205,7 +221,7 @@ class RulesetItem(Resource):
         Delete a ruleset
         From
         https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
-        
+
         ---
         tags:
             - ruleset
