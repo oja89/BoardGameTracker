@@ -8,6 +8,8 @@ http://flask.pocoo.org/docs/1.0/tutorial/factory/#the-application-factory
 """
 
 import os
+from flask import Response
+import json
 
 from flasgger import Swagger
 from flask import Flask
@@ -15,6 +17,7 @@ from flask_caching import Cache
 from flask_sqlalchemy import SQLAlchemy
 
 from boardgametracker.constants import *
+
 
 db = SQLAlchemy()
 cache = Cache()
@@ -100,6 +103,16 @@ def create_app(test_config=None):
         """
         Index page
         """
-        return "Index page for BoardgameTracker"
+        body = BGTBuilder()
+        body.add_namespace("BGT", LINK_RELATIONS_URL)
+        body.add_control_match_collection()
+        body.add_control_all_players()
+        body.add_control_all_teams()
+        body.add_control_all_games()
+
+        response = Response(json.dumps(body), 200, mimetype=MASON)
+
+
+        return response
 
     return app

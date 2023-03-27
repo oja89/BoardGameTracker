@@ -224,6 +224,17 @@ class BGTBuilder(MasonBuilder):
             title="Add player"
         )
 
+    def add_control_all_games(self):
+        """
+        Get all games
+        leads to GET /api/games/
+        """
+        self.add_control_get(
+            ctrl_name="BGT:all-games",
+            href=url_for("api.gamecollection"),
+            title="All games"
+        )
+
     def add_control_add_game(self):
         """
         Add a new game

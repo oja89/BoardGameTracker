@@ -50,6 +50,7 @@ class GameCollection(Resource):
         body = BGTBuilder()
         body.add_namespace("BGT", LINK_RELATIONS_URL)
         body.add_control("self", url_for("api.gamecollection"))
+        body.add_control_all_games()
         body.add_control_add_game()
         body["items"] = []
 
