@@ -128,8 +128,7 @@ class MatchCollection(Resource):
 
         return Response(status=201, headers={
             "Location": url_for("api.matchitem", match=match)
-                }
-            )
+                })
 
 
 class MatchItem(Resource):
@@ -145,6 +144,29 @@ class MatchItem(Resource):
 
         Added also Mason stuff from
         https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
+
+        ---
+        tags:
+            - match
+        description: Get one match
+        parameters:
+            - $ref: '#/components/parameters/match_id'
+        responses:
+            200:
+                description: Match's information
+                content:
+                    application/json:
+                        example:
+                            - date: 2008-08-12T12:20:30
+                              turns: 5
+                              game_name: CS:GO
+                              map_name: Sauna
+                              ruleset_name: Gungame
+                              player_results:
+                                player: John
+                                team: Foxes
+                                points: 20
+                              team_results:
         """
         # this serializer cannot give the results, the controls add them again
         body = BGTBuilder(match.serialize(long=True))
@@ -166,10 +188,10 @@ class MatchItem(Resource):
             for p_res in match.player_result:
                 item = BGTBuilder(p_res.serialize(long=False))
                 item.add_control_put("edit",
-                                 "Edit this row of playerresults",
-                                 url_for("api.playerresultitem", p_res=p_res, match=match),
-                                PlayerResult.get_schema()
-                                )
+                                     "Edit this row of playerresults",
+                                     url_for("api.playerresultitem", p_res=p_res, match=match),
+                                     PlayerResult.get_schema()
+                                     )
                 body["player_results"].append(item)
 
         # always add "add" control for a row of results
@@ -191,7 +213,7 @@ class MatchItem(Resource):
                                      )
                 body["team_results"].append(item)
 
-         # always add "add" control for a row of results
+        # always add "add" control for a row of results
         # this is not inside results, should it be?
         body.add_control_post("BGT:add-team-result",
                               "Add a row of teamresults",
@@ -207,6 +229,36 @@ class MatchItem(Resource):
         Change information of a match
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
+
+        ---
+        tags:
+            - match
+        description: Modify a match
+        parameters:
+            - $ref: '#/components/parameters/match_id'
+        requestBody:
+            description: JSON containing new data for the match
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/Match'
+                    example:
+                        date: "2008-08-12T12:20:30"
+                        turns: 20
+                        game_id: 2
+                        ruleset_id: 1
+                        map_id: 5
+        responses:
+            204:
+                description: Match modified, return new URI
+                headers:
+                    Location:
+                        description: URI of the match
+                        schema:
+                            type: string
+                        example: "/api/Game/3"
+            409:
+                description: Integrity error
         """
         if not request.mimetype == JSON:
             raise UnsupportedMediaType
@@ -219,6 +271,9 @@ class MatchItem(Resource):
         # TODO: and game?
         match.date = datetime.fromisoformat(request.json["date"])
         match.turns = request.json["turns"]
+        match.game_id = request.json["game_id"]
+        match.ruleset_id = request.json["ruleset_id"]
+        match.map_id = request.json["map_id"]
 
         try:
             db.session.commit()
@@ -226,14 +281,28 @@ class MatchItem(Resource):
             db.session.rollback()
             raise Conflict(409)
 
-        return Response(status=204)
+        return Response(status=204, headers={
+            "Location": url_for("api.matchitem", match=match)
+                }
+                        )
 
     def delete(self, match):
         """
         Delete a match
         From
         https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
+
+        ---
+        tags:
+            - match
+        description: Delete a match
+        parameters:
+            - $ref: '#/components/parameters/match_id'
+        responses:
+            204:
+                description: Match deleted, nothing to return
         """
+
         db.session.delete(match)
         db.session.commit()
 

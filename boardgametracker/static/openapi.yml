@@ -64,7 +64,7 @@ components:
 
   parameters:
     match_id:
-      description: Match, needed for results
+      description: Match id
       in: path
       name: match
       required: true
