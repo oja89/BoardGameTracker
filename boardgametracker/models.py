@@ -379,10 +379,13 @@ class PlayerResult(db.Model):
             }
 
         return {
+            "id": self.id,
             "points": self.points,
             "match_id": self.match_id,
             "player_id": self.player_id,
+            "player": self.player.serialize()["name"],
             "team_id": self.team_id,
+            "team": self.team_id and self.team.serialize()["name"]
         }
 
     @staticmethod
@@ -392,14 +395,25 @@ class PlayerResult(db.Model):
         """
         schema = {
             "type": "object",
-            "required": ["points"]
+            "required": ["points", "player_id", "team_id"]
         }
         props = schema["properties"] = {}
         props["points"] = {
             "description": "Player's points",
             "type": "number"
         }
-
+        props["player_id"] = {
+            "description": "ID of player",
+            "type": "number"
+        }
+        #props["match_id"] = {
+        #    "description": "ID of match",
+        #    "type": "number"
+        #}
+        props["team_id"] = {
+            "description": "ID of team",
+            "type": "number"
+        }
         return schema
 
 

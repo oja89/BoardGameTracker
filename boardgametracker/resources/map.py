@@ -92,7 +92,6 @@ class MapCollection(Resource):
                         $ref: '#/components/schemas/Map'
                     example:
                         name: Sauna
-                        game_id: 1
         responses:
             201:
                 description: Map added
@@ -112,8 +111,6 @@ class MapCollection(Resource):
             # check the correct error message
             # game needs to exist
             abort(400)
-        else:
-            game_id = game.serialize(long=True)["id"]
 
         try:
             validate(request.json, Map.get_schema())
@@ -122,7 +119,7 @@ class MapCollection(Resource):
         try:
             map_ = Map(
                 name=request.json["name"],
-                game_id=game_id
+                game_id=game.id
             )
             db.session.add(map_)
             db.session.commit()
@@ -130,7 +127,10 @@ class MapCollection(Resource):
             db.session.rollback()
             abort(400)
 
-        return Response(status=201)
+        return Response(
+            status=201,
+            headers={"Location": url_for("api.mapitem", game=game, map_=map_)}
+        )
 
 
 class MapItem(Resource):
