@@ -4,11 +4,15 @@ Functions for player_result class objects
 from sensorhub example
 https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
 """
+import json
 
+from flask import Response, request, url_for
 from flask_restful import Resource
 
 from boardgametracker import cache
 from boardgametracker.models import PlayerResult
+from boardgametracker.utils import BGTBuilder
+from boardgametracker.constants import *
 
 
 class PlayerResultCollection(Resource):
@@ -16,7 +20,7 @@ class PlayerResultCollection(Resource):
     Collection of player_results
     """
     @cache.cached(timeout=5)
-    def get(self, match=None, player=None):
+    def get(self, match):
         """
         Get all results
         If match is given, all for that match
@@ -25,27 +29,33 @@ class PlayerResultCollection(Resource):
 
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
+
+        ---
+        tags:
+            - results
+        description: Get results for a match
+
         """
-        data_object = []
 
-        # do the query for all
-        if player is None and match is None:
-            p_results = PlayerResult.query.all()
+        body = BGTBuilder()
+        body.add_namespace("BGT", LINK_RELATIONS_URL)
+        body.add_control("self", url_for("api.gamecollection"))
+        body["items"] = []
 
-        # do the query for given player
-        elif match is None:
-            player_id = player.serialize(long=True)["id"]
-            p_results = PlayerResult.query.filter_by(player_id=player_id)
-        elif player is None:
-            match_id = match.serialize(long=True)["id"]
-            p_results = PlayerResult.query.filter_by(match_id=match_id)
+        # get results for match
 
-        for result in p_results:
-            data_object.append(result.serialize(long=True))
+        for result in match.player_result:
+            item = BGTBuilder(result.serialize(long=True))
+            item.add_control("self", url_for("api.playerresultitem", match=match, p_res=result))
+            item.add_control("profile", PLAYER_RESULT_PROFILE)
+            body["items"].append(item)
 
-        response = data_object
+        response = Response(json.dumps(body), 200, mimetype=MASON)
 
-        return response, 200
+        return response
+
+    def post(self, match=None):
+        pass
 
 class PlayerResultItem(Resource):
     """

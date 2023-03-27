@@ -383,8 +383,6 @@ class PlayerResult(db.Model):
             "match_id": self.match_id,
             "player_id": self.player_id,
             "team_id": self.team_id,
-            # use match-serializer
-            "match_info": self.match.serialize(long=True)
         }
 
     @staticmethod
