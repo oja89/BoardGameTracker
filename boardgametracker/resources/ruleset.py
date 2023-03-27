@@ -128,8 +128,11 @@ class RulesetCollection(Resource):
             abort(400)
         # ruleset names are not unique, no need to test that
 
-        return Response(status=201)
-
+        return Response(
+            status=201,
+            headers={"Location": url_for("api.rulesetitem", game=game, ruleset=ruleset)
+                     }
+        )
 class RulesetItem(Resource):
     """
     One item of ruleset

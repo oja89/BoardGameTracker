@@ -107,7 +107,12 @@ class TeamCollection(Resource):
             db.session.rollback()
             name = request.json["name"]
             raise Conflict(description=f"Team with name '{name}' already exists.")
-        return Response(status=201)
+
+        return Response(
+            status=201,
+            headers={"Location": url_for("api.teamitem", team=team)
+                     }
+        )
 
 class TeamItem(Resource):
     """

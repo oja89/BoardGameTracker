@@ -99,3 +99,10 @@ components:
       required: true
       schema:
         type: string
+    player_name:
+      description: Name of an existing player
+      in: path
+      name: player
+      required: true
+      schema:
+        type: string

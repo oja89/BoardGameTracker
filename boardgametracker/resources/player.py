@@ -47,6 +47,7 @@ class PlayerCollection(Resource):
         body = BGTBuilder()
         body.add_namespace("BGT", LINK_RELATIONS_URL)
         body.add_control("self", url_for("api.playercollection"))
+        body.add_control_all_players()
         body.add_control_add_player()
         body["items"] = []
 
@@ -123,14 +124,61 @@ class PlayerItem(Resource):
         Get information about a player
         From exercise 2 material,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
+        
+        ---
+        tags:
+            - player
+        description: Get one player
+        parameters:
+            - $ref: '#/components/parameters/player_name'
+        responses:
+            200:
+                description: Player's information
+                content:
+                    application/json:
+                        example:
+                            - name: John
         """
-        return player.serialize(long=True)
+
+        body = BGTBuilder()
+        body["item"] = BGTBuilder(player.serialize(long=True))
+        body.add_namespace("BGT", LINK_RELATIONS_URL)
+        body.add_control("self", url_for("api.playeritem", player=player))
+        body.add_control("profile", PLAYER_PROFILE)
+        body.add_control("collection", url_for("api.playercollection"))
+        body.add_control_put("edit", "Edit this player", \
+        url_for("api.playeritem", player=player), schema=Player.get_schema())
+        body.add_control_delete("Delete this player", url_for("api.playeritem", player=player))
+
+        response = Response(json.dumps(body), 200, mimetype=MASON)
+
+        return response
 
     def put(self, player):
         """
         Change information of a player
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
+        
+        ---
+        tags:
+            - player
+        description: Modify player information
+        parameters:
+            - $ref: '#/components/parameters/player_name'
+        requestBody:
+            description: JSON containing new data for the player
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/Player'
+                    example:
+                        name: Nick
+        responses:
+            204:
+                description: Player information changed
+            409:
+                description: Integrity error
         """
         if not request.mimetype == "application/json":
             raise UnsupportedMediaType
@@ -153,6 +201,17 @@ class PlayerItem(Resource):
         Delete a player
         From
         https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
+        
+        ---
+        tags:
+            - player
+        description: Delete a player
+        parameters:
+            - $ref: '#/components/parameters/player_name'
+        responses:
+            204:
+                description: Player deleted, nothing to return
+
         """
         db.session.delete(player)
         db.session.commit()

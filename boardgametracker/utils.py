@@ -200,6 +200,16 @@ class BGTBuilder(MasonBuilder):
             schema=Match.get_schema(),
             title="Add match"
         )
+    def add_control_all_players(self):
+        """
+        Get all game's players
+        leads to GET /api/players/
+        """
+        self.add_control_get(
+            ctrl_name="BGT:all-players",
+            href=url_for("api.playercollection"),
+            title="All players"
+        )
 
     def add_control_add_player(self):
         """
