@@ -45,6 +45,9 @@ class MatchCollection(Resource):
                         example:
                             - date: 31.12.2012T20:30:00
                               turns: 1
+                              game_name: CS:GO
+                              ruleset_name: Competitive
+                              map_name: Dust
         """
 
         body = BGTBuilder()
@@ -92,6 +95,10 @@ class MatchCollection(Resource):
                     example:
                         date: '2022-12-25 00:00:00.000000'
                         turns: 21
+                        game_id: 1
+                        ruleset_id: 1
+                        map_id: 2
+
         responses:
             201:
                 description: Match added
@@ -115,7 +122,11 @@ class MatchCollection(Resource):
         # TODO: game?
         match = Match(
             date=datetime.fromisoformat(request.json["date"]),
-            turns=request.json["turns"]
+            turns=request.json["turns"],
+            game_id=request.json["game_id"],
+            ruleset_id=request.json["ruleset_id"],
+            map_id=request.json["map_id"]
+
         )
         try:
             db.session.add(match)
