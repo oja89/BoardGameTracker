@@ -6,11 +6,6 @@ https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhu
 """
 import json
 
-from boardgametracker import cache
-from boardgametracker import db
-from boardgametracker.constants import *
-from boardgametracker.models import Map, Game
-from boardgametracker.utils import BGTBuilder
 from flask import Response, request, abort, url_for
 from flask_restful import Resource
 from jsonschema import validate, ValidationError
@@ -19,7 +14,9 @@ from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
 
 from boardgametracker import cache
 from boardgametracker import db
+from boardgametracker.constants import *
 from boardgametracker.models import Map
+from boardgametracker.utils import BGTBuilder
 
 
 class MapCollection(Resource):

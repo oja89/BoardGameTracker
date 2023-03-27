@@ -46,3 +46,11 @@ class TeamResultCollection(Resource):
         response = data_object
 
         return response, 200
+
+class TeamResultItem(Resource):
+    """
+    item of team_result
+    """
+    @cache.cached(timeout=5)
+    def get(self, match=None, player=None):
+        pass
