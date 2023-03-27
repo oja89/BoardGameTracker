@@ -50,12 +50,6 @@ Activate the virtual environment
 venv\Scripts\activate.bat
 ```
 
-cd back to root
-```
-cd ..
-cd ..
-```
-
 Install the project in editable mode:
 ```
 pip install -e .
@@ -80,6 +74,16 @@ flask testgen
 Testing with pytest:
 ```
 pytest --cov-report term-missing --cov=boardgametracker
+```
+
+Testing with pylint:
+```
+pylint ./boardgametracker
+```
+
+Starting flask service:
+```
+flask run
 ```
 
 ## Shortcut for venv
