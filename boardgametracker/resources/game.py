@@ -161,11 +161,9 @@ class GameItem(Resource):
         body.add_control_put("edit", "Edit this game", url_for("api.gameitem", game=game), schema=Game.get_schema())
         body.add_control_delete("Delete this game", url_for("api.gameitem", game=game))
 
-
         # add new map, ruleset
         body.add_control_add_map(game)
         body.add_control_add_ruleset(game)
-
 
         # if map(s) exists, add route to edit and delete it
         if game.map is not None:
@@ -174,13 +172,12 @@ class GameItem(Resource):
             for map_ in game.map:
                 item = BGTBuilder(map_.serialize(long=False))
                 item.add_control_put("edit",
-                                 "Edit this map",
-                                 url_for("api.mapitem", game=game, map_=map_),
-                                Map.get_schema()
-                                )
+                                     "Edit this map",
+                                     url_for("api.mapitem", game=game, map_=map_),
+                                     Map.get_schema()
+                                     )
                 item.add_control_delete("Delete this map", url_for("api.mapitem", game=game, map_=map_))
                 body["maps"].append(item)
-
 
         # if ruleset(s) exists, add route to edit and delete it
         if game.ruleset is not None:
@@ -189,15 +186,14 @@ class GameItem(Resource):
             for ruleset in game.ruleset:
                 item = BGTBuilder(ruleset.serialize(long=False))
                 item.add_control_put("edit",
-                                 "Edit this ruleset",
-                        url_for("api.rulesetitem", game=game, ruleset=ruleset),
-                                Ruleset.get_schema()
-                                )
+                                     "Edit this ruleset",
+                                     url_for("api.rulesetitem", game=game, ruleset=ruleset),
+                                     Ruleset.get_schema()
+                                     )
                 item.add_control_delete("Delete this ruleset",
-                        url_for("api.rulesetitem", game=game, ruleset=ruleset)
-                                )
+                                        url_for("api.rulesetitem", game=game, ruleset=ruleset)
+                                        )
                 body["rulesets"].append(item)
-
 
         response = Response(json.dumps(body), 200, mimetype=MASON)
 
@@ -255,7 +251,7 @@ class GameItem(Resource):
         # return the location?
         return Response(status=204, headers={
             "Location": url_for("api.gameitem", game=game)
-                }
+        }
                         )
 
     def delete(self, game):

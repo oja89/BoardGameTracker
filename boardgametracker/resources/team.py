@@ -7,10 +7,10 @@ https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhu
 import json
 
 from flask import Response, request, url_for
+from flask_restful import Resource
 from jsonschema import validate, ValidationError
 from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
-from flask_restful import Resource
 
 from boardgametracker import cache
 from boardgametracker import db
@@ -23,6 +23,7 @@ class TeamCollection(Resource):
     """
     Collection of teams
     """
+
     @cache.cached(timeout=5)
     def get(self):
         """
@@ -59,7 +60,6 @@ class TeamCollection(Resource):
         response = Response(json.dumps(body), 200, mimetype=MASON)
 
         return response
-
 
     def post(self):
         """
@@ -114,10 +114,12 @@ class TeamCollection(Resource):
                      }
         )
 
+
 class TeamItem(Resource):
     """
     One item of team
     """
+
     def get(self, team):
         """
         Get information about a team
@@ -147,7 +149,7 @@ class TeamItem(Resource):
         body.add_control("profile", TEAM_PROFILE)
         body.add_control("collection", url_for("api.teamcollection"))
         body.add_control_put("edit", "Edit this team", \
-        url_for("api.teamitem", team=team), schema=Team.get_schema())
+                             url_for("api.teamitem", team=team), schema=Team.get_schema())
         body.add_control_delete("Delete this team", url_for("api.teamitem", team=team))
 
         response = Response(json.dumps(body), 200, mimetype=MASON)

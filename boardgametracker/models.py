@@ -259,9 +259,9 @@ class Match(db.Model):
     turns = db.Column(db.Integer, nullable=False)
 
     game_id = db.Column(
-                db.Integer,
-                db.ForeignKey("game.id", ondelete="SET NULL")
-                )
+        db.Integer,
+        db.ForeignKey("game.id", ondelete="SET NULL")
+    )
     ruleset_id = db.Column(
         db.Integer,
         db.ForeignKey("ruleset.id", ondelete="SET NULL")
@@ -285,28 +285,10 @@ class Match(db.Model):
         if not long:
             return {"date": self.date.isoformat()}
 
-
-        # TODO: these results mess up with controls, commented out for now for testing
-
-        # get results
-        #p_result_list = []
-        #t_result_list = []
-        # self.player_result is a PlayerResult class object
-        #for i in self.player_result:
-        #    p_result = i.serialize(long=False)
-        #    p_result_list.append(p_result)
-        # self.team is a Team_result class object
-        # for i in self.team_result:
-        #    t_result = i.serialize(long=False)
-        #   t_result_list.append(t_result)
         return {
             "id": self.id,
             "date": self.date.isoformat(),
             "turns": self.turns,
-            #"results": {
-            #    "player_results": p_result_list,
-            #    "team_results": t_result_list
-            #},
 
             # serializers to get more details
             # use "and" to make it work even if there are nulls
@@ -406,10 +388,10 @@ class PlayerResult(db.Model):
             "description": "ID of player",
             "type": "number"
         }
-        #props["match_id"] = {
+        # props["match_id"] = {
         #    "description": "ID of match",
         #    "type": "number"
-        #}
+        # }
         props["team_id"] = {
             "description": "ID of team",
             "type": "number"
@@ -446,16 +428,17 @@ class TeamResult(db.Model):
         """
         if not long:
             return {
-                "team": self.team_id and self.team.serialize()["name"],
+                "team": self.team_id and self.team.name,
                 "points": self.points,
                 "order": self.order
             }
 
         return {
-            "team": self.team_id and self.team.serialize()["name"],
+            "team": self.team_id and self.team.name,
+            "team_id": self.team_id,
             "points": self.points,
             "order": self.order,
-            "match_info": self.match.serialize(long=True)
+            #"match_info": self.match.serialize(long=True)
         }
 
     @staticmethod
@@ -469,11 +452,19 @@ class TeamResult(db.Model):
         }
         props = schema["properties"] = {}
         props["points"] = {
-            "description": "Player points",
+            "description": "Team's points",
             "type": "number"
         }
         props["order"] = {
-            "description": "Order of team",
+            "description": "Finishing order of the team",
+            "type": "number"
+        }
+        props["match_id"] = {
+            "description": "ID of match",
+            "type": "number"
+        }
+        props["team_id"] = {
+            "description": "ID of team",
             "type": "number"
         }
 

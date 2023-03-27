@@ -7,8 +7,9 @@ https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhu
 import json
 
 from flask import Response, request, abort, url_for
-from sqlalchemy.exc import IntegrityError
+from flask_restful import Resource
 from jsonschema import validate, ValidationError
+from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
 
 from boardgametracker import cache
@@ -17,7 +18,6 @@ from boardgametracker.constants import JSON, MASON, MAP_PROFILE, LINK_RELATIONS_
 from boardgametracker.models import Map
 from boardgametracker.utils import BGTBuilder
 
-from flask_restful import Resource
 
 class MapCollection(Resource):
     """
@@ -54,7 +54,7 @@ class MapCollection(Resource):
         body.add_control_add_map(game)
         body["items"] = []
 
-        #for map_ in Map.query.filter_by(game_id=db_game.id):
+        # for map_ in Map.query.filter_by(game_id=db_game.id):
         for map_ in game.map:
             # use serializer and BGTBuilder
             item = BGTBuilder(map_.serialize(long=True))
@@ -165,8 +165,8 @@ class MapItem(Resource):
         body.add_control("self", url_for("api.mapitem", game=game, map_=map_))
         body.add_control("profile", MAP_PROFILE)
         body.add_control("collection", url_for("api.mapcollection", game=game))
-        body.add_control_put("edit", "Edit this map", url_for("api.mapitem", game=game, map_=map_),\
-        schema=Map.get_schema())
+        body.add_control_put("edit", "Edit this map", url_for("api.mapitem", game=game, map_=map_), \
+                             schema=Map.get_schema())
         body.add_control_delete("Delete this map", url_for("api.mapitem", game=game, map_=map_))
 
         response = Response(json.dumps(body), 200, mimetype=MASON)
@@ -232,7 +232,6 @@ class MapItem(Resource):
             204:
                 description: Map deleted, nothing to return
         """
-        print(map_)
         db.session.delete(map_)
         db.session.commit()
 

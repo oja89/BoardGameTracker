@@ -61,6 +61,21 @@ components:
         team_id:
           description: ID of team
           type: integer
+    TeamResult:
+      properties:
+        points:
+          description: Team's points
+          type: number
+        order:
+          description: Finishing order of the team
+          type: integer
+        match_id:
+          in: path
+          description: ID of match
+          type: integer
+        team_id:
+          description: ID of team
+          type: integer
 
   parameters:
     match_id:
@@ -129,3 +144,17 @@ components:
       required: true
       schema:
         type: string
+    player_result_id:
+      description: Row of player results
+      in: path
+      name: player_result
+      required: true
+      schema:
+        type: integer
+    team_result_id:
+      description: Row of team results
+      in: path
+      name: team_result
+      required: true
+      schema:
+        type: integer

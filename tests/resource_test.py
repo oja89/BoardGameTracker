@@ -124,11 +124,11 @@ def _populate_db():
         db.session.add(player)
 
 
-    p_res = PlayerResult(points=100, match_id=1, player_id=1, team_id=1)
-    db.session.add(p_res)
+    player_result = PlayerResult(points=100, match_id=1, player_id=1, team_id=1)
+    db.session.add(player_result)
 
-    t_res = TeamResult(points=1000, order=3, match_id=1, team_id=1)
-    db.session.add(t_res)
+    team_result = TeamResult(points=1000, order=3, match_id=1, team_id=1)
+    db.session.add(team_result)
 
     db.session.commit()
 

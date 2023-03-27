@@ -23,6 +23,7 @@ class PlayerCollection(Resource):
     """
     Collection of players
     """
+
     @cache.cached(timeout=5)
     def get(self):
         """
@@ -110,15 +111,17 @@ class PlayerCollection(Resource):
             name = request.json["name"]
             raise Conflict(description=f"Player with name '{name}' already exists.")
         return Response(
-                status=201,
-                headers={"Location": url_for("api.playeritem", player=player)
-                 }
+            status=201,
+            headers={"Location": url_for("api.playeritem", player=player)
+                     }
         )
+
 
 class PlayerItem(Resource):
     """
     One item of player
     """
+
     def get(self, player):
         """
         Get information about a player
@@ -147,7 +150,7 @@ class PlayerItem(Resource):
         body.add_control("profile", PLAYER_PROFILE)
         body.add_control("collection", url_for("api.playercollection"))
         body.add_control_put("edit", "Edit this player", \
-        url_for("api.playeritem", player=player), schema=Player.get_schema())
+                             url_for("api.playeritem", player=player), schema=Player.get_schema())
         body.add_control_delete("Delete this player", url_for("api.playeritem", player=player))
 
         response = Response(json.dumps(body), 200, mimetype=MASON)

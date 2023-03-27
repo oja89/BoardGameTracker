@@ -6,23 +6,24 @@ https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhu
 """
 import json
 
-from sqlalchemy.exc import IntegrityError
 from flask import Response, request, abort, url_for
-from jsonschema import validate, ValidationError
-from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
 from flask_restful import Resource
+from jsonschema import validate, ValidationError
+from sqlalchemy.exc import IntegrityError
+from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
 
-from boardgametracker.constants import JSON, MASON, RULESET_PROFILE, LINK_RELATIONS_URL
-from boardgametracker.utils import BGTBuilder
 from boardgametracker import cache
 from boardgametracker import db
+from boardgametracker.constants import JSON, MASON, RULESET_PROFILE, LINK_RELATIONS_URL
 from boardgametracker.models import Ruleset
+from boardgametracker.utils import BGTBuilder
 
 
 class RulesetCollection(Resource):
     """
     Collection of rulesets
     """
+
     @cache.cached(timeout=5)
     def get(self, game):
         """
@@ -105,8 +106,8 @@ class RulesetCollection(Resource):
             raise UnsupportedMediaType
 
         if game is None:
-        # check the correct error message
-        # game needs to exist
+            # check the correct error message
+            # game needs to exist
             abort(400)
         else:
             game_id = game.serialize(long=True)["id"]
@@ -133,10 +134,13 @@ class RulesetCollection(Resource):
             headers={"Location": url_for("api.rulesetitem", game=game, ruleset=ruleset)
                      }
         )
+
+
 class RulesetItem(Resource):
     """
     One item of ruleset
     """
+
     def get(self, ruleset, game=None):
         """
         Get information about a ruleset
@@ -167,10 +171,11 @@ class RulesetItem(Resource):
         body.add_control("self", url_for("api.rulesetitem", game=game, ruleset=ruleset))
         body.add_control("profile", RULESET_PROFILE)
         body.add_control("collection", url_for("api.rulesetcollection", game=game))
-        body.add_control_put("edit", "Edit this ruleset", url_for("api.rulesetitem",\
-        game=game, ruleset=ruleset), schema=Ruleset.get_schema())
-        body.add_control_delete("Delete this ruleset",\
-        url_for("api.rulesetitem", game=game, ruleset=ruleset))
+        body.add_control_put("edit", "Edit this ruleset", url_for("api.rulesetitem", \
+                                                                  game=game, ruleset=ruleset),
+                             schema=Ruleset.get_schema())
+        body.add_control_delete("Delete this ruleset", \
+                                url_for("api.rulesetitem", game=game, ruleset=ruleset))
 
         response = Response(json.dumps(body), 200, mimetype=MASON)
 

@@ -7,7 +7,6 @@ which is based on
 http://flask.pocoo.org/docs/1.0/tutorial/factory/#the-application-factory
 """
 
-
 import os
 
 from flasgger import Swagger
@@ -57,8 +56,8 @@ def create_app(test_config=None):
 
     # imports need to be inside the function to prevent circular imports
     # pylint gives bad points but cannot find a better way
-    from boardgametracker import models
-    from boardgametracker import api
+    from . import models
+    from . import api
 
     from boardgametracker.utils import (
         PlayerConverter,
@@ -86,8 +85,8 @@ def create_app(test_config=None):
     app.url_map.converters["ruleset"] = RulesetConverter
     app.url_map.converters["map_"] = MapConverter
     app.url_map.converters["game"] = GameConverter
-    app.url_map.converters["p_res"] = PlayerResultConverter
-    app.url_map.converters["t_res"] = TeamResultConverter
+    app.url_map.converters["player_result"] = PlayerResultConverter
+    app.url_map.converters["team_result"] = TeamResultConverter
 
     # this has to be after converters
     app.register_blueprint(api.api_bp)

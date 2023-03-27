@@ -128,8 +128,8 @@ class MatchCollection(Resource):
 
         return Response(status=201, headers={
             "Location": url_for("api.matchitem", match=match)
-                }
-            )
+        }
+                        )
 
 
 class MatchItem(Resource):
@@ -163,13 +163,13 @@ class MatchItem(Resource):
         if match.player_result is not None:
             body["player_results"] = []
             # for each "row" in this game's results:
-            for p_res in match.player_result:
-                item = BGTBuilder(p_res.serialize(long=False))
+            for player_result in match.player_result:
+                item = BGTBuilder(player_result.serialize(long=False))
                 item.add_control_put("edit",
-                                 "Edit this row of playerresults",
-                                 url_for("api.playerresultitem", p_res=p_res, match=match),
-                                PlayerResult.get_schema()
-                                )
+                                     "Edit this row of playerresults",
+                                     url_for("api.playerresultitem", player_result=player_result, match=match),
+                                     PlayerResult.get_schema()
+                                     )
                 body["player_results"].append(item)
 
         # always add "add" control for a row of results
@@ -182,16 +182,16 @@ class MatchItem(Resource):
         # # if result exists, add route to edit result
         if match.team_result is not None:
             body["team_results"] = []
-            for t_res in match.team_result:
-                item = BGTBuilder(t_res.serialize(long=False))
+            for team_result in match.team_result:
+                item = BGTBuilder(team_result.serialize(long=False))
                 item.add_control_put("edit",
                                      "Edit this row of teamresults",
-                                     url_for("api.teamresultitem", t_res=t_res, match=match),
+                                     url_for("api.teamresultitem", team_result=team_result, match=match),
                                      TeamResult.get_schema()
                                      )
                 body["team_results"].append(item)
 
-         # always add "add" control for a row of results
+        # always add "add" control for a row of results
         # this is not inside results, should it be?
         body.add_control_post("BGT:add-team-result",
                               "Add a row of teamresults",

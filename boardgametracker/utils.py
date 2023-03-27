@@ -200,6 +200,7 @@ class BGTBuilder(MasonBuilder):
             schema=Match.get_schema(),
             title="Add match"
         )
+
     def add_control_all_players(self):
         """
         Get all game's players
@@ -280,7 +281,7 @@ class BGTBuilder(MasonBuilder):
             schema=Ruleset.get_schema(),
             title="Add ruleset"
         )
-        
+
     def add_control_all_teams(self):
         """
         Get all teams
@@ -303,6 +304,7 @@ class BGTBuilder(MasonBuilder):
             schema=Team.get_schema(),
             title="Add team"
         )
+
 
 class PlayerConverter(BaseConverter):
     """
@@ -439,10 +441,10 @@ class PlayerResultConverter(BaseConverter):
         """
         URL to python
         """
-        db_p_res = PlayerResult.query.filter_by(id=value).first()
-        if db_p_res is None:
+        db_player_result = PlayerResult.query.filter_by(id=value).first()
+        if db_player_result is None:
             raise NotFound
-        return db_p_res
+        return db_player_result
 
     def to_url(self, value):
         """
@@ -460,10 +462,10 @@ class TeamResultConverter(BaseConverter):
         """
         URL to python
         """
-        db_t_res = TeamResult.query.filter_by(id=value).first()
-        if db_t_res is None:
+        db_team_result = TeamResult.query.filter_by(id=value).first()
+        if db_team_result is None:
             raise NotFound
-        return db_t_res
+        return db_team_result
 
     def to_url(self, value):
         """
