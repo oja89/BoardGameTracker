@@ -51,8 +51,9 @@ class RulesetCollection(Resource):
         body = BGTBuilder()
         body.add_namespace("BGT", LINK_RELATIONS_URL)
         body.add_control("self", url_for("api.rulesetcollection", game=game))
-        body.add_control_all_rulesets(game)
+        body.add_control_get_game(game)
         body.add_control_add_ruleset(game)
+
         body["items"] = []
 
         # append objects to list

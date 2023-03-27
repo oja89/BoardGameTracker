@@ -53,11 +53,12 @@ class TeamResultCollection(Resource):
         body = BGTBuilder()
         body.add_namespace("BGT", LINK_RELATIONS_URL)
         body.add_control("self", url_for("api.teamresultcollection", match=match))
+        body.add_control_get_match(match)
         body["items"] = []
 
         # get results for match
 
-        for result in match.team:
+        for result in match.team_result:
             item = BGTBuilder(result.serialize(long=True))
             item.add_control("self", url_for("api.teamresultitem", match=match, team_result=result))
             item.add_control("profile", TEAM_RESULT_PROFILE)
@@ -163,6 +164,9 @@ class TeamResultItem(Resource):
         body.add_namespace("BGT", LINK_RELATIONS_URL)
         body.add_control("self", url_for("api.teamresultitem", match=match, team_result=team_result))
         body.add_control("profile", TEAM_RESULT_PROFILE)
+        body.add_control("collection", url_for("api.teamresultcollection", match=match))
+        body.add_control_get_match(match)
+        body.add_control_get_team(team=team_result.team)
         body.add_control_put("edit", "Edit this row",
                              url_for("api.teamresultitem",
                                      match=match,

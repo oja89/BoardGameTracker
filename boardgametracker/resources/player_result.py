@@ -53,6 +53,7 @@ class PlayerResultCollection(Resource):
         body = BGTBuilder()
         body.add_namespace("BGT", LINK_RELATIONS_URL)
         body.add_control("self", url_for("api.playerresultcollection", match=match))
+        body.add_control_get_match(match)
         body["items"] = []
 
         # get results for match
@@ -164,6 +165,9 @@ class PlayerResultItem(Resource):
         body.add_namespace("BGT", LINK_RELATIONS_URL)
         body.add_control("self", url_for("api.playerresultitem", match=match, player_result=player_result))
         body.add_control("profile", PLAYER_RESULT_PROFILE)
+        body.add_control("collection", url_for("api.playerresultcollection", match=match))
+        body.add_control_get_match(match)
+        body.add_control_get_player(player=player_result.player)
         body.add_control_put("edit", "Edit this row",
                              url_for("api.playerresultitem",
                                      match=match,

@@ -15,7 +15,7 @@ from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
 
 from boardgametracker import db, cache
 from boardgametracker.constants import *
-from boardgametracker.models import Match, PlayerResult, TeamResult
+from boardgametracker.models import Match, PlayerResult, TeamResult, Game
 from boardgametracker.utils import BGTBuilder
 
 
@@ -189,6 +189,7 @@ class MatchItem(Resource):
                              "Edit this match",
                              url_for("api.matchitem", match=match),
                              schema=Match.get_schema())
+        body.add_control_get_game(game=match.game)
         body.add_control_match_collection()
 
         # do controls for results

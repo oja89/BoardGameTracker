@@ -15,7 +15,7 @@ from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
 from boardgametracker import cache
 from boardgametracker import db
 from boardgametracker.constants import *
-from boardgametracker.models import Player
+from boardgametracker.models import Player, Match
 from boardgametracker.utils import BGTBuilder
 
 
@@ -152,6 +152,17 @@ class PlayerItem(Resource):
         body.add_control_put("edit", "Edit this player", \
                              url_for("api.playeritem", player=player), schema=Player.get_schema())
         body.add_control_delete("Delete this player", url_for("api.playeritem", player=player))
+
+        # link to the matches the player has played:
+        if player.player_result is not None:
+            body["matches"] = []
+            for row in player.player_result:
+                match = Match.query.filter_by(id=row.match_id).first()
+
+                item = BGTBuilder(match.serialize(long=True))
+                item.add_control("self", url_for("api.matchitem", match=match))
+                item.add_control("profile", MATCH_PROFILE)
+                body["matches"].append(item)
 
         response = Response(json.dumps(body), 200, mimetype=MASON)
 

@@ -14,8 +14,8 @@ from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
 
 from boardgametracker import cache
 from boardgametracker import db
-from boardgametracker.constants import JSON, MASON, TEAM_PROFILE, LINK_RELATIONS_URL
-from boardgametracker.models import Team
+from boardgametracker.constants import *
+from boardgametracker.models import Team, Match
 from boardgametracker.utils import BGTBuilder
 
 
@@ -148,9 +148,21 @@ class TeamItem(Resource):
         body.add_control("self", url_for("api.teamitem", team=team))
         body.add_control("profile", TEAM_PROFILE)
         body.add_control("collection", url_for("api.teamcollection"))
-        body.add_control_put("edit", "Edit this team", \
+        body.add_control_put("edit",
+                             "Edit this team",
                              url_for("api.teamitem", team=team), schema=Team.get_schema())
         body.add_control_delete("Delete this team", url_for("api.teamitem", team=team))
+
+        # link to the matches the team has played:
+        if team.team_result is not None:
+            body["matches"] = []
+            for row in team.team_result:
+                match = Match.query.filter_by(id=row.match_id).first()
+
+                item = BGTBuilder(match.serialize(long=True))
+                item.add_control("self", url_for("api.matchitem", match=match))
+                item.add_control("profile", MATCH_PROFILE)
+                body["matches"].append(item)
 
         response = Response(json.dumps(body), 200, mimetype=MASON)
 

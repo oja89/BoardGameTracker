@@ -305,6 +305,49 @@ class BGTBuilder(MasonBuilder):
             title="Add team"
         )
 
+    def add_control_get_match(self, match):
+        """
+        Go to the match (from results)
+        leads to GET /api/match/<match>
+        """
+        self.add_control_get(
+            ctrl_name="BGT:go-to-match",
+            href=url_for("api.matchitem", match=match),
+            title="Go to match"
+        )
+
+    def add_control_get_game(self, game):
+        """
+        Go to the game (from maps/rulesets)
+        leads to GET /api/game/<game>
+        """
+        self.add_control_get(
+            ctrl_name="BGT:go-to-game",
+            href=url_for("api.gameitem", game=game),
+            title="Go to game"
+        )
+
+    def add_control_get_player(self, player):
+        """
+        Go to player (of a result)
+        leads to GET /api/player/<player>
+        """
+        self.add_control_get(
+            ctrl_name="BGT:go-to-player",
+            href=url_for("api.playeritem", player=player),
+            title="Go to player"
+        )
+
+    def add_control_get_team(self, team):
+        """
+        Go to team (of a result)
+        leads to GET /api/team/<team>
+        """
+        self.add_control_get(
+            ctrl_name="BGT:go-to-team",
+            href=url_for("api.teamitem", team=team),
+            title="Go to team"
+        )
 
 class PlayerConverter(BaseConverter):
     """
