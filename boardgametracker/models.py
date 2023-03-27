@@ -315,7 +315,18 @@ class Match(db.Model):
         props["turns"] = {
             "description": "Match's turns",
             "type": "number"
-
+        }
+        props["game_id"] = {
+            "description":"Game's id",
+            "type":"number"
+        }
+        props["map_id"] = {
+            "description":"Map's id",
+            "type":"number"
+        }
+        props["ruleset_id"] = {
+            "description":"Ruleset's id",
+            "type":"number"
         }
         return schema
 

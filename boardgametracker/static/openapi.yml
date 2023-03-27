@@ -15,6 +15,15 @@ components:
         turns:
           description: Number of turns in the match
           type: integer
+        game_id:
+          description: Game's id
+          type: integer
+        map_id:
+          description: Map's id
+          type: integer
+        ruleset_id:
+          description: Ruleset's id
+          type: integer
     Player:
       type: object
       properties:
@@ -79,7 +88,7 @@ components:
 
   parameters:
     match_id:
-      description: Match, needed for results
+      description: Match id
       in: path
       name: match
       required: true
