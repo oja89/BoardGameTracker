@@ -14,7 +14,9 @@ from boardgametracker.models import (
     Game,
     Map,
     Ruleset,
-    Match
+    Match,
+    PlayerResult,
+    TeamResult
 )
 
 
@@ -410,6 +412,48 @@ class MapConverter(BaseConverter):
         if db_map is None:
             raise NotFound
         return db_map
+
+    def to_url(self, value):
+        """
+        python to URL
+        """
+        return str(value.id)
+
+
+class PlayerResultConverter(BaseConverter):
+    """
+    Converter for player results url
+    """
+
+    def to_python(self, value):
+        """
+        URL to python
+        """
+        db_p_res = PlayerResult.query.filter_by(id=value).first()
+        if db_p_res is None:
+            raise NotFound
+        return db_p_res
+
+    def to_url(self, value):
+        """
+        python to URL
+        """
+        return str(value.id)
+
+
+class TeamResultConverter(BaseConverter):
+    """
+    Converter for team results url
+    """
+
+    def to_python(self, value):
+        """
+        URL to python
+        """
+        db_t_res = TeamResult.query.filter_by(id=value).first()
+        if db_t_res is None:
+            raise NotFound
+        return db_t_res
 
     def to_url(self, value):
         """

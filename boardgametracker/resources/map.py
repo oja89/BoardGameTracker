@@ -10,12 +10,15 @@ from flask import Response, request, abort, url_for
 from sqlalchemy.exc import IntegrityError
 from jsonschema import validate, ValidationError
 from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
+
 from boardgametracker import cache
 from boardgametracker import db
 from boardgametracker.constants import JSON, MASON, MAP_PROFILE, LINK_RELATIONS_URL
 from boardgametracker.models import Map
 from boardgametracker.utils import BGTBuilder
+
 from flask_restful import Resource
+
 
 
 class MapCollection(Resource):

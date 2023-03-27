@@ -1,5 +1,5 @@
 """
-Functions for team_result class objects
+Functions for player_result class objects
 
 from sensorhub example
 https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
@@ -46,3 +46,11 @@ class PlayerResultCollection(Resource):
         response = data_object
 
         return response, 200
+
+class PlayerResultItem(Resource):
+    """
+    item of player_result
+    """
+    @cache.cached(timeout=5)
+    def get(self, match=None, player=None):
+        pass

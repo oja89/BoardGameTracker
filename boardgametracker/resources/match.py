@@ -152,26 +152,22 @@ class MatchItem(Resource):
         body.add_control("self", url_for("api.matchitem", match=match))
         body.add_control("profile", MATCH_PROFILE)
         body.add_control_put("edit",
-                             "TODO:title",
+                             "Edit this match",
                              url_for("api.matchitem", match=match),
                              schema=Match.get_schema())
         body.add_control_match_collection()
 
         # do controls for results
-        # do not use them as their own resource anymore
-        # TODO: change urls, titles, check the ctrl-name
-        # TODO: probably need match id into the ctrl-name?
-        # TODO: results need their id in the put?
 
         # if player_result exists, add route to edit player_result
         if match.player_result is not None:
             body["player_results"] = []
-            # for each "row" in this games results:
+            # for each "row" in this game's results:
             for p_res in match.player_result:
                 item = BGTBuilder(p_res.serialize(long=False))
                 item.add_control_put("edit",
-                                 "TODO:title_for_row",
-                                 "TODO:url_edit_row",
+                                 "Edit this row of playerresults",
+                                 url_for("api.playerresultitem", p_res=p_res, match=match),
                                 PlayerResult.get_schema()
                                 )
                 body["player_results"].append(item)
@@ -179,8 +175,8 @@ class MatchItem(Resource):
         # always add "add" control for a row of results
         # this is not inside results, should it be?
         body.add_control_post("BGT:add-player-result",
-                              "TODO:add-pres-title",
-                              "TODO:add-pres-url",
+                              "Add a row of playerresults",
+                              url_for("api.playerresultcollection", match=match),
                               PlayerResult.get_schema())
 
         # # if result exists, add route to edit result
@@ -189,8 +185,8 @@ class MatchItem(Resource):
             for t_res in match.team_result:
                 item = BGTBuilder(t_res.serialize(long=False))
                 item.add_control_put("edit",
-                                     "TODO:title_for_row",
-                                     "TODO:url_edit_row",
+                                     "Edit this row of teamresults",
+                                     url_for("api.teamresultitem", t_res=t_res, match=match),
                                      TeamResult.get_schema()
                                      )
                 body["team_results"].append(item)
@@ -198,9 +194,9 @@ class MatchItem(Resource):
          # always add "add" control for a row of results
         # this is not inside results, should it be?
         body.add_control_post("BGT:add-team-result",
-                              "TODO:add-tres-title",
-                              "TODO:add-tres-url",
-                             TeamResult.get_schema()
+                              "Add a row of teamresults",
+                              url_for("api.teamresultcollection", match=match),
+                              TeamResult.get_schema()
                               )
 
         response = Response(json.dumps(body), 200, mimetype=MASON)

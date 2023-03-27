@@ -67,6 +67,8 @@ def create_app(test_config=None):
         RulesetConverter,
         MapConverter,
         GameConverter,
+        PlayerResultConverter,
+        TeamResultConverter,
         MasonBuilder,
         BGTBuilder
     )
@@ -84,6 +86,8 @@ def create_app(test_config=None):
     app.url_map.converters["ruleset"] = RulesetConverter
     app.url_map.converters["map_"] = MapConverter
     app.url_map.converters["game"] = GameConverter
+    app.url_map.converters["p_res"] = PlayerResultConverter
+    app.url_map.converters["t_res"] = TeamResultConverter
 
     # this has to be after converters
     app.register_blueprint(api.api_bp)

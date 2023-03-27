@@ -160,11 +160,7 @@ class GameItem(Resource):
         body.add_control_delete("Delete this game", url_for("api.gameitem", game=game))
 
 
-        # TODO: IS THIS THE RIGHT WAY?
-        # game and rulesets and controls
-
-
-        # needs to pass the game
+        # add new map, ruleset
         body.add_control_add_map(game)
         body.add_control_add_ruleset(game)
 
@@ -172,7 +168,7 @@ class GameItem(Resource):
         # if map(s) exists, add route to edit and delete it
         if game.map is not None:
             body["maps"] = []
-            # for each "row" in this games results:
+            # for each "row" in this game's results:
             for map_ in game.map:
                 item = BGTBuilder(map_.serialize(long=False))
                 item.add_control_put("edit",
@@ -187,7 +183,7 @@ class GameItem(Resource):
         # if ruleset(s) exists, add route to edit and delete it
         if game.ruleset is not None:
             body["rulesets"] = []
-            # for each "row" in this games results:
+            # for each "row" in this game's results:
             for ruleset in game.ruleset:
                 item = BGTBuilder(ruleset.serialize(long=False))
                 item.add_control_put("edit",
