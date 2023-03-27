@@ -50,12 +50,6 @@ Activate the virtual environment
 venv\Scripts\activate.bat
 ```
 
-cd back to root
-```
-cd ..
-cd ..
-```
-
 Install the project in editable mode:
 ```
 pip install -e .
