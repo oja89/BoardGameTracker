@@ -151,7 +151,7 @@ def _get_match_json():
     Creates a valid match JSON object to be used for PUT and POST tests.
     """
 
-    return{"date":"2022-12-25", "turns":500, "game_id":1, "ruleset_id":1, ":map_id":1}
+    return{"date":"2022-12-25", "turns":500, "game_id":1, "ruleset_id":1, "map_id":1}
 
 def _get_game_json():
     """
@@ -185,7 +185,7 @@ class TestPlayerCollection():
     """
     Test for PlayerCollection
     """
-    RESOURCE_URL = "/api/player/"
+    RESOURCE_URL = "/api/players/"
 
     def test_get(self, client):
         """
@@ -195,7 +195,7 @@ class TestPlayerCollection():
         assert resp.status_code == 200
         body = json.loads(resp.data)
         assert len(body) == 3
-        for item in body:
+        for item in body["items"]:
             assert "name" in item
 
     def test_post_valid_request(self, client):
@@ -288,7 +288,7 @@ class TestMatchCollection():
     Test for MatchCollection
     """
 
-    RESOURCE_URL = "/api/match/"
+    RESOURCE_URL = "/api/matches/"
 
     def test_get(self, client):
         """
@@ -297,12 +297,10 @@ class TestMatchCollection():
         resp = client.get(self.RESOURCE_URL)
         assert resp.status_code == 200
         body = json.loads(resp.data)
-        assert len(body) == 2
-        for item in body:
+        assert len(body["items"]) == 2
+        for item in body["items"]:
             assert "date" in item
             assert "turns" in item
-            assert "results" in item
-            assert "game_name" in item
             assert "game_name" in item
             assert "map_name" in item
             assert "ruleset_name" in item
@@ -399,7 +397,7 @@ class TestGameCollection():
     Test for GameCollection
     """
 
-    RESOURCE_URL = "/api/game/"
+    RESOURCE_URL = "/api/games/"
 
     def test_get(self, client):
         """
@@ -408,8 +406,8 @@ class TestGameCollection():
         resp = client.get(self.RESOURCE_URL)
         assert resp.status_code == 200
         body = json.loads(resp.data)
-        assert len(body) == 2
-        for item in body:
+        assert len(body["items"]) == 2
+        for item in body["items"]:
             assert "name" in item
 
     def test_post_valid_request(self, client):
@@ -502,8 +500,8 @@ class TestMapCollection():
     Test for MapCollection
     """
 
-    RESOURCE_URL = "/api/map/"
-    RESOURCE_URL_FOR_POST = "/api/game/CS:GO/map/"
+    RESOURCE_URL = "/api/game/CS:GO/maps/"
+    RESOURCE_URL_FOR_POST = "/api/game/CS:GO/maps/"
 
     def test_get(self, client):
         """
@@ -512,16 +510,13 @@ class TestMapCollection():
         resp = client.get(self.RESOURCE_URL)
         assert resp.status_code == 200
         body = json.loads(resp.data)
-        assert len(body) == 4
-        for item in body:
+        # There is 2 CS:GO maps 
+        assert len(body["items"]) == 2
+        for item in body["items"]:
             assert "name" in item
             assert "id" in item
             assert "game" in item
             assert "matches" in item
-        # show one games' maps
-        resp = client.get(self.RESOURCE_URL_FOR_POST)
-        body = json.loads(resp.data)
-        assert len(body) == 2
 
     def test_post_valid_request(self, client):
         """
@@ -546,10 +541,6 @@ class TestMapCollection():
         Test post with missing field
         """
         valid = _get_map_json()
-        valid.pop("game_id")
-        resp = client.post(self.RESOURCE_URL, json=valid)
-        assert resp.status_code == 400
-        valid = _get_map_json()
         valid.pop("name")
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 400
@@ -559,8 +550,8 @@ class TestMapItem():
     Test for MapItem
     """
 
-    RESOURCE_URL = "/api/map/1/"
-    INVALID_URL = "/api/map/invalid/"
+    RESOURCE_URL = "/api/game/CS:GO/map/1/"
+    INVALID_URL = "/api/game/CS:GO/map/invalid/"
 
     def test_get(self, client):
         """
@@ -615,8 +606,8 @@ class TestRulesetCollection():
     Test for RulesetCollection
     """
 
-    RESOURCE_URL = "/api/ruleset/"
-    RESOURCE_URL_FOR_POST = "api/game/CS:GO/ruleset/"
+    RESOURCE_URL = "api/game/CS:GO/rulesets/"
+    RESOURCE_URL_FOR_POST = "api/game/CS:GO/rulesets/"
 
     def test_get(self, client):
         """
@@ -625,16 +616,13 @@ class TestRulesetCollection():
         resp = client.get(self.RESOURCE_URL)
         assert resp.status_code == 200
         body = json.loads(resp.data)
-        assert len(body) == 2
-        for item in body:
+        # One ruleset for CS:GO
+        assert len(body["items"]) == 1
+        for item in body["items"]:
             assert "name" in item
             assert "id" in item
             assert "game" in item
             assert "matches" in item
-        # show one games' rulesets
-        resp = client.get(self.RESOURCE_URL_FOR_POST)
-        body = json.loads(resp.data)
-        assert len(body) == 1
 
     def test_post_valid_request(self, client):
         """
@@ -662,18 +650,14 @@ class TestRulesetCollection():
         valid.pop("name")
         resp = client.post(self.RESOURCE_URL, json=valid)
         assert resp.status_code == 400
-        valid = _get_ruleset_json()
-        valid.pop("game_id")
-        resp = client.post(self.RESOURCE_URL, json=valid)
-        assert resp.status_code == 400
 
 class TestRulesetItem():
     """
     Test for RulesetItem
     """
 
-    RESOURCE_URL = "/api/ruleset/1/"
-    INVALID_URL = "/api/ruleset/invalid/"
+    RESOURCE_URL = "/api/game/CS:GO/ruleset/1/"
+    INVALID_URL = "/api/game/CS:GO/ruleset/invalid/"
 
     def test_get(self, client):
         """
@@ -728,7 +712,7 @@ class TestTeamCollection():
     Test for TeamCollection
     """
 
-    RESOURCE_URL = "/api/team/"
+    RESOURCE_URL = "/api/teams/"
 
     def test_get(self, client):
         """
@@ -737,8 +721,8 @@ class TestTeamCollection():
         resp = client.get(self.RESOURCE_URL)
         assert resp.status_code == 200
         body = json.loads(resp.data)
-        assert len(body) == 3
-        for item in body:
+        assert len(body["items"]) == 3
+        for item in body["items"]:
             assert "name" in item
 
     def test_post_valid_request(self, client):
@@ -831,7 +815,7 @@ class TestPlayerResultCollection():
     Test for PlayerResultcollection
     """
 
-    RESOURCE_URL = "api/player/John-1/result/"
+    RESOURCE_URL = "api/match/1/playerresults/"
 
     def test_get(self, client):
         """
@@ -840,19 +824,19 @@ class TestPlayerResultCollection():
         resp = client.get(self.RESOURCE_URL)
         assert resp.status_code == 200
         body = json.loads(resp.data)
-        assert len(body) == 1
-        for item in body:
+        assert len(body["items"]) == 1
+        for item in body["items"]:
             assert "points" in item
             assert "match_id" in item
             assert "player_id" in item
-            assert "match_info" in item
+            assert "team_id" in item
 
 class TestTeamResultCollection():
     """
     Test for TeamResultCollection
     """
 
-    RESOURCE_URL = "api/match/1/teamresult/"
+    RESOURCE_URL = "api/match/1/teamresults/"
 
     def test_get(self, client):
         """
@@ -861,12 +845,14 @@ class TestTeamResultCollection():
         resp = client.get(self.RESOURCE_URL)
         assert resp.status_code == 200
         body = json.loads(resp.data)
-        assert len(body) == 1
-        for item in body:
+        assert len(body["items"]) == 1
+        for item in body["items"]:
+            print("item")
+            print(item)
             assert "team" in item
             assert "points" in item
             assert "order" in item
-            assert "match_info" in item
+            assert "team_id" in item
 
 class TestIndex():
     """
