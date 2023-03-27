@@ -61,7 +61,9 @@ class MapCollection(Resource):
             # use serializer and BGTBuilder
             item = BGTBuilder(map_.serialize(long=True))
             # create controls for all items
-            item.add_control("self", url_for("api.mapitem", game=game.name, map_=map_.id))
+            print(game)
+            print(map_)
+            item.add_control("self", url_for("api.mapitem", game=game, map_=map_))
             item.add_control("profile", MAP_PROFILE)
             body["items"].append(item)
 
@@ -143,15 +145,51 @@ class MapItem(Resource):
         (Game can be in the path, but doesn't make difference)
         From exercise 2 material,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
+        
+        ---
+        tags:
+            - map
+        description: Get one map
+        parameters:
+            - $ref: '#/components/parameters/game_name'
+            - $ref: '#/components/parameters/map_id'
+        responses:
+            200:
+                description: Map's information
+                content:
+                    application/json:
+                        example:
+                            - name: dust
+                            - game_id: 1
+        
         """
 
         return map_.serialize(long=True)
 
-    def put(self, map_):
+    def put(self, game, map_):
         """
         Change information of a map
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
+        
+        ---
+        tags:
+            - map
+        description: Modify map information
+        parameters:
+            - $ref: '#/components/parameters/game_name'
+            - $ref: '#/components/parameters/map_id'
+        requestBody:
+            description: JSON containing new data for the game
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/Map'
+                    example:
+                        name: Dust
+        responses:
+            204:
+                description: Map information changed
         """
         if not request.mimetype == "application/json":
             raise UnsupportedMediaType
@@ -159,26 +197,33 @@ class MapItem(Resource):
             validate(request.json, Map.get_schema())
         except ValidationError as err:
             raise BadRequest(description=str(err))
-
         try:
-            map_ = Map(
-                name=request.json["name"],
-                game_id=request.json["game_id"]
-            )
-            db.session.add(map_)
+            map_.name=request.json["name"]
             db.session.commit()
         except IntegrityError:
             db.session.rollback()
             raise Conflict(409)
         return Response(status=204)
 
-    def delete(self, map_):
+    def delete(self, game, map_):
         """
         Delete a map
 
         From
         https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
+        
+        ---
+        tags:
+            - map
+        description: Delete a map
+        parameters:
+            - $ref: '#/components/parameters/game_name'
+            - $ref: '#/components/parameters/map_id'
+        responses:
+            204:
+                description: Map deleted, nothing to return
         """
+        print(map_)
         db.session.delete(map_)
         db.session.commit()
 

@@ -33,6 +33,12 @@ components:
         name:
           description: Name of the map
           type: string
+    Ruleset:
+      type: object
+      properties:
+        name:
+          description: Name of the ruleset
+          type: string
       
 
   parameters:
@@ -59,9 +65,23 @@ components:
       name: map_
       required: true
       schema:
+        type: integer
+    map_name:
+      description: Name of the existing map
+      in: path
+      name: map_
+      required: true
+      schema:
         type: string
     ruleset_id:
       description: Id of the existing ruleset
+      in: path
+      name: ruleset
+      required: true
+      schema:
+        type: integer
+    ruleset_name:
+      description: Name of the existing ruleset
       in: path
       name: ruleset
       required: true

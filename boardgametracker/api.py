@@ -32,8 +32,8 @@ api.add_resource(MapCollection,
                  "/game/<game:game>/maps/"
                  )
 api.add_resource(MapItem,
-                 #"/map/<map_:map_>/",
-                 "/game/<string:game>/map/<int:map_>/"
+                #"/map/<map_:map_>/",
+                "/game/<game:game>/map/<map_:map_>/"
                  )
 
 # 2 routes for rulesets
@@ -43,7 +43,7 @@ api.add_resource(RulesetCollection,
                  )
 api.add_resource(RulesetItem,
                 #"/ruleset/<ruleset:ruleset>/",
-                 "/game/<string:game>/ruleset/<int:ruleset>/"
+                 "/game/<game:game>/ruleset/<ruleset:ruleset>/"
                  )
 
 api.add_resource(MatchCollection, "/matches/")

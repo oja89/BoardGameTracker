@@ -139,15 +139,50 @@ class RulesetItem(Resource):
         (Game can be in the path, but doesn't make difference)
         From exercise 2 material,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
+        
+        ---
+        tags:
+            - ruleset
+        description: Get one ruleset
+        parameters:
+            - $ref: '#/components/parameters/game_name'
+            - $ref: '#/components/parameters/ruleset_id'
+        responses:
+            200:
+                description: Map's information
+                content:
+                    application/json:
+                        example:
+                            - name: competitive
+                            - game_id: 1
         """
 
         return ruleset.serialize(long=True)
 
-    def put(self, ruleset):
+    def put(self, game, ruleset):
         """
         Change information of a ruleset
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
+        
+        ---
+        tags:
+            - ruleset
+        description: Modify map information
+        parameters:
+            - $ref: '#/components/parameters/game_name'
+            - $ref: '#/components/parameters/ruleset_id'
+        requestBody:
+            description: JSON containing new data for the game
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/Ruleset'
+                    example:
+                        name: Competitive
+        responses:
+            204:
+                description: Map information changed
         """
         if not request.mimetype == "application/json":
             raise UnsupportedMediaType
@@ -158,7 +193,6 @@ class RulesetItem(Resource):
 
         try:
             ruleset.name = request.json["name"]
-            db.session.add(ruleset)
             db.session.commit()
         except IntegrityError:
             db.session.rollback()
@@ -166,11 +200,22 @@ class RulesetItem(Resource):
 
         return Response(status=204)
 
-    def delete(self, ruleset):
+    def delete(self, game, ruleset):
         """
         Delete a ruleset
         From
         https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
+        
+        ---
+        tags:
+            - ruleset
+        description: Delete a ruleset
+        parameters:
+            - $ref: '#/components/parameters/game_name'
+            - $ref: '#/components/parameters/ruleset_id'
+        responses:
+            204:
+                description: Ruleset deleted, nothing to return
         """
         db.session.delete(ruleset)
         db.session.commit()

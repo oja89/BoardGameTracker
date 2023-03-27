@@ -245,7 +245,7 @@ class BGTBuilder(MasonBuilder):
             schema=Map.get_schema(),
             title="Add map"
         )
-        
+
     def add_control_all_rulesets(self, game):
         """
         Get all game's rulesets
@@ -256,8 +256,7 @@ class BGTBuilder(MasonBuilder):
             href=url_for("api.rulesetcollection", game=game),
             title="Add map"
         )
-    
-        
+
     def add_control_add_ruleset(self, game):
         """
         Add a new ruleset to a game
@@ -371,7 +370,7 @@ class RulesetConverter(BaseConverter):
         """
         python to URL
         """
-        return value.id
+        return str(value.id)
 
 
 class MapConverter(BaseConverter):
@@ -392,4 +391,4 @@ class MapConverter(BaseConverter):
         """
         python to URL
         """
-        return value.id
+        return str(value.id)
