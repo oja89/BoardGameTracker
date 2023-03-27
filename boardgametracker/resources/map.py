@@ -53,7 +53,7 @@ class MapCollection(Resource):
         body = BGTBuilder()
         body.add_namespace("BGT", LINK_RELATIONS_URL)
         body.add_control("self", url_for("api.mapcollection", game=game))
-        body.add_control_add_map(game)  #NOT SURE IF THIS IS CORRECT!
+        body.add_control_all_maps(game)  #NOT SURE IF THIS IS CORRECT!
         body["items"] = []
 
         #for map_ in Map.query.filter_by(game_id=db_game.id):
@@ -81,6 +81,8 @@ class MapCollection(Resource):
         tags:
             - map
         description: Add a new map
+        parameters:
+            - $ref: '#/components/parameters/game_name'
         requestBody:
             description: JSON containing data for the map
             content:

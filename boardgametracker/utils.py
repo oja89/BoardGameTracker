@@ -223,10 +223,21 @@ class BGTBuilder(MasonBuilder):
             title="Add game"
         )
 
+    def add_control_all_maps(self, game):
+        """
+        Get all game's maps
+        leads to GET /api/<game:game>/maps/
+        """
+        self.add_control_get(
+            ctrl_name="BGT:all-maps",
+            href=url_for("api.mapcollection", game=game),
+            title="Add map"
+        )
+
     def add_control_add_map(self, game):
         """
         Add a new map to a game
-        leads to Post /api/<game:game>/maps/
+        leads to POST /api/<game:game>/maps/
         """
         self.add_control_post(
             ctrl_name="BGT:add-map",
@@ -234,7 +245,19 @@ class BGTBuilder(MasonBuilder):
             schema=Map.get_schema(),
             title="Add map"
         )
-
+        
+    def add_control_all_rulesets(self, game):
+        """
+        Get all game's rulesets
+        leads to GET /api/<game:game>/rulesets/
+        """
+        self.add_control_get(
+            ctrl_name="BGT:all-rulesets",
+            href=url_for("api.rulesetcollection", game=game),
+            title="Add map"
+        )
+    
+        
     def add_control_add_ruleset(self, game):
         """
         Add a new ruleset to a game

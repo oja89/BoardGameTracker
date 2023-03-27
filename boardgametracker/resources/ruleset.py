@@ -33,7 +33,7 @@ class RulesetCollection(Resource):
         
         ---
         tags:
-            - rulesets
+            - ruleset
         description: Get all rulesets for one game
         parameters:
             - $ref: '#/components/parameters/game_name'
@@ -50,7 +50,7 @@ class RulesetCollection(Resource):
         body = BGTBuilder()
         body.add_namespace("BGT", LINK_RELATIONS_URL)
         body.add_control("self", url_for("api.rulesetcollection", game=game))
-        body.add_control_add_ruleset(game) 
+        body.add_control_all_rulesets(game) 
         body["items"] = []
 
         # append objects to list
@@ -72,6 +72,33 @@ class RulesetCollection(Resource):
         Cannot add a ruleset without a game
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
+        
+        ---
+        tags:
+            - ruleset
+        description: Add a new ruleset
+        parameters:
+            - $ref: '#/components/parameters/game_name'
+        requestBody:
+            description: JSON containing data for the map
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/Ruleset'
+                    example:
+                        name: Gungame
+                        game_id: 1
+        responses:
+            201:
+                description: Ruleset added
+                headers:
+                    Location:
+                        description: URI of the match
+                        schema:
+                            type: string
+                        example: "asdfadf"
+            400:
+                description: Key error
         """
         if not request.mimetype == "application/json":
             raise UnsupportedMediaType
