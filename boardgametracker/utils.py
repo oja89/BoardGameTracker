@@ -231,7 +231,7 @@ class BGTBuilder(MasonBuilder):
         self.add_control_get(
             ctrl_name="BGT:all-maps",
             href=url_for("api.mapcollection", game=game),
-            title="Add map"
+            title="All maps"
         )
 
     def add_control_add_map(self, game):
@@ -254,7 +254,7 @@ class BGTBuilder(MasonBuilder):
         self.add_control_get(
             ctrl_name="BGT:all-rulesets",
             href=url_for("api.rulesetcollection", game=game),
-            title="Add map"
+            title="All rulesets"
         )
 
     def add_control_add_ruleset(self, game):
@@ -268,6 +268,30 @@ class BGTBuilder(MasonBuilder):
             schema=Ruleset.get_schema(),
             title="Add ruleset"
         )
+        
+    def add_control_all_teams(self):
+        """
+        Get all teams
+        leads to GET /api/teams/
+        """
+        self.add_control_get(
+            ctrl_name="BGT:all-teams",
+            href=url_for("api.teamcollection"),
+            title="All teams"
+        )
+
+    def add_control_add_team(self):
+        """
+        Add a new team
+        leads to POST /api/teams/
+        """
+        self.add_control_post(
+            ctrl_name="BGT:add-team",
+            href=url_for("api.teamcollection"),
+            schema=Team.get_schema(),
+            title="Add team"
+        )
+
 class PlayerConverter(BaseConverter):
     """
     Converter for player URL
@@ -349,7 +373,7 @@ class TeamConverter(BaseConverter):
         """
         python to URL
         """
-        return value.name
+        return str(value.name)
 
 
 class RulesetConverter(BaseConverter):

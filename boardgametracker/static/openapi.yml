@@ -39,7 +39,12 @@ components:
         name:
           description: Name of the ruleset
           type: string
-      
+    Team:
+      type: object
+      properties:
+        name:
+          description: Name of the team
+          type: string
 
   parameters:
     date:
@@ -84,6 +89,13 @@ components:
       description: Name of the existing ruleset
       in: path
       name: ruleset
+      required: true
+      schema:
+        type: string
+    team_name:
+      description: Name of the existing team
+      in: path
+      name: team
       required: true
       schema:
         type: string

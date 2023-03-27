@@ -6,20 +6,16 @@ https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhu
 """
 import json
 
-from boardgametracker import cache
-from boardgametracker import db
-from boardgametracker.constants import *
-from boardgametracker.models import Map, Game
-from boardgametracker.utils import BGTBuilder
 from flask import Response, request, abort, url_for
-from flask_restful import Resource
-from jsonschema import validate, ValidationError
 from sqlalchemy.exc import IntegrityError
+from jsonschema import validate, ValidationError
 from werkzeug.exceptions import Conflict, BadRequest, UnsupportedMediaType
-
 from boardgametracker import cache
 from boardgametracker import db
+from boardgametracker.constants import JSON, MASON, MAP_PROFILE, LINK_RELATIONS_URL
 from boardgametracker.models import Map
+from boardgametracker.utils import BGTBuilder
+from flask_restful import Resource
 
 
 class MapCollection(Resource):
@@ -33,7 +29,7 @@ class MapCollection(Resource):
         Get all maps for the game given
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
-        
+
         ---
         tags:
             - map
@@ -78,7 +74,7 @@ class MapCollection(Resource):
 
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
-        
+
         ---
         tags:
             - map
@@ -106,7 +102,7 @@ class MapCollection(Resource):
             400:
                 description: Key error
         """
-        if not request.mimetype == "application/json":
+        if not request.mimetype == JSON:
             raise UnsupportedMediaType
 
         if game is None:
@@ -136,7 +132,7 @@ class MapCollection(Resource):
 
 class MapItem(Resource):
     """
-    One item of team
+    One item of map
     """
 
     def get(self, map_, game=None):
@@ -145,7 +141,7 @@ class MapItem(Resource):
         (Game can be in the path, but doesn't make difference)
         From exercise 2 material,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
-        
+
         ---
         tags:
             - map
@@ -161,17 +157,28 @@ class MapItem(Resource):
                         example:
                             - name: dust
                             - game_id: 1
-        
-        """
 
-        return map_.serialize(long=True)
+        """
+        body = BGTBuilder()
+        body["item"] = BGTBuilder(map_.serialize(long=True))
+        body.add_namespace("BGT", LINK_RELATIONS_URL)
+        body.add_control("self", url_for("api.mapitem", game=game, map_=map_))
+        body.add_control("profile", MAP_PROFILE)
+        body.add_control("collection", url_for("api.mapcollection", game=game))
+        body.add_control_put("edit", "Edit this map", url_for("api.mapitem", game=game, map_=map_),\
+        schema=Map.get_schema())
+        body.add_control_delete("Delete this map", url_for("api.mapitem", game=game, map_=map_))
+
+        response = Response(json.dumps(body), 200, mimetype=MASON)
+
+        return response
 
     def put(self, game, map_):
         """
         Change information of a map
         From exercise 2,
         https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/
-        
+
         ---
         tags:
             - map
@@ -190,15 +197,17 @@ class MapItem(Resource):
         responses:
             204:
                 description: Map information changed
+            409:
+                description: Integrity error
         """
-        if not request.mimetype == "application/json":
+        if not request.mimetype == JSON:
             raise UnsupportedMediaType
         try:
             validate(request.json, Map.get_schema())
         except ValidationError as err:
             raise BadRequest(description=str(err))
         try:
-            map_.name=request.json["name"]
+            map_.name = request.json["name"]
             db.session.commit()
         except IntegrityError:
             db.session.rollback()
@@ -211,7 +220,7 @@ class MapItem(Resource):
 
         From
         https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
-        
+
         ---
         tags:
             - map
