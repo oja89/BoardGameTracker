@@ -136,6 +136,8 @@ class GameItem(Resource):
         tags:
             - game
         description: Get one game
+        parameters:
+            - $ref: '#/components/parameters/game_name'
         responses:
             200:
                 description: Game and stuff

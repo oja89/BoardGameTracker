@@ -45,8 +45,31 @@ components:
         name:
           description: Name of the team
           type: string
+    PlayerResult:
+      type: object
+      properties:
+        points:
+          description: Player's points
+          type: number
+        player_id:
+          description: ID of player
+          type: integer
+        match_id:
+          in: path
+          description: ID of match
+          type: integer
+        team_id:
+          description: ID of team
+          type: integer
 
   parameters:
+    match_id:
+      description: Match, needed for results
+      in: path
+      name: match
+      required: true
+      schema:
+        type: integer
     date:
       description: date of the match
       name: date
