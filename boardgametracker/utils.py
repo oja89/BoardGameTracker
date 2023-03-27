@@ -307,7 +307,7 @@ class MatchConverter(BaseConverter):
         """
         python to URL
         """
-        return value.id
+        return str(value.id)
 
 
 class GameConverter(BaseConverter):

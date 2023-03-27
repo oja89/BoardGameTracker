@@ -57,7 +57,7 @@ class MatchCollection(Resource):
             # use serializer and BGTBuilder
             item = BGTBuilder(match.serialize(long=True))
             # create controls for all items
-            item.add_control("self", url_for("api.matchitem", match=match.id))
+            item.add_control("self", url_for("api.matchitem", match=match))
             item.add_control("profile", MATCH_PROFILE)
             body["items"].append(item)
 
@@ -127,7 +127,7 @@ class MatchCollection(Resource):
             abort(400)
 
         return Response(status=201, headers={
-            "Location": url_for("api.matchitem", match=match.id)
+            "Location": url_for("api.matchitem", match=match)
                 }
             )
 
@@ -146,16 +146,14 @@ class MatchItem(Resource):
         Added also Mason stuff from
         https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/resources/sensor.py
         """
-        # get match, use serializer for data
-        db_match = Match.query.filter_by(id=match).first()
         # this serializer cannot give the results, the controls add them again
-        body = BGTBuilder(db_match.serialize(long=True))
+        body = BGTBuilder(match.serialize(long=True))
         body.add_namespace("BGT", LINK_RELATIONS_URL)
-        body.add_control("self", url_for("api.matchitem", match=body["id"]))
+        body.add_control("self", url_for("api.matchitem", match=match))
         body.add_control("profile", MATCH_PROFILE)
         body.add_control_put("edit",
                              "TODO:title",
-                             url_for("api.matchitem", match=body["id"]),
+                             url_for("api.matchitem", match=match),
                              schema=Match.get_schema())
         body.add_control_match_collection()
 
@@ -166,10 +164,10 @@ class MatchItem(Resource):
         # TODO: results need their id in the put?
 
         # if player_result exists, add route to edit player_result
-        if db_match.player_result is not None:
+        if match.player_result is not None:
             body["player_results"] = []
             # for each "row" in this games results:
-            for p_res in db_match.player_result:
+            for p_res in match.player_result:
                 item = BGTBuilder(p_res.serialize(long=False))
                 item.add_control_put("edit",
                                  "TODO:title_for_row",
@@ -186,9 +184,9 @@ class MatchItem(Resource):
                               PlayerResult.get_schema())
 
         # # if result exists, add route to edit result
-        if db_match.team_result is not None:
+        if match.team_result is not None:
             body["team_results"] = []
-            for t_res in db_match.team_result:
+            for t_res in match.team_result:
                 item = BGTBuilder(t_res.serialize(long=False))
                 item.add_control_put("edit",
                                      "TODO:title_for_row",

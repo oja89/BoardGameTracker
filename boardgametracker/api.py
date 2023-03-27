@@ -47,14 +47,14 @@ api.add_resource(RulesetItem,
                  )
 
 api.add_resource(MatchCollection, "/matches/")
-api.add_resource(MatchItem, "/match/<int:match>/")
+api.add_resource(MatchItem, "/match/<match:match>/")
 
 # results collections
 api.add_resource(PlayerResultCollection,
                  "/player/<player:player>/results/",
-                 "/match/<int:match>/playerresults/"
+                 "/match/<match:match>/playerresults/"
                  )
 api.add_resource(TeamResultCollection,
                  "/team/<team:team>/results/",
-                 "/match/<int:match>/teamresults/"
+                 "/match/<match:match>/teamresults/"
                  )

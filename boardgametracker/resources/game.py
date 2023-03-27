@@ -177,10 +177,10 @@ class GameItem(Resource):
                 item = BGTBuilder(map_.serialize(long=False))
                 item.add_control_put("edit",
                                  "Edit this map",
-                                 url_for("api.mapitem", game=game, map_=map_.id),
+                                 url_for("api.mapitem", game=game, map_=map_),
                                 Map.get_schema()
                                 )
-                item.add_control_delete("Delete this map", url_for("api.mapitem", game=game, map_=map_.id))
+                item.add_control_delete("Delete this map", url_for("api.mapitem", game=game, map_=map_))
                 body["maps"].append(item)
 
 
@@ -192,11 +192,11 @@ class GameItem(Resource):
                 item = BGTBuilder(ruleset.serialize(long=False))
                 item.add_control_put("edit",
                                  "Edit this ruleset",
-                        url_for("api.rulesetitem", game=game, ruleset=ruleset.id),
+                        url_for("api.rulesetitem", game=game, ruleset=ruleset),
                                 Ruleset.get_schema()
                                 )
                 item.add_control_delete("Delete this ruleset",
-                        url_for("api.rulesetitem", game=game, ruleset=ruleset.id)
+                        url_for("api.rulesetitem", game=game, ruleset=ruleset)
                                 )
                 body["rulesets"].append(item)
 
