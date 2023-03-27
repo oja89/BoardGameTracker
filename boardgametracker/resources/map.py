@@ -19,8 +19,6 @@ from boardgametracker.utils import BGTBuilder
 
 from flask_restful import Resource
 
-
-
 class MapCollection(Resource):
     """
     Collection of maps
@@ -52,7 +50,8 @@ class MapCollection(Resource):
         body = BGTBuilder()
         body.add_namespace("BGT", LINK_RELATIONS_URL)
         body.add_control("self", url_for("api.mapcollection", game=game))
-        body.add_control_all_maps(game)  #NOT SURE IF THIS IS CORRECT!
+        body.add_control_all_maps(game)
+        body.add_control_add_map(game)
         body["items"] = []
 
         #for map_ in Map.query.filter_by(game_id=db_game.id):
@@ -60,8 +59,6 @@ class MapCollection(Resource):
             # use serializer and BGTBuilder
             item = BGTBuilder(map_.serialize(long=True))
             # create controls for all items
-            print(game)
-            print(map_)
             item.add_control("self", url_for("api.mapitem", game=game, map_=map_))
             item.add_control("profile", MAP_PROFILE)
             body["items"].append(item)

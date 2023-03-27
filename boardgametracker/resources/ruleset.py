@@ -19,9 +19,6 @@ from boardgametracker import db
 from boardgametracker.models import Ruleset
 
 
-
-
-
 class RulesetCollection(Resource):
     """
     Collection of rulesets
@@ -54,6 +51,7 @@ class RulesetCollection(Resource):
         body.add_namespace("BGT", LINK_RELATIONS_URL)
         body.add_control("self", url_for("api.rulesetcollection", game=game))
         body.add_control_all_rulesets(game)
+        body.add_control_add_ruleset(game)
         body["items"] = []
 
         # append objects to list
