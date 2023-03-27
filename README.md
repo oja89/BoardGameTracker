@@ -76,6 +76,16 @@ Testing with pytest:
 pytest --cov-report term-missing --cov=boardgametracker
 ```
 
+Testing with pylint:
+```
+pylint ./boardgametracker
+```
+
+Starting flask service:
+```
+flask run
+```
+
 ## Shortcut for venv
 
 You can also create a shortcut on your desktop (on Windows) to open the venv directly.
