@@ -555,13 +555,13 @@ def generate_test_data():
         date=datetime.date(2022, 12, 25),
         turns=30,
         game_id=game.id,
-        map_id=map.id,
+        map_id=map_.id,
         ruleset_id=rset.id
     )
     db.session.add(match)
     db.session.commit()
 
-    print(f"Added match on date {match.date} as {match}, with {game}, {map}, {rset}")
+    print(f"Added match on date {match.date} as {match}, with {game}, {map_}, {rset}")
 
     # team results, use match, team
     tres = TeamResult(
