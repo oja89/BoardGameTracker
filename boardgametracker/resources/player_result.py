@@ -153,13 +153,14 @@ class PlayerResultItem(Resource):
         responses:
             200:
                 description: One row of player results
-                application/json:
-                    schema:
-                        $ref: '#/components/schemas/PlayerResult'
-                    example:
-                        points: 23
-                        player_id: 1
-                        team_id: 2
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/PlayerResult'
+                        example:
+                            points: 23
+                            player_id: 1
+                            team_id: 2
         """
         body = BGTBuilder(player_result.serialize(long=True))
         body.add_namespace("BGT", LINK_RELATIONS_URL)

@@ -152,13 +152,14 @@ class TeamResultItem(Resource):
         responses:
             200:
                 description: One row of team results
-                application/json:
-                    schema:
-                        $ref: '#/components/schemas/TeamResult'
-                    example:
-                        - points: 45
-                          order: 1
-                          team_id: 2
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/TeamResult'
+                        example:
+                            - points: 45
+                              order: 1
+                              team_id: 2
         """
         body = BGTBuilder(team_result.serialize(long=True))
         body.add_namespace("BGT", LINK_RELATIONS_URL)

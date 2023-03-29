@@ -1,9 +1,11 @@
 ---
+openapi: 3.0.3
 info:
   title: BoardgameTracker
-  version: 0.1
+  version: '0.1'
   description: API for tracking game results
-servers: ''
+servers:
+  - url: http://127.0.0.1:5000
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -16,7 +18,8 @@ components:
       properties:
         date:
           description: When the match was played
-          type: datetime
+          type: string
+          format: datetime
         turns:
           description: Number of turns in the match
           type: integer
@@ -69,7 +72,6 @@ components:
           description: ID of player
           type: integer
         match_id:
-          in: path
           description: ID of match
           type: integer
         team_id:
@@ -84,7 +86,6 @@ components:
           description: Finishing order of the team
           type: integer
         match_id:
-          in: path
           description: ID of match
           type: integer
         team_id:
@@ -97,16 +98,6 @@ components:
       in: path
       name: match
       required: true
-      schema:
-        type: integer
-    date:
-      description: date of the match
-      name: date
-      schema:
-        type: datetime
-    turns:
-      description: turns of the match
-      name: turns
       schema:
         type: integer
     game_name:
@@ -123,13 +114,6 @@ components:
       required: true
       schema:
         type: integer
-    map_name:
-      description: Name of the existing map
-      in: path
-      name: map_
-      required: true
-      schema:
-        type: string
     ruleset_id:
       description: Id of the existing ruleset
       in: path
@@ -137,13 +121,6 @@ components:
       required: true
       schema:
         type: integer
-    ruleset_name:
-      description: Name of the existing ruleset
-      in: path
-      name: ruleset
-      required: true
-      schema:
-        type: string
     team_name:
       description: Name of the existing team
       in: path
