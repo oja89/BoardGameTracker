@@ -16,7 +16,7 @@ from boardgametracker import cache
 from boardgametracker import db
 from boardgametracker.constants import *
 from boardgametracker.models import Player, Match
-from boardgametracker.utils import BGTBuilder
+from boardgametracker.utils import BGTBuilder, require_admin, require_this_user
 
 
 class PlayerCollection(Resource):
@@ -168,6 +168,7 @@ class PlayerItem(Resource):
 
         return response
 
+    @require_this_user
     def put(self, player):
         """
         Change information of a player
@@ -193,8 +194,11 @@ class PlayerItem(Resource):
                 description: Player information changed
             409:
                 description: Integrity error
+        security:
+            - AdminKey: []
+            - PlayerKey: []
         """
-        if not request.mimetype == "application/json":
+        if not request.mimetype == JSON:
             raise UnsupportedMediaType
         try:
             validate(request.json, Player.get_schema())
@@ -208,7 +212,10 @@ class PlayerItem(Resource):
             db.session.rollback()
             raise Conflict(description=f"Player with name '{player.name}' already exists.")
 
-        return Response(status=204)
+        return Response(status=204, headers={
+            "Location": url_for("api.playeritem", player=player)
+        }
+                        )
 
     def delete(self, player):
         """

@@ -25,6 +25,8 @@ class ApiKey(db.Model):
     key = db.Column(db.String(32), nullable=False, unique=True)
     admin = db.Column(db.Boolean, default=False)
 
+    player_id = db.Column(db.Integer, db.ForeignKey("player.id"), nullable=True)
+
     @staticmethod
     def key_hash(key):
         return hashlib.sha256(key.encode()).digest()
@@ -617,6 +619,28 @@ def generate_admin_key():
         name="admin",
         key=ApiKey.key_hash(token),
         admin=True
+    )
+    db.session.add(db_key)
+    db.session.commit()
+    print(token)
+
+@click.command("userkey")
+@with_appcontext
+def generate_user_key():
+    """
+    Generate API key for user
+    from:
+    https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/models.py
+    """
+    import secrets
+    token = secrets.token_urlsafe()
+    db_key = ApiKey(
+        #push hash to name now
+        # TODO: do not do that.
+        name=token,
+        #hardcoded player id
+        player_id=1,
+        key=ApiKey.key_hash(token)
     )
     db.session.add(db_key)
     db.session.commit()

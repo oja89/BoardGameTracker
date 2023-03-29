@@ -546,7 +546,6 @@ def require_admin(func):
     def wrapper(*args, **kwargs):
         try:
             key_hash = ApiKey.key_hash(request.headers.get("BGT-Api-Key").strip())
-            print(key_hash)
             db_key = ApiKey.query.filter_by(admin=True).first()
             if secrets.compare_digest(key_hash, db_key.key):
                 return func(*args, **kwargs)
@@ -554,3 +553,36 @@ def require_admin(func):
         except: AttributeError
         raise Forbidden
     return wrapper
+
+def require_this_user(func):
+    """
+    Decorator for user
+    Should give access if:
+    ApiKey matches player that is to be modified
+    or if ApiKey matches admin
+
+    from
+    https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/#key-registry
+
+    """
+    @wraps(func)
+    # needs self, otherwise doesn't understand player
+    # return also self and player in func
+    def wrapper(self, player, *args, **kwargs):
+        try:
+            key_hash = ApiKey.key_hash(request.headers.get("BGT-Api-Key").strip())
+            # check if admin
+            db_key = ApiKey.query.filter_by(admin=True).first()
+            if secrets.compare_digest(key_hash, db_key.key):
+                return func(self, player, *args, **kwargs)
+            # check if this user
+            db_key = ApiKey.query.filter_by(player_id=player.id).first()
+            if db_key is not None and (
+                    secrets.compare_digest(key_hash, db_key.key)
+                ):
+                return func(self, player, *args, **kwargs)
+            raise Forbidden
+        except: AttributeError
+        raise Forbidden
+    return wrapper
+

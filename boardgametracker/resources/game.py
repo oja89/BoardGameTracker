@@ -97,7 +97,7 @@ class GameCollection(Resource):
             409:
                 description: Name already exists
         security:
-            - ApiKeyAuth: []
+            - AdminKey: []
         """
         if not request.mimetype == JSON:
             raise UnsupportedMediaType
@@ -239,7 +239,7 @@ class GameItem(Resource):
             409:
                 description: Name exists already
         security:
-            - ApiKeyAuth: []
+            - AdminKey: []
         """
         if not request.mimetype == JSON:
             raise UnsupportedMediaType
@@ -280,7 +280,7 @@ class GameItem(Resource):
             204:
                 description: Game deleted, nothing to return
         security:
-            - ApiKeyAuth: []
+            - AdminKey: []
         """
 
         db.session.delete(game)

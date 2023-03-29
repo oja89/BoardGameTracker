@@ -78,6 +78,9 @@ def create_app(test_config=None):
     app.cli.add_command(models.init_db_command)
     app.cli.add_command(models.generate_test_data)
     app.cli.add_command(models.generate_admin_key)
+    # TODO: elsewhere...
+    app.cli.add_command(models.generate_user_key)
+
 
     # print instance path
     print(app.instance_path)
