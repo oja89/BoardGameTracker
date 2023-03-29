@@ -8,13 +8,26 @@ https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhu
 """
 
 import datetime
-
 import click
+import hashlib
+
+
 from flask.cli import with_appcontext
 
 from boardgametracker import db
 
+class ApiKey(db.Model):
+    """
+    Authorization, from
+    https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/#key-registry
+    """
+    name = db.Column(db.String(16), primary_key=True)
+    key = db.Column(db.String(32), nullable=False, unique=True)
+    admin = db.Column(db.Boolean, default=False)
 
+    @staticmethod
+    def key_hash(key):
+        return hashlib.sha256(key.encode()).digest()
 class Player(db.Model):
     """
     Player class
@@ -588,3 +601,23 @@ def generate_test_data():
     print(f"Added player score {pres.points} as {pres}")
 
     db.session.commit()
+
+
+@click.command("adminkey")
+@with_appcontext
+def generate_admin_key():
+    """
+    Generate API key for admin
+    from:
+    https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/models.py
+    """
+    import secrets
+    token = secrets.token_urlsafe()
+    db_key = ApiKey(
+        name="admin",
+        key=ApiKey.key_hash(token),
+        admin=True
+    )
+    db.session.add(db_key)
+    db.session.commit()
+    print(token)

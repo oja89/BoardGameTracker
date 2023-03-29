@@ -4,9 +4,13 @@ Converters for URL calls
 from example
 https://github.com/enkwolf/pwp-course-sensorhub-api-example/blob/master/sensorhub/utils.py"""
 
-from flask import url_for
-from werkzeug.exceptions import NotFound
+import secrets
+
+from flask import url_for, request
+from werkzeug.exceptions import NotFound, Forbidden
 from werkzeug.routing import BaseConverter
+
+from functools import wraps
 
 from boardgametracker.models import (
     Player,
@@ -16,7 +20,8 @@ from boardgametracker.models import (
     Ruleset,
     Match,
     PlayerResult,
-    TeamResult
+    TeamResult,
+    ApiKey
 )
 
 
@@ -527,3 +532,25 @@ class TeamResultConverter(BaseConverter):
         python to URL
         """
         return str(value.id)
+
+
+def require_admin(func):
+    """
+    Decorator for admin requirement
+    from
+    https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/implementing-rest-apis-with-flask/#key-registry
+
+    Added same forbidden -error for not having a apikey
+    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            key_hash = ApiKey.key_hash(request.headers.get("BGT-Api-Key").strip())
+            print(key_hash)
+            db_key = ApiKey.query.filter_by(admin=True).first()
+            if secrets.compare_digest(key_hash, db_key.key):
+                return func(*args, **kwargs)
+            raise Forbidden
+        except: AttributeError
+        raise Forbidden
+    return wrapper

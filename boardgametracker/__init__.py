@@ -41,7 +41,6 @@ def create_app(test_config=None):
         "openapi": "3.0.3",
         "uiversion": 3
     }
-
     swagger = Swagger(app, template_file="doc/openapi.yml")
 
     if test_config is None:
@@ -78,6 +77,7 @@ def create_app(test_config=None):
     # cli commands placed in models
     app.cli.add_command(models.init_db_command)
     app.cli.add_command(models.generate_test_data)
+    app.cli.add_command(models.generate_admin_key)
 
     # print instance path
     print(app.instance_path)

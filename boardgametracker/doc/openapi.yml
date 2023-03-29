@@ -5,6 +5,11 @@ info:
   description: API for tracking game results
 servers: ''
 components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: BGT-Api-Key
   schemas:
     Match:
       type: object

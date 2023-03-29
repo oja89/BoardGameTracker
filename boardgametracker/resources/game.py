@@ -16,7 +16,7 @@ from boardgametracker import cache
 from boardgametracker import db
 from boardgametracker.constants import *
 from boardgametracker.models import Game, Map, Ruleset
-from boardgametracker.utils import BGTBuilder
+from boardgametracker.utils import BGTBuilder,  require_admin
 
 
 class GameCollection(Resource):
@@ -65,6 +65,7 @@ class GameCollection(Resource):
 
         return response
 
+    @require_admin
     def post(self):
         """
         Add a new game
@@ -95,6 +96,8 @@ class GameCollection(Resource):
                             type: string
             409:
                 description: Name already exists
+        security:
+            - ApiKeyAuth: []
         """
         if not request.mimetype == JSON:
             raise UnsupportedMediaType
@@ -200,6 +203,7 @@ class GameItem(Resource):
 
         return response
 
+    @require_admin
     def put(self, game):
         """
         Change information of a game
@@ -234,6 +238,8 @@ class GameItem(Resource):
                         example: "/api/Game/Chess"
             409:
                 description: Name exists already
+        security:
+            - ApiKeyAuth: []
         """
         if not request.mimetype == JSON:
             raise UnsupportedMediaType
@@ -255,6 +261,7 @@ class GameItem(Resource):
         }
                         )
 
+    @require_admin
     def delete(self, game):
         """
         Delete a game
@@ -272,6 +279,8 @@ class GameItem(Resource):
         responses:
             204:
                 description: Game deleted, nothing to return
+        security:
+            - ApiKeyAuth: []
         """
 
         db.session.delete(game)
