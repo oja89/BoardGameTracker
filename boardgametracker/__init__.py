@@ -115,7 +115,10 @@ def create_app(test_config=None):
 
         response = Response(json.dumps(body), 200, mimetype=MASON)
 
-
         return response
+
+    @app.route("/admin/")
+    def client():
+        return app.send_static_file("html/admin.html")
 
     return app

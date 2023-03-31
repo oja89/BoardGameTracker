@@ -1,0 +1,8 @@
+/*From https://lovelace.oulu.fi/ohjelmoitava-web/programmable-web-project-spring-2021/exercise-4-implementing-hypermedia-clients/ */
+form label {
+    font-weight: bold;
+    display:block;/*Necessary for the first letter*/
+}
+form label:first-letter{
+    text-transform: uppercase;
+}
