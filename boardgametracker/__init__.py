@@ -118,11 +118,11 @@ def create_app(test_config=None):
         return response
 
     @app.route("/admin/")
-    def client():
+    def admin_page():
         return app.send_static_file("html/admin.html")
 
     @app.route("/pyscript/")
-    def client():
+    def pyscript_page():
         return app.send_static_file("html/pyscript.html")
 
     return app

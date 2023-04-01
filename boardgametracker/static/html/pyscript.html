@@ -1,20 +1,70 @@
-<!--from https://www.geeksforgeeks.org/create-basic-webpage-with-pyscript/-->
+<!--from https://docs.pyscript.net/latest/tutorials/requests.html-->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <!--    using the pyscript css and js-->
-    <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
-    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-    <title>PyScript Demo</title>
-</head>
-<body>
-    <h1>Hello,
-    <py-script>
-        name = "Geeks"
-        print(name)
-    </py-script>
-    </h1>
-</body>
+        <title>Requests Tutorial</title>
+
+        <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+        <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+    </head>
+
+    <body>
+    <div id="pyscript-header">
+      <py-config>
+        packages = ["requests", "pyodide-http"]
+      </py-config>
+
+      <py-script>
+        import requests
+        import pyodide_http
+        from pyodide.ffi import create_proxy
+
+
+        URL = "http://http://oja89.pythonanywhere.com"
+        URL = "http://127.0.0.1:5000"
+
+
+        def add_button(text):
+          parent = js.document.getElementById("test_div")
+          btn = js.document.createElement("button")
+          btn.classList = "bg-green-500 hover:bg-green-500 text-gray-800 font-bold py-1 px-2 rounded-l"
+          btn.setAttribute('id', 'btnx')
+          btn.innerText = text
+          #Element("btnx", btn).element.addEventListener("click",  create_proxy(add_button))
+          Element("btnx", btn).element.addEventListener("click",  create_proxy(get_next))
+          parent.append(btn)
+
+        def get_next(asdf):
+          response = requests.get(URL + "/api/games")
+          controls = response.json()["@controls"]
+          for control in controls:
+            print(control)
+        """
+        MAIN CODE
+        """
+
+        # Patch the Requests library so it works with Pyscript
+        # pyodide_http.patch()
+        pyodide_http.patch_all()  # new name...
+
+
+        # Make a request to the API
+        response = requests.get(URL + "/api/")
+
+
+        # Print all from "@controls"
+        controls = response.json()["@controls"]
+        for control in controls:
+            print(control)
+            add_button(control)
+
+
+
+      </py-script>
+      </div>
+      <div id="test_div"></div>
+    </body>
 </html>
