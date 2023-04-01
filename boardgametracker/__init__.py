@@ -121,4 +121,8 @@ def create_app(test_config=None):
     def client():
         return app.send_static_file("html/admin.html")
 
+    @app.route("/pyscript/")
+    def client():
+        return app.send_static_file("html/pyscript.html")
+
     return app
