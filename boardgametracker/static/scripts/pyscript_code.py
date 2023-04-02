@@ -12,7 +12,6 @@ URL = "http://127.0.0.1:5000"
 def add_button(name, href):
   parent = js.document.getElementById("navigation")
   btn = js.document.createElement("button")
-  btn.classList = "bg-green-500 hover:bg-green-500 text-gray-800 font-bold py-1 px-2 rounded-l"
 
   # use py-click
   # https://docs.pyscript.net/latest/tutorials/py-click.html
@@ -24,37 +23,78 @@ def add_button(name, href):
 
   # cleaner way to add listener: https://jeff.glass/post/pyscript-why-create-proxy/
   # add_event_listener(btn, "click", click_control(href))) # nice but fires automatically
-  def click_function(event):
+
+  def click_control(event):
       """
       Way to get around the autofire...
       """
-      click_control(href)
+      update_controls(href)
 
-  add_event_listener(btn, "click", click_function)
+  add_event_listener(btn, "click", click_control)
 
   parent.append(btn)
 
+def add_items(name, href):
+    parent = js.document.getElementById("items")
+    btn = js.document.createElement("button")
+
+    btn.setAttribute('id', name)
+    btn.setAttribute('class', 'py-button')
+
+    btn.textContent = name
+
+    # cleaner way to add listener: https://jeff.glass/post/pyscript-why-create-proxy/
+    # add_event_listener(btn, "click", click_control(href))) # nice but fires automatically
+
+    def click_item(event):
+        """
+        Way to get around the autofire...
+        """
+        update_items(href)
+
+    add_event_listener(btn, "click", click_item)
+
+    parent.append(btn)
 def delete_all_buttons():
     """
-    Delete the buttons shown.
+    Delete the control buttons shown.
     """
-    # they are under test_div
     parent = js.document.getElementById("navigation")
     parent.innerHTML = ""
 
+def delete_all_items():
+    """
+    Delete the item buttons shown.
+    """
+    parent = js.document.getElementById("items")
+    parent.innerHTML = ""
 
-def click_control(href):
-    print(href)
+
+def update_controls(href):
+    #print(href)
     response = requests.get(URL + href)
 
     # remove old buttons
     delete_all_buttons()
 
-    # add new controls:
+    # add new controls
     get_controls(response)
 
+    # get items
+    #get_items(response)
+    update_items(response)
+
+
+def update_items(response):
+    #response = requests.get(URL + href)
+
+    delete_all_items()
+
+    get_items(response)
+
+
 def get_entrance():
-    # Make a request to the API
+    # Make the first request to the API
     response = requests.get(URL + "/api/")
     get_controls(response)
 
@@ -68,6 +108,20 @@ def get_controls(response):
         name = ctrl
         href = controls[ctrl]["href"]
         add_button(name, href)
+
+def get_items(response):
+    # buttons for all items (works for all but matches?)
+    items = response.json()["items"]
+
+    # add new buttons
+    for item in items:
+        # add buttons for items
+        name = item["name"]
+        href = item["@controls"]["self"]["href"]
+        add_items(name, href)
+
+
+
 
 
 """
