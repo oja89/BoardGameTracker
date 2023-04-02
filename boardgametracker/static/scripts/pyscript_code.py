@@ -28,7 +28,7 @@ def add_button(name, href):
       """
       Way to get around the autofire...
       """
-      update_controls(href)
+      update_controls(href=href)
 
   add_event_listener(btn, "click", click_control)
 
@@ -50,7 +50,7 @@ def add_items(name, href):
         """
         Way to get around the autofire...
         """
-        update_items(href)
+        update_items(href=href)
 
     add_event_listener(btn, "click", click_item)
 
@@ -70,26 +70,38 @@ def delete_all_items():
     parent.innerHTML = ""
 
 
-def update_controls(href):
-    #print(href)
-    response = requests.get(URL + href)
-
-    # remove old buttons
+def update_controls(response=None, href=None):
+    """
+    Clicked control button or..
+    href is None -> was item
+    response is None -> was ctrl
+    """
+    if response is None:
+        response = requests.get(URL + href)
+        # update items
+        update_items(response=response)
+    if href is None:
+        response = response
+    # remove old ctrls
     delete_all_buttons()
-
     # add new controls
     get_controls(response)
 
-    # get items
-    #get_items(response)
-    update_items(response)
 
-
-def update_items(response):
-    #response = requests.get(URL + href)
-
+def update_items(response=None, href=None):
+    """
+    Clicked item button or..
+    """
+    pass
+    if response is None:
+        response = requests.get(URL + href)
+        # update controls
+        update_controls(response=response)
+    if href is None:
+        response = response
+    # remove old items
     delete_all_items()
-
+    # add new items
     get_items(response)
 
 
@@ -110,15 +122,23 @@ def get_controls(response):
         add_button(name, href)
 
 def get_items(response):
-    # buttons for all items (works for all but matches?)
-    items = response.json()["items"]
+    # buttons for all items (works for all collections but matches?)
+    try:
+        items = response.json()["items"]
+        # add new buttons
+        for item in items:
+            # add buttons for items
+            name = item["name"]
+            href = item["@controls"]["self"]["href"]
+            add_items(name, href)
 
-    # add new buttons
-    for item in items:
-        # add buttons for items
-        name = item["name"]
-        href = item["@controls"]["self"]["href"]
-        add_items(name, href)
+    except KeyError as kerr:
+        # maybe just print stuff
+        print(response.json())
+        # and update controls
+
+
+
 
 
 
