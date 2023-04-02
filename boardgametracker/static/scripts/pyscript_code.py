@@ -1,7 +1,6 @@
 
 import requests
 import pyodide_http
-from pyodide.ffi import create_proxy
 from pyodide.ffi.wrappers import add_event_listener
 
 
@@ -34,6 +33,7 @@ def add_button(name, href):
 
   parent.append(btn)
 
+
 def add_items(name, href):
     parent = js.document.getElementById("items")
     btn = js.document.createElement("button")
@@ -55,12 +55,15 @@ def add_items(name, href):
     add_event_listener(btn, "click", click_item)
 
     parent.append(btn)
+
+
 def delete_all_buttons():
     """
     Delete the control buttons shown.
     """
     parent = js.document.getElementById("navigation")
     parent.innerHTML = ""
+
 
 def delete_all_items():
     """
@@ -121,6 +124,7 @@ def get_controls(response):
         href = controls[ctrl]["href"]
         add_button(name, href)
 
+
 def get_items(response):
     # buttons for all items (works for all collections but matches?)
     try:
@@ -128,20 +132,17 @@ def get_items(response):
         # add new buttons
         for item in items:
             # add buttons for items
-            name = item["name"]
+            # name = item["name"] # doesn't work if not named
+            name = item.get("name")
+            if name is None:
+                # works for matches:
+                name = item.get("date")
             href = item["@controls"]["self"]["href"]
             add_items(name, href)
-
     except KeyError as kerr:
+        # we are probably looking at one item, so no items...
         # maybe just print stuff
         print(response.json())
-        # and update controls
-
-
-
-
-
-
 
 
 """
