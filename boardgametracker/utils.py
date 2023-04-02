@@ -183,7 +183,7 @@ class BGTBuilder(MasonBuilder):
     https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/exercise-3-api-documentation-and-hypermedia/
     """
 
-    def add_control_match_collection(self):
+    def add_control_all_matches(self):
         """
         Match collection
         leads to GET /api/matches/

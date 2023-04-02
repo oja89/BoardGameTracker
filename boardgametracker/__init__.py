@@ -108,7 +108,7 @@ def create_app(test_config=None):
         """
         body = BGTBuilder()
         body.add_namespace("BGT", LINK_RELATIONS_URL)
-        body.add_control_match_collection()
+        body.add_control_all_matches()
         body.add_control_all_players()
         body.add_control_all_teams()
         body.add_control_all_games()
