@@ -9,7 +9,7 @@ URL = "http://127.0.0.1:5000"
 
 
 def add_button(name, href):
-  parent = js.document.getElementById("navigation")
+  parent = js.document.getElementById("controls")
   btn = js.document.createElement("button")
 
   # use py-click
@@ -61,7 +61,7 @@ def delete_all_buttons():
     """
     Delete the control buttons shown.
     """
-    parent = js.document.getElementById("navigation")
+    parent = js.document.getElementById("controls")
     parent.innerHTML = ""
 
 
@@ -94,8 +94,9 @@ def update_controls(response=None, href=None):
 def update_items(response=None, href=None):
     """
     Clicked item button or..
+    href is None -> was ctrl
+    response is None -> was item
     """
-    pass
     if response is None:
         response = requests.get(URL + href)
         # update controls
@@ -106,6 +107,15 @@ def update_items(response=None, href=None):
     delete_all_items()
     # add new items
     get_items(response)
+
+    # also update contents
+    update_contents(response)
+
+def update_contents(response=None, href=None):
+    """
+    Clicked item?
+    """
+    get_results(response)
 
 
 def get_entrance():
@@ -144,6 +154,24 @@ def get_items(response):
         # maybe just print stuff
         print(response.json())
 
+def get_results(response):
+    """
+    Update the contents
+    """
+    try:
+        results = response.json()
+        # results = response.json()["item"]
+        # create element
+        # show them on the screen using display
+        # https: // github.com / pyscript / pyscript / blob / main / docs / reference / API / display.md
+        display(results, target="results", append=False)
+        # how to use _repr_json???
+
+    except:
+        pass
+
+    # use key name and value to add all to html
+    # except controls
 
 """
 MAIN CODE
