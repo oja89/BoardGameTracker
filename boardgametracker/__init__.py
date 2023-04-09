@@ -115,7 +115,14 @@ def create_app(test_config=None):
 
         response = Response(json.dumps(body), 200, mimetype=MASON)
 
-
         return response
+
+    @app.route("/admin/")
+    def admin_page():
+        return app.send_static_file("html/admin.html")
+
+    @app.route("/pyscript/")
+    def pyscript_page():
+        return app.send_static_file("html/pyscript.html")
 
     return app

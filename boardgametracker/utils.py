@@ -570,7 +570,7 @@ def require_this_user(func):
     # return also self and player in func
     def wrapper(self, player, *args, **kwargs):
         try:
-            key_hash = ApiKey.key_hash(request.headers.get("BGT-Api-Key").strip())
+            admin_hash = ApiKey.key_hash(request.headers.get("BGT-Api-Key").strip())
             # check if admin
             db_key = ApiKey.query.filter_by(admin=True).first()
             if secrets.compare_digest(key_hash, db_key.key):

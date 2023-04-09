@@ -11,7 +11,7 @@ components:
     AdminKey:
       type: apiKey
       in: header
-      name: BGT-Api-Key
+      name: BGT-Admin-Key
     PlayerKey:
       type: apiKey
       in: header

@@ -1,0 +1,26 @@
+<!--from https://docs.pyscript.net/latest/tutorials/requests.html-->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+        <title>BGT Python API</title>
+
+        <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+        <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+    </head>
+
+    <body>
+    <div id="pyscript-header">
+      <py-config>
+        packages = ["requests", "pyodide-http"]
+      </py-config>
+        <!--https://github.com/pyscript/pyscript/blob/main/examples/todo.html-->
+      <py-script src="/static/scripts/pyscript_code.py"></py-script>
+      </div>
+      <div id="controls"></div>
+      <div id="items"></div>
+      <div id="results"></div>
+    </body>
+</html>
