@@ -86,6 +86,15 @@ Starting flask service:
 flask run
 ```
 
+(Deploying on pythonanywhere:)
+```
+export FLASK_APP=boardgametracker
+flask init-db
+flask testgen
+```
+
+
+
 ## Shortcut for venv
 
 You can also create a shortcut on your desktop (on Windows) to open the venv directly.
