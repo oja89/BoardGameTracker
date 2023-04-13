@@ -4,8 +4,8 @@ import pyodide_http
 from pyodide.ffi.wrappers import add_event_listener
 
 
-# URL = "http://http://oja89.pythonanywhere.com"
-URL = "http://127.0.0.1:5000"
+URL = "http://http://oja89.pythonanywhere.com"
+# URL = "http://127.0.0.1:5000"
 
 
 def add_button(name, href):
