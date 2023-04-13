@@ -37,7 +37,7 @@ def create_app(test_config=None):
     )
 
     app.config["SWAGGER"] = {
-        "title": "Sensorhub API",
+        "title": "BoardGameTracker API",
         "openapi": "3.0.3",
         "uiversion": 3
     }
