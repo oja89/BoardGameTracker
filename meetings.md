@@ -54,16 +54,21 @@ During this meeting we went through wiki 3, code, pylint and pytest.
 
 
 ## Meeting 4.
-* **DATE:**
-* **ASSISTANTS:**
+* **DATE: 14.4.2023**
+* **ASSISTANTS:Ivan Sanchez Milara**
 
 ### Minutes
-*Summary of what was discussed during the meeting*
+During this meeting we went through the swagger and hypermedia of the project
 
 ### Action points
 *List here the actions points discussed with assistants*
-
-
+- If no such game can't create map for it. Add 404 not found
+- Don't use integrity error (409) as output for user.
+- Make apiKeys work
+- Check get team/{team}
+- Add schemas
+- Fix state diagram. Missing lines
+- Player_result missing get_player
 
 
 ## Midterm meeting
