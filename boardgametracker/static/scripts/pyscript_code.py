@@ -34,13 +34,65 @@ def add_button(name, href, method):
         # if it is not just a get ...
         if method == "GET":
             update_controls(href=href)
+        elif method == "DELETE":
+            add_choice_buttons(method, href)
+        elif method == "POST":
+            # get empty forms according to the schema
+
+            add_choice_buttons(method, href)
+
+        elif method == "PUT":
+            pass
+            # similar to post, but read existing values into form
         else:
-            print(f"THIS WAS NOT A GET, but {method}")
-            # probably this needs then to show the contents in a form?
-            make_form(name, href, method)
+            print(f"WEIRD METHOD: {method}")
+            pass
 
     add_event_listener(btn, "click", click_control)
     parent.append(btn)
+
+
+def add_choice_buttons(method, href):
+    # add cancel (self) and "method"
+    # dont use add_button
+
+    parent = js.document.getElementById("controls")
+    parent.innerHTML = ""
+
+    # self == cancel?
+    c_btn = js.document.createElement("button")
+    c_btn.setAttribute('id', "cancel")
+    c_btn.setAttribute('class', 'py-button')
+    c_btn.textContent = "cancel"
+
+
+    def click_cancel(event):
+        # get self
+        # update controls (it updates all)
+        update_controls(href=href)
+
+    add_event_listener(c_btn, "click", click_cancel)
+    parent.append(c_btn)
+
+    # delete
+    d_btn = js.document.createElement("button")
+    d_btn.setAttribute('id', method)
+    d_btn.setAttribute('class', 'py-button')
+    d_btn.textContent = method
+
+    def click_submit(event):
+        resp = sess.request(method, URL + href)
+        output(f"Status: {resp}")
+        # TODO: jump to collection instead?
+        update_controls(href=href)
+
+
+    add_event_listener(d_btn, "click", click_submit)
+    parent.append(d_btn)
+
+
+
+
 
 
 def make_form(name, href, method):
