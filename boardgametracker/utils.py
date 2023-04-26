@@ -328,7 +328,7 @@ class BGTBuilder(MasonBuilder):
         leads to GET /api/match/<match>
         """
         self.add_control_get(
-            ctrl_name="BGT:go-to-match",
+            ctrl_name="BGT:get-match",
             href=url_for("api.matchitem", match=match),
             title="Go to match"
         )
@@ -339,7 +339,7 @@ class BGTBuilder(MasonBuilder):
         leads to GET /api/game/<game>
         """
         self.add_control_get(
-            ctrl_name="BGT:go-to-game",
+            ctrl_name="BGT:get-game",
             href=url_for("api.gameitem", game=game),
             title="Go to game"
         )
@@ -350,7 +350,7 @@ class BGTBuilder(MasonBuilder):
         leads to GET /api/player/<player>
         """
         self.add_control_get(
-            ctrl_name="BGT:go-to-player",
+            ctrl_name="BGT:get-player",
             href=url_for("api.playeritem", player=player),
             title="Go to player"
         )
@@ -361,7 +361,7 @@ class BGTBuilder(MasonBuilder):
         leads to GET /api/team/<team>
         """
         self.add_control_get(
-            ctrl_name="BGT:go-to-team",
+            ctrl_name="BGT:get-team",
             href=url_for("api.teamitem", team=team),
             title="Go to team"
         )

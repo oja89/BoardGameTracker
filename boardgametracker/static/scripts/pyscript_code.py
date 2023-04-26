@@ -4,10 +4,12 @@ import pyodide_http
 from pyodide.ffi.wrappers import add_event_listener
 
 
-URL = "http://oja89.pythonanywhere.com"
-# URL = "http://127.0.0.1:5000"
+# URL = "http://oja89.pythonanywhere.com"
+URL = "http://127.0.0.1:5000"
+APIKEYHEADER = {"BGT-Api-Key": "asdf"}
 
 def add_button(name, href):
+  print("----add control-button")
   parent = js.document.getElementById("controls")
   btn = js.document.createElement("button")
 
@@ -22,18 +24,23 @@ def add_button(name, href):
   # cleaner way to add listener: https://jeff.glass/post/pyscript-why-create-proxy/
   # add_event_listener(btn, "click", click_control(href))) # nice but fires automatically
 
+
+
   def click_control(event):
       """
       Way to get around the autofire...
       """
+      print("CLICKED CONTROL")
       update_controls(href=href)
 
   add_event_listener(btn, "click", click_control)
-
   parent.append(btn)
 
 
+
+
 def add_items(name, href):
+    print("----add item-button")
     parent = js.document.getElementById("items")
     btn = js.document.createElement("button")
 
@@ -49,27 +56,38 @@ def add_items(name, href):
         """
         Way to get around the autofire...
         """
+        print("CLICKED ITEM")
         update_items(href=href)
+
+
 
     add_event_listener(btn, "click", click_item)
 
     parent.append(btn)
 
 
-def delete_all_buttons():
+
+
+def delete_all_controls():
     """
     Delete the control buttons shown.
     """
+    print("---delete old control buttons")
     parent = js.document.getElementById("controls")
     parent.innerHTML = ""
+
+
 
 
 def delete_all_items():
     """
     Delete the item buttons shown.
     """
+    print("---delete old item buttons")
     parent = js.document.getElementById("items")
     parent.innerHTML = ""
+
+
 
 
 def update_controls(response=None, href=None):
@@ -78,14 +96,17 @@ def update_controls(response=None, href=None):
     href is None -> was item
     response is None -> was ctrl
     """
+    print("--updating control buttons")
     if response is None:
-        response = requests.get(URL + href)
+        response = sess.get(URL + href)
+        print(f"----updating controls because control clicked: {response.json()}")
         # update items
         update_items(response=response)
     if href is None:
         response = response
+        print("----updating controls because item clicked")
     # remove old ctrls
-    delete_all_buttons()
+    delete_all_controls()
     # add new controls
     get_controls(response)
 
@@ -96,12 +117,15 @@ def update_items(response=None, href=None):
     href is None -> was ctrl
     response is None -> was item
     """
+    print("--updating item buttons")
     if response is None:
-        response = requests.get(URL + href)
+        response = sess.get(URL + href)
+        print(f"----updating items because item clicked:: {response.json()}")
         # update controls
         update_controls(response=response)
     if href is None:
         response = response
+        print("----updating items because control clicked")
     # remove old items
     delete_all_items()
     # add new items
@@ -114,18 +138,21 @@ def update_contents(response=None, href=None):
     """
     Clicked item?
     """
+    print("--updating contents")
     get_results(response)
 
 
 def get_entrance():
     # Make the first request to the API
-    response = requests.get(URL + "/api/")
+    response = sess.get(URL + "/api/")
+    print("GET ENTRANCE")
     get_controls(response)
 
 
 def get_controls(response):
     # Print all from "@controls"
     controls = response.json()["@controls"]
+    print("---get new controls")
     for ctrl in controls:
         # not items pls
         # name, url, method?
@@ -135,6 +162,7 @@ def get_controls(response):
 
 
 def get_items(response):
+    print("---get new items")
     # buttons for all items (works for all collections but matches?)
     try:
         items = response.json()["items"]
@@ -157,6 +185,7 @@ def get_results(response):
     """
     Update the contents
     """
+    print("---get new content")
     try:
         results = response.json()
         # results = response.json()["item"]
@@ -180,5 +209,9 @@ MAIN CODE
 # pyodide_http.patch()
 pyodide_http.patch_all()  # new name...
 
-# get first data
-get_entrance()
+# create Session to use
+with requests.Session() as sess:
+    sess.headers.update(APIKEYHEADER)
+
+    # get first data
+    get_entrance()

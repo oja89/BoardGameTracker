@@ -171,6 +171,7 @@ class GameItem(Resource):
         body.add_control_add_map(game)
         body.add_control_add_ruleset(game)
 
+
         # if map(s) exists, add route to edit and delete it
         if game.map is not None:
             body["maps"] = []
