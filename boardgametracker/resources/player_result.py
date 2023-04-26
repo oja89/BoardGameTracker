@@ -162,7 +162,8 @@ class PlayerResultItem(Resource):
                             player_id: 1
                             team_id: 2
         """
-        body = BGTBuilder(player_result.serialize(long=True))
+        body = BGTBuilder()
+        body["item"] = BGTBuilder(player_result.serialize(long=True))
         body.add_namespace("BGT", LINK_RELATIONS_URL)
         body.add_control("self", url_for("api.playerresultitem", match=match, player_result=player_result))
         body.add_control("profile", PLAYER_RESULT_PROFILE)

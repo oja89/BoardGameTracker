@@ -185,7 +185,8 @@ class MatchItem(Resource):
                               team_results:
         """
         # this serializer cannot give the results, the controls add them again
-        body = BGTBuilder(match.serialize(long=True))
+        body = BGTBuilder()
+        body["item"] = BGTBuilder(match.serialize(long=True))
         body.add_namespace("BGT", LINK_RELATIONS_URL)
         body.add_control("self", url_for("api.matchitem", match=match))
         body.add_control("profile", MATCH_PROFILE)

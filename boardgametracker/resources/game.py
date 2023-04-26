@@ -159,7 +159,8 @@ class GameItem(Resource):
                                 - arcade
         """
 
-        body = BGTBuilder(game.serialize(long=True))
+        body = BGTBuilder()
+        body["item"] = BGTBuilder(game.serialize(long=True))
         body.add_namespace("BGT", LINK_RELATIONS_URL)
         body.add_control("self", url_for("api.gameitem", game=game))
         body.add_control("profile", PLAYER_PROFILE)

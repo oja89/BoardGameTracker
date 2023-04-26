@@ -30,7 +30,7 @@ def add_button(name, href):
       """
       Way to get around the autofire...
       """
-      print("CLICKED CONTROL")
+      print(f"CLICKED CONTROL: {name}")
       update_controls(href=href)
 
   add_event_listener(btn, "click", click_control)
@@ -56,7 +56,7 @@ def add_items(name, href):
         """
         Way to get around the autofire...
         """
-        print("CLICKED ITEM")
+        print(f"CLICKED ITEM: {name}")
         update_items(href=href)
 
 
@@ -186,20 +186,28 @@ def get_results(response):
     Update the contents
     """
     print("---get new content")
-    try:
-        results = response.json()
-        # results = response.json()["item"]
-        # create element
-        # show them on the screen using display
-        # https: // github.com / pyscript / pyscript / blob / main / docs / reference / API / display.md
-        display(results, target="results", append=False)
-        # how to use _repr_json???
 
-    except:
-        pass
+    results = response.json()
+    # create element
+    # show them on the screen using display
+    # https: // github.com / pyscript / pyscript / blob / main / docs / reference / API / display.md
+
+    #clear display
+    display("", target="results", append=False)
 
     # use key name and value to add all to html
     # except controls
+
+    # from https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/exercise-4-implementing-hypermedia-clients/#to-put-or-not
+    for field, props in results.items():
+        if field in ["item", ""]:
+            print_to_content(f"Field: {field}")
+            for key, value in props.items():
+                print_to_content(f"{key}: {value}")
+
+def print_to_content(stuff):
+    display(stuff, target="results", append=True)
+
 
 """
 MAIN CODE

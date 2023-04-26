@@ -161,7 +161,8 @@ class TeamResultItem(Resource):
                               order: 1
                               team_id: 2
         """
-        body = BGTBuilder(team_result.serialize(long=True))
+        body = BGTBuilder()
+        body["item"] = BGTBuilder(team_result.serialize(long=True))
         body.add_namespace("BGT", LINK_RELATIONS_URL)
         body.add_control("self", url_for("api.teamresultitem", match=match, team_result=team_result))
         body.add_control("profile", TEAM_RESULT_PROFILE)
