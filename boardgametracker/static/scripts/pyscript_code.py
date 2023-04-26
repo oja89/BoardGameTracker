@@ -1,3 +1,5 @@
+import json
+
 import requests
 import pyodide_http
 from pyodide.ffi.wrappers import add_event_listener
@@ -42,23 +44,35 @@ def add_button(name, href, method):
 
 
 def make_form(name, href, method):
+    """
+    This should be reworked
+    This should send the post,put etc?
+    """
     print("----add form")
     # get the parent
-    parent = js.document.getElementById("forms")
+    parent = js.document.getElementById("content")
+
+    #clear fcontnet
+    parent.innerHTML = ""
+
     # get the existing data
 
-    lista = ["asd", "dads"]
+    results = {'item': {'name': 'Foxes', 'id': 1, 'matches': 1}, '@namespaces': {'BGT': {'name': '/boardgametracker/link-relations/'}}, '@controls': {'self': {'href': '/api/team/Foxes/'}, 'profile': {'href': '/profiles/team'}, 'collection': {'href': '/api/teams/'}, 'edit': {'method': 'PUT', 'encoding': 'json', 'title': 'Edit this team', 'schema': {'type': 'object', 'required': ['name'], 'properties': {'name': {'description': "Team's  name", 'type': 'string'}}}, 'href': '/api/team/Foxes/'}, 'BGT:delete': {'method': 'DELETE', 'title': 'Delete this team', 'href': '/api/team/Foxes/'}}, 'matches': [{'id': 1, 'date': '2022-12-25T00:00:00', 'turns': 30, 'game_name': 'CS:GO', 'map_name': 'dust', 'ruleset_name': 'competitive', '@controls': {'self': {'href': '/api/match/1/'}, 'profile': {'href': '/profiles/match/'}}}]}
 
     # for each row create and add elements
-    for field in lista:
-        input = js.document.createElement("input")
+    for field, props in results.items():
+        # add KEY before as a text:
+        for key, value in props.items():
+            output(key)
 
-        input.setAttribute('id', field)
-        input.setAttribute('class', 'py-box')
-        input.setAttribute('value', 'sometext')
+            input = js.document.createElement("input")
 
-        input.textContent = name
-        parent.append(input)
+            input.setAttribute('id', key)
+            input.setAttribute('class', 'py-box')
+            input.setAttribute('value', value)
+
+            input.textContent = name
+            parent.append(input)
 
     # add submit button
     btn = js.document.createElement("button")
@@ -97,8 +111,7 @@ def delete_all_controls():
     Delete the control buttons shown.
     """
     print("---delete old control buttons")
-    parent = js.document.getElementById("controls")
-    parent.innerHTML = ""
+    js.document.getElementById("controls").innerHTML = ""
 
 
 def delete_all_items():
@@ -106,8 +119,7 @@ def delete_all_items():
     Delete the item buttons shown.
     """
     print("---delete old item buttons")
-    parent = js.document.getElementById("items")
-    parent.innerHTML = ""
+    js.document.getElementById("items").innerHTML = ""
 
 
 def update_controls(response=None, href=None):
@@ -217,21 +229,36 @@ def get_results(response):
     results = response.json()
     # create element
     # show them on the screen using display
-    # https: // github.com / pyscript / pyscript / blob / main / docs / reference / API / display.md
+    # https://github.com/pyscript/pyscript/blob/main/docs/reference/API/display.md
 
-    # clear display
-    display("", target="results", append=False)
-
+    # clear content
+    parent = js.document.getElementById("content")
+    parent.innerHTML = ""
     # use key name and value to add all to html
     # except controls
 
-    # from https://lovelace.oulu.fi/ohjelmoitava-web/ohjelmoitava-web/exercise-4-implementing-hypermedia-clients/#to-put-or-not
+    # for each row create and add elements
     for field, props in results.items():
         if field in ["item"]:  # single item
+            output(field.upper())
             for key, value in props.items():
-                output(f"{key}: {value}")
-        if field in ["items"]:  # list of items
+                # add KEY before as a text:
+                output(key)
+
+                input = js.document.createElement("input")
+
+                input.setAttribute('id', key)
+                input.setAttribute('class', 'py-box')
+                input.setAttribute('value', value)
+
+                input.textContent = value
+                parent.append(input)
+
+
+        if field in ["items", "matches", "maps", "rulesets", "player_results", "team_results"]:  # list of items
             # as this is a list inside, we need to go deeper
+            # don't use forms here
+            output(field.upper())
             for i in props:
                 for field2, props2 in i.items():
                     if field2 not in ["@controls"]:
@@ -239,7 +266,7 @@ def get_results(response):
 
 
 def output(stuff):
-    display(stuff, target="results", append=True)
+    display(stuff, target="content", append=True)
 
 
 """
