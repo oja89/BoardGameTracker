@@ -93,6 +93,8 @@ flask init-db
 flask testgen
 ```
 
+Also change the URL in pyscript_code from 127.0.0.1:5000 to what is used...
+
 
 
 ## Shortcut for venv
