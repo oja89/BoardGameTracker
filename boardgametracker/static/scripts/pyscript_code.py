@@ -9,7 +9,7 @@ URL = "http://127.0.0.1:5000"
 APIKEYHEADER = {"BGT-Api-Key": "asdf"}
 
 
-def add_button(name, href, method):
+def add_button(ctrl, controls):
     print("----add control-button")
     parent = js.document.getElementById("controls")
     btn = js.document.createElement("button")
@@ -17,10 +17,10 @@ def add_button(name, href, method):
     # use py-click
     # https://docs.pyscript.net/latest/tutorials/py-click.html
     # btn.setAttribute('py-click', "click_control('asd')")
-    btn.setAttribute('id', name)
+    btn.setAttribute('id', ctrl)
     btn.setAttribute('class', 'py-button')
 
-    btn.textContent = name
+    btn.textContent = ctrl
 
     # cleaner way to add listener: https://jeff.glass/post/pyscript-why-create-proxy/
     # add_event_listener(btn, "click", click_control(href))) # nice but fires automatically
@@ -29,11 +29,12 @@ def add_button(name, href, method):
         """
       Way to get around the autofire...
       """
-        print(f"CLICKED CONTROL: {name}")
-
+        print(f"CLICKED CONTROL: {ctrl}")
+        method = controls[ctrl]["method"]
+        href = controls[ctrl]["href"]
         # if it is not just a get ...
         if method == "GET":
-            update_controls(href=href)
+            refresh_page(href=href)
         elif method == "DELETE":
             add_choice_buttons(method, href)
         elif method == "POST":
@@ -69,7 +70,8 @@ def add_choice_buttons(method, href):
     def click_cancel(event):
         # get self
         # update controls (it updates all)
-        update_controls(href=href)
+        #update_controls(href=href)
+        refresh_page(href=href)
 
     add_event_listener(c_btn, "click", click_cancel)
     parent.append(c_btn)
@@ -84,54 +86,12 @@ def add_choice_buttons(method, href):
         resp = sess.request(method, URL + href)
         output(f"Status: {resp}")
         # TODO: jump to collection instead?
-        update_controls(href=href)
+        refresh_page(href=href)
 
 
     add_event_listener(d_btn, "click", click_submit)
     parent.append(d_btn)
 
-
-
-
-
-
-def make_form(name, href, method):
-    """
-    This should be reworked
-    This should send the post,put etc?
-    """
-    print("----add form")
-    # get the parent
-    parent = js.document.getElementById("content")
-
-    #clear fcontnet
-    parent.innerHTML = ""
-
-    # get the existing data
-
-    results = {'item': {'name': 'Foxes', 'id': 1, 'matches': 1}, '@namespaces': {'BGT': {'name': '/boardgametracker/link-relations/'}}, '@controls': {'self': {'href': '/api/team/Foxes/'}, 'profile': {'href': '/profiles/team'}, 'collection': {'href': '/api/teams/'}, 'edit': {'method': 'PUT', 'encoding': 'json', 'title': 'Edit this team', 'schema': {'type': 'object', 'required': ['name'], 'properties': {'name': {'description': "Team's  name", 'type': 'string'}}}, 'href': '/api/team/Foxes/'}, 'BGT:delete': {'method': 'DELETE', 'title': 'Delete this team', 'href': '/api/team/Foxes/'}}, 'matches': [{'id': 1, 'date': '2022-12-25T00:00:00', 'turns': 30, 'game_name': 'CS:GO', 'map_name': 'dust', 'ruleset_name': 'competitive', '@controls': {'self': {'href': '/api/match/1/'}, 'profile': {'href': '/profiles/match/'}}}]}
-
-    # for each row create and add elements
-    for field, props in results.items():
-        # add KEY before as a text:
-        for key, value in props.items():
-            output(key)
-
-            input = js.document.createElement("input")
-
-            input.setAttribute('id', key)
-            input.setAttribute('class', 'py-box')
-            input.setAttribute('value', value)
-
-            input.textContent = name
-            parent.append(input)
-
-    # add submit button
-    btn = js.document.createElement("button")
-    btn.setAttribute('id', method)
-    btn.setAttribute('class', 'py-button')
-    btn.textContent = method
-    parent.append(btn)
 
 def add_items(name, href):
     print("----add item-button")
@@ -151,109 +111,52 @@ def add_items(name, href):
         Way to get around the autofire...
         """
         print(f"CLICKED ITEM: {name}")
-        update_items(href=href)
+        refresh_page(href=href)
 
     add_event_listener(btn, "click", click_item)
 
     parent.append(btn)
 
 
-def delete_all_controls():
-    """
-    Delete the control buttons shown.
-    """
-    print("---delete old control buttons")
-    js.document.getElementById("controls").innerHTML = ""
 
+def refresh_page(href):
 
-def delete_all_items():
-    """
-    Delete the item buttons shown.
-    """
-    print("---delete old item buttons")
-    js.document.getElementById("items").innerHTML = ""
+    response = sess.get(URL + href)
 
-
-def update_controls(response=None, href=None):
-    """
-    Clicked control button or..
-    href is None -> was item
-    response is None -> was ctrl
-    """
-    print("--updating control buttons")
-    if response is None:
-        response = sess.get(URL + href)
-        print(f"----updating controls because control clicked: {response.json()}")
-        # update items
-        update_items(response=response)
-    if href is None:
-        response = response
-        print("----updating controls because item clicked")
-    # remove old ctrls
-    delete_all_controls()
-    # add new controls
+    # reload controls
     get_controls(response)
-
-
-def update_items(response=None, href=None):
-    """
-    Clicked item button or..
-    href is None -> was ctrl
-    response is None -> was item
-    """
-    print("--updating item buttons")
-    if response is None:
-        response = sess.get(URL + href)
-        print(f"----updating items because item clicked:: {response.json()}")
-        # update controls
-        update_controls(response=response)
-    if href is None:
-        response = response
-        print("----updating items because control clicked")
-    # remove old items
-    delete_all_items()
-    # add new items
     get_items(response)
-
-    # also update contents
-    update_contents(response)
-
-
-def update_contents(response=None):
-    """
-    Clicked item?
-    """
-    print("--updating contents")
-    get_results(response)
-
-
-def get_entrance():
-    # Make the first request to the API
-    response = sess.get(URL + "/api/")
-    print("GET ENTRANCE")
-    get_controls(response)
+    get_contents(response)
 
 
 def get_controls(response):
+    parent = js.document.getElementById("controls")
+    parent.innerHTML = ""
+
     # Print all from "@controls"
     controls = response.json()["@controls"]
     print("---get new controls")
     for ctrl in controls:
         # not items pls
         # name, url, method?
-        name = ctrl
-        href = controls[ctrl]["href"]
-        # check if there is a method
-        try:
-            method = controls[ctrl]["method"]
-        except KeyError:
-            print("no method, default to get")
-            method = "GET"
-        add_button(name, href, method)
+        # name = ctrl
+        # href = controls[ctrl]["href"]
+        # # check if there is a method
+        # try:
+        #     method = controls[ctrl]["method"]
+        # except KeyError:
+        #     print("no method, default to get")
+        #     method = "GET"
+        add_button(ctrl, controls)
 
 
 def get_items(response):
     print("---get new items")
+
+    # clear existing items
+    parent = js.document.getElementById("items")
+    parent.innerHTML = ""
+
     # buttons for all items (works for all collections but matches?)
     try:
         items = response.json()["items"]
@@ -272,7 +175,7 @@ def get_items(response):
         pass
 
 
-def get_results(response):
+def get_contents(response):
     """
     Update the contents
     """
@@ -334,4 +237,4 @@ with requests.Session() as sess:
     sess.headers.update(APIKEYHEADER)
 
     # get first data
-    get_entrance()
+    refresh_page("/api/")
