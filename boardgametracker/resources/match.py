@@ -205,6 +205,7 @@ class MatchItem(Resource):
             # for each "row" in this game's results:
             for player_result in match.player_result:
                 item = BGTBuilder(player_result.serialize(long=False))
+                item.add_control("self", url_for("api.playerresultitem", player_result=player_result, match=match))
                 item.add_control_put("edit",
                                      "Edit this row of playerresults",
                                      url_for("api.playerresultitem", player_result=player_result, match=match),
@@ -224,6 +225,7 @@ class MatchItem(Resource):
             body["team_results"] = []
             for team_result in match.team_result:
                 item = BGTBuilder(team_result.serialize(long=False))
+                item.add_control("self", url_for("api.teamresultitem", team_result=team_result, match=match))
                 item.add_control_put("edit",
                                      "Edit this row of teamresults",
                                      url_for("api.teamresultitem", team_result=team_result, match=match),

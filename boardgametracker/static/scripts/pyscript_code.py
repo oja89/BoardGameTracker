@@ -18,9 +18,9 @@ def refresh_page(href):
 
     # reload controls
     get_controls(response)
-    get_items(response)
+    #get_items(response)
     get_contents(response)
-    print(response)
+    print(f"resp {response}")
 
 
 def add_control(ctrl, controls):
@@ -64,9 +64,9 @@ def add_control(ctrl, controls):
     parent.append(btn)
 
 
-def add_items(name, href):
+def add_item(name, href):
     print("----add item-button")
-    parent = js.document.getElementById("items")
+    parent = js.document.getElementById("content")
     btn = js.document.createElement("button")
 
     btn.setAttribute('id', name)
@@ -138,26 +138,6 @@ def get_controls(response):
             add_control(ctrl, controls)
 
 
-def get_items(response):
-    print("---get new items")
-
-    # clear existing items
-    parent = js.document.getElementById("items")
-    parent.innerHTML = ""
-
-    # check if there is items
-    items = response.get("items")
-    if items is not None:
-        # add new buttons
-        for item in items:
-            name = item.get("name")
-            if name is None:
-                # workaround for matches:
-                name = item.get("date")
-            href = item["@controls"]["self"].get("href")
-            add_items(name, href)
-
-
 def get_contents(response):
     """
     Update the contents
@@ -178,6 +158,7 @@ def get_contents(response):
     for field, props in response.items():
         if field in ["item"]:  # single item
             output(field.upper())
+            # TODO: Take these from schema instead so we get empty ones too
             for key, value in props.items():
                 # add KEY before as a text:
                 output(key)
@@ -192,13 +173,22 @@ def get_contents(response):
                 parent.append(input)
 
         if field in ["items", "matches", "maps", "rulesets", "player_results", "team_results"]:  # list of items
+        # if field == "items":  # list of items
             # as this is a list inside, we need to go deeper
             # don't use forms here
             output(field.upper())
+            # first get the item button
             for i in props:
                 for field2, props2 in i.items():
-                    if field2 not in ["@controls"]:
+                    # add first the item button
+                    if field2 in ["name", "date", "player", "team"]:
+                        add_item(props2, i["@controls"]["self"].get("href"))
+                    # print everything else (but not controls)
+                    if field2 != "@controls":
                         output(f"{field2}: {props2}")
+
+        if field in ["edit"]:
+            output(props)
 
 
 def output(stuff):

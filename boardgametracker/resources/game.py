@@ -179,6 +179,7 @@ class GameItem(Resource):
             # for each "row" in this game's results:
             for map_ in game.map:
                 item = BGTBuilder(map_.serialize(long=False))
+                item.add_control("self", url_for("api.mapitem", game=game, map_=map_))
                 item.add_control_put("edit",
                                      "Edit this map",
                                      url_for("api.mapitem", game=game, map_=map_),
@@ -193,6 +194,7 @@ class GameItem(Resource):
             # for each "row" in this game's results:
             for ruleset in game.ruleset:
                 item = BGTBuilder(ruleset.serialize(long=False))
+                item.add_control("self", url_for("api.rulesetitem", game=game, ruleset=ruleset))
                 item.add_control_put("edit",
                                      "Edit this ruleset",
                                      url_for("api.rulesetitem", game=game, ruleset=ruleset),
