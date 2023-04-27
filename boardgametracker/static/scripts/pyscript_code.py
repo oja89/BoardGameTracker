@@ -9,14 +9,25 @@ URL = "http://127.0.0.1:5000"
 APIKEYHEADER = {"BGT-Api-Key": "asdf"}
 
 
-def add_button(ctrl, controls):
+
+def refresh_page(href):
+    print("Loading new page")
+
+    # get and jsonify directly
+    response = sess.get(URL + href).json()
+
+    # reload controls
+    get_controls(response)
+    get_items(response)
+    get_contents(response)
+    print(response)
+
+
+def add_control(ctrl, controls):
     print("----add control-button")
     parent = js.document.getElementById("controls")
     btn = js.document.createElement("button")
 
-    # use py-click
-    # https://docs.pyscript.net/latest/tutorials/py-click.html
-    # btn.setAttribute('py-click', "click_control('asd')")
     btn.setAttribute('id', ctrl)
     btn.setAttribute('class', 'py-button')
 
@@ -27,15 +38,15 @@ def add_button(ctrl, controls):
 
     def click_control(event):
         """
-      Way to get around the autofire...
-      """
+        Way to get around the autofire...
+        """
         print(f"CLICKED CONTROL: {ctrl}")
-        method = controls[ctrl]["method"]
-        href = controls[ctrl]["href"]
+        method = controls[ctrl].get("method")
+        href = controls[ctrl].get("href")
         # if it is not just a get ...
         if method == "GET":
-            refresh_page(href=href)
-        elif method == "DELETE":
+            refresh_page(href)
+        if method == "DELETE":
             add_choice_buttons(method, href)
         elif method == "POST":
             # get empty forms according to the schema
@@ -46,51 +57,11 @@ def add_button(ctrl, controls):
             pass
             # similar to post, but read existing values into form
         else:
-            print(f"WEIRD METHOD: {method}")
-            pass
+            # probably just get...
+            refresh_page(href)
 
     add_event_listener(btn, "click", click_control)
     parent.append(btn)
-
-
-def add_choice_buttons(method, href):
-    # add cancel (self) and "method"
-    # dont use add_button
-
-    parent = js.document.getElementById("controls")
-    parent.innerHTML = ""
-
-    # self == cancel?
-    c_btn = js.document.createElement("button")
-    c_btn.setAttribute('id', "cancel")
-    c_btn.setAttribute('class', 'py-button')
-    c_btn.textContent = "cancel"
-
-
-    def click_cancel(event):
-        # get self
-        # update controls (it updates all)
-        #update_controls(href=href)
-        refresh_page(href=href)
-
-    add_event_listener(c_btn, "click", click_cancel)
-    parent.append(c_btn)
-
-    # delete
-    d_btn = js.document.createElement("button")
-    d_btn.setAttribute('id', method)
-    d_btn.setAttribute('class', 'py-button')
-    d_btn.textContent = method
-
-    def click_submit(event):
-        resp = sess.request(method, URL + href)
-        output(f"Status: {resp}")
-        # TODO: jump to collection instead?
-        refresh_page(href=href)
-
-
-    add_event_listener(d_btn, "click", click_submit)
-    parent.append(d_btn)
 
 
 def add_items(name, href):
@@ -111,43 +82,60 @@ def add_items(name, href):
         Way to get around the autofire...
         """
         print(f"CLICKED ITEM: {name}")
-        refresh_page(href=href)
+        refresh_page(href)
 
     add_event_listener(btn, "click", click_item)
 
     parent.append(btn)
 
+def add_choice_buttons(method, href):
+    # add cancel (self) and "method"
+
+    parent = js.document.getElementById("controls")
+    parent.innerHTML = ""
+
+    # self == cancel?
+    c_btn = js.document.createElement("button")
+    c_btn.setAttribute('id', "cancel")
+    c_btn.setAttribute('class', 'py-button')
+    c_btn.textContent = "cancel"
+
+    def click_cancel(event):
+        # self?
+        refresh_page(href)
+
+    add_event_listener(c_btn, "click", click_cancel)
+    parent.append(c_btn)
+
+    # delete
+    d_btn = js.document.createElement("button")
+    d_btn.setAttribute('id', method)
+    d_btn.setAttribute('class', 'py-button')
+    d_btn.textContent = method
+
+    def click_submit(event):
+        resp = sess.request(method, URL + href)
+        output(f"Status: {resp}")
+        # TODO: jump to collection instead?
+        refresh_page(href)
+
+    add_event_listener(d_btn, "click", click_submit)
+    parent.append(d_btn)
 
 
-def refresh_page(href):
-
-    response = sess.get(URL + href)
-
-    # reload controls
-    get_controls(response)
-    get_items(response)
-    get_contents(response)
 
 
 def get_controls(response):
     parent = js.document.getElementById("controls")
     parent.innerHTML = ""
 
-    # Print all from "@controls"
-    controls = response.json()["@controls"]
+    # add buttons for all from "@controls"
+    controls = response.get("@controls")
     print("---get new controls")
     for ctrl in controls:
-        # not items pls
-        # name, url, method?
-        # name = ctrl
-        # href = controls[ctrl]["href"]
-        # # check if there is a method
-        # try:
-        #     method = controls[ctrl]["method"]
-        # except KeyError:
-        #     print("no method, default to get")
-        #     method = "GET"
-        add_button(ctrl, controls)
+        # don't put profile, it's not working
+        if ctrl not in ["profile"]:
+            add_control(ctrl, controls)
 
 
 def get_items(response):
@@ -157,22 +145,17 @@ def get_items(response):
     parent = js.document.getElementById("items")
     parent.innerHTML = ""
 
-    # buttons for all items (works for all collections but matches?)
-    try:
-        items = response.json()["items"]
+    # check if there is items
+    items = response.get("items")
+    if items is not None:
         # add new buttons
         for item in items:
-            # add buttons for items
-            # name = item["name"] # doesn't work if not named
             name = item.get("name")
             if name is None:
-                # works for matches:
+                # workaround for matches:
                 name = item.get("date")
-            href = item["@controls"]["self"]["href"]
+            href = item["@controls"]["self"].get("href")
             add_items(name, href)
-    except KeyError as kerr:
-        # we are probably looking at one item, so no items...
-        pass
 
 
 def get_contents(response):
@@ -181,7 +164,6 @@ def get_contents(response):
     """
     print("---get new content")
 
-    results = response.json()
     # create element
     # show them on the screen using display
     # https://github.com/pyscript/pyscript/blob/main/docs/reference/API/display.md
@@ -193,7 +175,7 @@ def get_contents(response):
     # except controls
 
     # for each row create and add elements
-    for field, props in results.items():
+    for field, props in response.items():
         if field in ["item"]:  # single item
             output(field.upper())
             for key, value in props.items():
@@ -208,7 +190,6 @@ def get_contents(response):
 
                 input.textContent = value
                 parent.append(input)
-
 
         if field in ["items", "matches", "maps", "rulesets", "player_results", "team_results"]:  # list of items
             # as this is a list inside, we need to go deeper
