@@ -33,8 +33,6 @@ def add_control(ctrl, controls):
 
     btn.textContent = ctrl
 
-    # cleaner way to add listener: https://jeff.glass/post/pyscript-why-create-proxy/
-    # add_event_listener(btn, "click", click_control(href))) # nice but fires automatically
 
     def click_control(event):
         """
@@ -51,11 +49,68 @@ def add_control(ctrl, controls):
         elif method == "POST":
             # get empty forms according to the schema
 
+            # cannot GET any page
+            # so we need to build the boxes
+            # but we can get schema
+
+            props = controls[ctrl]["schema"].get("properties")
+
+            # clear contents first
+            parent = js.document.getElementById("content")
+            parent.innerHTML = ""
+
+            # print title (what are we adding)
+            output(ctrl.upper())
+
+            for key in props:
+                #add key as text
+                output(key)
+
+                input = js.document.createElement("input")
+
+                input.setAttribute('id', key)
+                input.setAttribute('class', 'py-box')
+                input.setAttribute('value', '')
+
+                input.textContent = ''
+                parent.append(input)
+
             add_choice_buttons(method, href)
 
         elif method == "PUT":
-            pass
-            # similar to post, but read existing values into form
+            #TODO
+
+            # get all forms according to the schema
+
+            # data exists, but there might be empty fields that are not showing
+
+            props = controls[ctrl]["schema"].get("properties")
+
+            # clear contents first
+            parent = js.document.getElementById("content")
+            parent.innerHTML = ""
+
+            # print title (what are we adding)
+            output(ctrl.upper())
+
+            for key in props:
+                #add key as text
+                output(key)
+
+                input = js.document.createElement("input")
+
+                input.setAttribute('id', key)
+                input.setAttribute('class', 'py-box')
+
+                # fill existing values in
+                input.setAttribute('value', old_value)
+
+
+                input.textContent = ''
+                parent.append(input)
+
+            add_choice_buttons(method, href)
+
         else:
             # probably just get...
             refresh_page(href)
@@ -74,8 +129,6 @@ def add_item(name, href):
 
     btn.textContent = name
 
-    # cleaner way to add listener: https://jeff.glass/post/pyscript-why-create-proxy/
-    # add_event_listener(btn, "click", click_control(href))) # nice but fires automatically
 
     def click_item(event):
         """
@@ -114,10 +167,40 @@ def add_choice_buttons(method, href):
     d_btn.textContent = method
 
     def click_submit(event):
-        resp = sess.request(method, URL + href)
-        output(f"Status: {resp}")
-        # TODO: jump to collection instead?
-        refresh_page(href)
+        if method == "DELETE":
+            resp = sess.request(method, URL + href)
+            output(f"Status: {resp}")
+            if resp.status_code == 204:
+                #TODO: get collection
+                #now just jump to entry
+                refresh_page("/api/")
+            refresh_page(href)
+
+        if method in ["POST", "PUT"]:
+            # get data from the input boxes
+            data_raw= {}
+            boxes = js.document.getElementsByClassName("py-box")
+            for box in boxes:
+                #output(box.id) # Key
+                #output(box.value) # inputted value
+                data_raw[box.id] = box.value
+
+            #output(data_raw) # {'name': 'asd}
+
+            resp = sess.request(
+                method,
+                URL + href,
+                data=json.dumps(data_raw),
+                headers = {"Content-type": "application/json"}
+            )
+            output(f"Status: {resp}")
+
+            # if successful, refresh to location
+            if resp.status_code == 201:
+                output(resp.headers)
+                refresh_page(resp.headers["Location"])
+
+
 
     add_event_listener(d_btn, "click", click_submit)
     parent.append(d_btn)
