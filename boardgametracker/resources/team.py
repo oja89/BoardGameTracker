@@ -210,7 +210,9 @@ class TeamItem(Resource):
             db.session.rollback()
             raise Conflict(description=f"Team with name '{team.name}' already exists.")
 
-        return Response(status=204)
+        return Response(status=204,
+                        headers={"Location": url_for("api.teamitem", team=team)}
+                        )
 
     def delete(self, team):
         """

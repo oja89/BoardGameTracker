@@ -11,7 +11,7 @@ APIKEYHEADER = {"BGT-Api-Key": "asdf"}
 
 
 def refresh_page(href):
-    print("Loading new page")
+    #print("Loading new page")
 
     # get and jsonify directly
     response = sess.get(URL + href).json()
@@ -20,11 +20,11 @@ def refresh_page(href):
     get_controls(response)
     #get_items(response)
     get_contents(response)
-    print(f"resp {response}")
+    #print(f"resp {response}")
 
 
 def add_control(ctrl, controls):
-    print("----add control-button")
+    #print("----add control-button")
     parent = js.document.getElementById("controls")
     btn = js.document.createElement("button")
 
@@ -38,7 +38,7 @@ def add_control(ctrl, controls):
         """
         Way to get around the autofire...
         """
-        print(f"CLICKED CONTROL: {ctrl}")
+        #print(f"CLICKED CONTROL: {ctrl}")
         method = controls[ctrl].get("method")
         href = controls[ctrl].get("href")
         # if it is not just a get ...
@@ -78,10 +78,8 @@ def add_control(ctrl, controls):
             add_choice_buttons(method, href)
 
         elif method == "PUT":
-            #TODO
 
             # get all forms according to the schema
-
             # data exists, but there might be empty fields that are not showing
 
             props = controls[ctrl]["schema"].get("properties")
@@ -93,23 +91,29 @@ def add_control(ctrl, controls):
             # print title (what are we adding)
             output(ctrl.upper())
 
-            for key in props:
-                #add key as text
-                output(key)
+            # get existing data
+            resp = sess.request("GET", URL + href).json()
+
+            print(resp)
+            print(resp.items())
+            print(resp["item"])
+            # get schema
+            for field in props:
+                #add field as text
+                output(field)
 
                 input = js.document.createElement("input")
 
-                input.setAttribute('id', key)
+                input.setAttribute('id', field)
                 input.setAttribute('class', 'py-box')
 
                 # fill existing values in
-                input.setAttribute('value', old_value)
+                input.setAttribute('value', resp["item"][field])
 
-
-                input.textContent = ''
                 parent.append(input)
 
             add_choice_buttons(method, href)
+
 
         else:
             # probably just get...
@@ -120,7 +124,7 @@ def add_control(ctrl, controls):
 
 
 def add_item(name, href):
-    print("----add item-button")
+    #print("----add item-button")
     parent = js.document.getElementById("content")
     btn = js.document.createElement("button")
 
@@ -134,7 +138,7 @@ def add_item(name, href):
         """
         Way to get around the autofire...
         """
-        print(f"CLICKED ITEM: {name}")
+        #print(f"CLICKED ITEM: {name}")
         refresh_page(href)
 
     add_event_listener(btn, "click", click_item)
@@ -196,7 +200,7 @@ def add_choice_buttons(method, href):
             output(f"Status: {resp}")
 
             # if successful, refresh to location
-            if resp.status_code == 201:
+            if resp.status_code in [201, 204]:
                 output(resp.headers)
                 refresh_page(resp.headers["Location"])
 
@@ -214,7 +218,7 @@ def get_controls(response):
 
     # add buttons for all from "@controls"
     controls = response.get("@controls")
-    print("---get new controls")
+    #print("---get new controls")
     for ctrl in controls:
         # don't put profile, it's not working
         if ctrl not in ["profile"]:
@@ -225,7 +229,7 @@ def get_contents(response):
     """
     Update the contents
     """
-    print("---get new content")
+    #print("---get new content")
 
     # create element
     # show them on the screen using display
@@ -241,25 +245,14 @@ def get_contents(response):
     for field, props in response.items():
         if field in ["item"]:  # single item
             output(field.upper())
-            # TODO: Take these from schema instead so we get empty ones too
             for key, value in props.items():
-                # add KEY before as a text:
-                output(key)
-
-                input = js.document.createElement("input")
-
-                input.setAttribute('id', key)
-                input.setAttribute('class', 'py-box')
-                input.setAttribute('value', value)
-
-                input.textContent = value
-                parent.append(input)
+                output(f"{key}: {value}")
 
         if field in ["items", "matches", "maps", "rulesets", "player_results", "team_results"]:  # list of items
-        # if field == "items":  # list of items
             # as this is a list inside, we need to go deeper
             # don't use forms here
-            output(field.upper())
+
+            output(f"{field.upper()} related to this")
             # first get the item button
             for i in props:
                 for field2, props2 in i.items():
