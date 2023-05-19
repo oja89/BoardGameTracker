@@ -95,6 +95,9 @@ flask testgen
 
 Also change the URL in pyscript_code from 127.0.0.1:5000 to what is used...
 
+The PyScript site (GUI) can be found at /pyscript
+For example oja89.pythonanywhere.com/pyscript
+
 
 
 ## Shortcut for venv
